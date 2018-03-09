@@ -101,11 +101,23 @@ public class MagnetWService {
         if (matches) {
             return url;
         } else {
+            System.out.println(url);
             String newMagnet;
             try {
-                int startIndex = url.lastIndexOf("/") + 1;
+                StringBuffer sb = new StringBuffer(url);
                 int htmlIndex = url.lastIndexOf(".html");
-                newMagnet = url.substring(startIndex, htmlIndex);
+                if (htmlIndex != -1) {
+                    sb.delete(htmlIndex, sb.length());
+                }
+                int paramIndex = url.indexOf("&");
+                if (paramIndex != -1) {
+                    sb.delete(paramIndex, sb.length());
+                }
+                if (sb.length() >= 40) {
+                    newMagnet = sb.substring(sb.length() - 40, sb.length());
+                } else {
+                    newMagnet = url;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 newMagnet = url;

@@ -4,8 +4,20 @@ var page = getQueryString("page");
 
 $(document).ready(function () {
 
+    $('#keyword').bind('keypress', function (event) {
+        if (event.keyCode == 13) {
+            requestSearchPage()
+        }
+    });
+
     $("#btn_search").click(function () {
         requestSearchPage()
+    });
+
+    $("#disclaimer").click(function () {
+        var content="本网站完全开源，仅用于技术交流学习，用户使用本工具进行的任何操作，本服务器均不保存。\n\n" +
+            "本网站不会存储，不能分享，也不提供任何传播信息与资源的功能, 对此工具的非法使用概不负责。"
+        alert(content)
     });
 
     $("input[name='site']").change(function () {

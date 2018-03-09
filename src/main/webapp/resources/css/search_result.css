@@ -17,18 +17,33 @@
     margin-left: 10px;
     margin-right: 10px;
 }
-.search_site{
+
+.search_site {
     margin-top: 1.5%;
     margin-bottom: 1.5%;
 }
 
-#tr_load_more{
+#tr_load_more {
     cursor: pointer;
 }
 
 .container-margin-bottom {
     margin-bottom: 1.5%;
 }
-.loader div{
+
+.loader div {
     background-color: #D32F2F;
+}
+
+#footer {
+    width: 100%;
+    text-align: center;
+    height: 60px;
+    bottom: 0;
+    background: #eeeeee;
+}
+
+#footer-content{
+    font-size: 18px;
+    padding-top: 20px;
 }

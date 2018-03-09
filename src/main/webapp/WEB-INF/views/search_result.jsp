@@ -14,6 +14,8 @@
     <%--<c:set var="contextpath" value="http://asset.dyhdyh.com/resources/magnetw"></c:set>--%>
     <c:set var="contextpath" value="resources"></c:set>
     <title>${keyword}</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/Ladda/1.0.6/ladda.min.css" rel="stylesheet">
     <link href="${contextpath}/css/base.css" rel="stylesheet">
@@ -29,54 +31,61 @@
     <input id="form_page" value="${current_page}" name="page" type="hidden">
     <input id="form_site" value="${current_site}" name="site" type="hidden">
 </form>
+<div>
+    <div class="container container-margin-top" style="min-height: 87%">
+        <div class="search_form">
+            <div class="form-group">
+                <div class="col-xs-9" style="padding: 0px">
+                    <input class="form-control" placeholder="" id="keyword" name="keyword"
+                           value="${keyword}">
+                </div>
+                <div class="col-xs-3" style="padding-right: 0px;">
+                    <input class="btn btn-primary btn-block" type="submit" value="搜索"
+                           id="btn_search">
+                </div>
+            </div>
+            <div class="btn-group  search_site" id="btn_site_group" data-toggle="buttons">
+                <c:forEach items="${site_list}" var="site">
+                    <c:choose>
+                        <c:when test="${current_site==site}">
+                            <label class="btn btn-default active">
+                                <input type="radio" name="site" autocomplete="off" value="${site}"
+                                       checked>${site}
+                            </label>
+                        </c:when>
+                        <c:otherwise>
+                            <label class="btn btn-default">
+                                <input type="radio" name="site" autocomplete="off"
+                                       value="${site}">${site}
+                            </label>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+            </div>
+        </div>
+        <div class="container-margin-bottom">
+            <div class="text-center" style="font-size: 22px" id="div_loading" hidden>
+                加载中...
+            </div>
+            <table class="table table-bordered table-hover table-condensed" id="table_content">
+                <tr id="tr_placeholder">
+                </tr>
+                <%--<tr id="tr_load_more">
+                    <td id="td_load_more" colspan="4" class="text-center">
+                    </td>
+                </tr>--%>
+            </table>
 
-<div class="container container-margin-top">
-    <div class="search_form">
-        <div class="form-group">
-            <div class="col-md-10" style="padding: 0px">
-                <input class="form-control" placeholder="" id="keyword" name="keyword"
-                       value="${keyword}">
-            </div>
-            <div class="col-md-2" style="padding-right: 0px;">
-                <input class="btn btn-primary btn-block" type="submit" value="搜索" id="btn_search">
+            <div hidden id="div_btn_request_page">
+                <button class="ladda-button btn-block" data-style="expand-left" data-size="s"
+                        id="btn_request_page" data-color="blue">点击加载更多
+                </button>
             </div>
         </div>
-        <div class="btn-group  search_site" id="btn_site_group" data-toggle="buttons">
-            <c:forEach items="${site_list}" var="site">
-                <c:choose>
-                    <c:when test="${current_site==site}">
-                        <label class="btn btn-default active">
-                            <input type="radio" name="site" autocomplete="off" value="${site}"
-                                   checked>${site}
-                        </label>
-                    </c:when>
-                    <c:otherwise>
-                        <label class="btn btn-default">
-                            <input type="radio" name="site" autocomplete="off"
-                                   value="${site}">${site}
-                        </label>
-                    </c:otherwise>
-                </c:choose>
-            </c:forEach>
-        </div>
+
     </div>
-    <div class="container-margin-bottom">
-        <div class="text-center" style="font-size: 22px" id="div_loading" hidden>
-            加载中...
-        </div>
-        <table class="table table-bordered table-hover table-condensed" id="table_content">
-            <tr id="tr_placeholder">
-            </tr>
-            <%--<tr id="tr_load_more">
-                <td id="td_load_more" colspan="4" class="text-center">
-                </td>
-            </tr>--%>
-        </table>
-
-        <div hidden id="div_btn_request_page">
-            <button class="ladda-button btn-block" data-style="expand-left" data-size="s"
-                    id="btn_request_page" data-color="blue">点击加载更多
-            </button>
+    <div id="footer">
+        <div id="footer-content"><a href="https://github.com/dengyuhan/magnetW" target="_blank">Github</a> | <a id="disclaimer" href="#">免责声明</a>
         </div>
     </div>
 </div>
@@ -123,5 +132,11 @@
         }
     });
 </script>
+
+
+<div style="display: none">
+    <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan id='cnzz_stat_icon_1273076204'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s22.cnzz.com/z_stat.php%3Fid%3D1273076204%26online%3D2' type='text/javascript'%3E%3C/script%3E"));</script>
+</div>
 </body>
 </html>
