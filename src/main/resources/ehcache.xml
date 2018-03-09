@@ -15,8 +15,8 @@
     <cache name="magnetList"
         maxElementsInMemory="10000"
         eternal="false"
-        overflowToDisk="true"
-        diskPersistent="true"
+        overflowToDisk="false"
+        diskPersistent="false"
         timeToIdleSeconds="3600"
         timeToLiveSeconds="86400" />
 </ehcache>
