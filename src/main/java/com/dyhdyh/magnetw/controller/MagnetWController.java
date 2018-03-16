@@ -49,7 +49,8 @@ public class MagnetWController extends BaseController {
      * @return
      */
     @RequestMapping(value = {"/", "search"}, method = RequestMethod.GET)
-    public String submitSearchMagnet(Model model, @RequestParam(required = false) String site, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
+    public String submitSearchMagnet(Model model, HttpServletRequest request, @RequestParam(required = false) String site, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
+        logger(request);
         try {
             List<String> siteNames = getSiteNames();
             if (StringUtils.isEmpty(site)) {
@@ -78,6 +79,7 @@ public class MagnetWController extends BaseController {
     @RequestMapping(value = "search-json", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
     public List<MagnetInfo> submitSearchMagnetJson(Model model, HttpServletRequest request, @RequestParam(required = false) String site, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
+        logger(request);
         try {
             List<String> siteNames = getSiteNames();
             if (StringUtils.isEmpty(site)) {

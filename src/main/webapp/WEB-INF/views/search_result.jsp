@@ -13,7 +13,7 @@
 <head>
     <%--<c:set var="contextpath" value="http://asset.dyhdyh.com/resources/magnetw"></c:set>--%>
     <c:set var="contextpath" value="resources"></c:set>
-    <title>${keyword}</title>
+    <title>磁力搜 - ${keyword}</title>
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -85,7 +85,7 @@
 
     </div>
     <div id="footer">
-        <div id="footer-content"><a href="https://github.com/dengyuhan/magnetW" target="_blank">Github</a> | <a id="disclaimer" href="#">免责声明</a>
+        <div id="footer-content"><a href="https://github.com/dengyuhan/magnetW" target="_blank">Github</a> | <a id="disclaimer" href="#">免责声明</a> | <a id="feedback" href="https://github.com/dengyuhan/magnetW/issues">反馈失效</a>
         </div>
     </div>
 </div>

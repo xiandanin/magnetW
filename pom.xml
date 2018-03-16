@@ -5,7 +5,7 @@
     <groupId>com.dyhdyh</groupId>
     <artifactId>magnetw</artifactId>
     <packaging>war</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>magnetW</name>
     <url>http://maven.apache.org</url>
     <dependencies>
@@ -34,6 +34,12 @@
             <artifactId>jstl-api</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
         <!-- jsp -->
         <dependency>
             <groupId>javax.el</groupId>
@@ -63,6 +69,7 @@
             <artifactId>spring-context-support</artifactId>
             <version>4.3.1.RELEASE</version>
         </dependency>
+
 
         <!--缓存-->
         <dependency>

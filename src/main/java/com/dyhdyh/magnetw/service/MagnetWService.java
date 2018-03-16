@@ -101,7 +101,6 @@ public class MagnetWService {
         if (matches) {
             return url;
         } else {
-            System.out.println(url);
             String newMagnet;
             try {
                 StringBuffer sb = new StringBuffer(url);
