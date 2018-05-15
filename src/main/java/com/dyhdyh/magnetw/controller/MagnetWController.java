@@ -1,6 +1,7 @@
 package com.dyhdyh.magnetw.controller;
 
 import com.dyhdyh.magnetw.model.MagnetInfo;
+import com.dyhdyh.magnetw.model.MagnetPageResponse;
 import com.dyhdyh.magnetw.model.MagnetRule;
 import com.dyhdyh.magnetw.service.MagnetWService;
 import com.dyhdyh.magnetw.util.GsonUtil;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * author  dengyuhan
@@ -40,61 +42,37 @@ public class MagnetWController extends BaseController {
 
 
     /**
-     * 搜索
-     *
      * @param model
-     * @param site
      * @param keyword
      * @param page
      * @return
      */
-    @RequestMapping(value = {"/", "search"}, method = RequestMethod.GET)
-    public String submitSearchMagnet(Model model, HttpServletRequest request, @RequestParam(required = false) String site, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
-        logger(request);
-        try {
-            List<String> siteNames = getSiteNames();
-            if (StringUtils.isEmpty(site)) {
-                site = siteNames.get(0);
-            }
-            int newPage = magnetWService.transformPage(page);
-            //model.addAttribute("title", String.format("%s - %s", site, keyword));
-            model.addAttribute("current_site", site);
-            model.addAttribute("keyword", keyword);
-            model.addAttribute("current_page", newPage);
-            model.addAttribute("site_list", siteNames);
-            return "search_result";
-        } catch (Exception e) {
-            return error(model, e);
-        }
-    }
-
-
-    /**
-     * @param model
-     * @param site
-     * @param keyword
-     * @param page
-     * @return
-     */
-    @RequestMapping(value = "search-json", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "api/search", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public List<MagnetInfo> submitSearchMagnetJson(Model model, HttpServletRequest request, @RequestParam(required = false) String site, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
+    public MagnetPageResponse getSearchMagnetJson(Model model, HttpServletRequest request, HttpServletResponse response1, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
         logger(request);
+        response1.addHeader("Access-Control-Allow-Origin","*");
+        MagnetPageResponse response = new MagnetPageResponse();
         try {
+            int newPage = magnetWService.transformPage(page);
+
             List<String> siteNames = getSiteNames();
-            if (StringUtils.isEmpty(site)) {
-                site = siteNames.get(0);
+            if (StringUtils.isEmpty(source)) {
+                source = siteNames.get(0);
             }
             List<MagnetInfo> infos = null;
-            int newPage = magnetWService.transformPage(page);
             if (!StringUtils.isEmpty(keyword)) {
-                MagnetRule rule = getMagnetRule().get(site);
+                MagnetRule rule = getMagnetRule().get(source);
                 infos = magnetWService.parser(rule, keyword, newPage);
             }
-            return infos;
+            response.setCurrentPage(newPage);
+            response.setSourceNames(siteNames);
+            response.setResults(infos);
+            response.setCurrentSourceName(source);
+            return response;
         } catch (Exception e) {
             error(model, e);
-            return new ArrayList<MagnetInfo>();
+            return response;
         }
 
 
