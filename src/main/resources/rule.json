@@ -20,16 +20,6 @@
     "source": "http://www.ciliba.org/s/XXX_rel_PPP.html"
   },
   {
-    "site": "AOYOSO",
-    "waiting": "0",
-    "group": "//div[@class='col-md-8']//div[@class='panel panel-default']",
-    "magnet": ".//a//@href",
-    "name": ".//a",
-    "size": ".//table//tr//td[2]",
-    "count": ".//table//tr//td[1]",
-    "source": "http://www.aoyoso.com/search/XXX_ctime_PPP.html"
-  },
-  {
     "site": "屌丝搜",
     "waiting": "0",
     "group": "//ul[@class='mlist']//li",
@@ -58,5 +48,15 @@
     "size": ".//div[3]//span[3]//b",
     "count": ".//div[3]//span[2]//b",
     "source": "https://www.btrabbit.tv/search/XXX/default-PPP.html"
+  },
+  {
+    "site": "AOYOSO",
+    "waiting": "0",
+    "group": "//div[@class='col-md-8']//div[@class='panel panel-default']",
+    "magnet": ".//a//@href",
+    "name": ".//a",
+    "size": ".//table//tr//td[2]",
+    "count": ".//table//tr//td[1]",
+    "source": "http://www.aoyoso.com/search/XXX_ctime_PPP.html"
   }
 ]
