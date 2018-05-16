@@ -11,10 +11,23 @@ public class MagnetInfo implements Serializable{
     private String group;
     private String magnet;
     private String name;
-    private String size;
+    private String formatSize;
+    private long size;
     private String count;
 
     private String resolution;//清晰度
+
+    public String getFormatSize() {
+        return formatSize;
+    }
+
+    public void setFormatSize(String formatSize) {
+        this.formatSize = formatSize;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
 
     public String getResolution() {
         return resolution;
@@ -48,12 +61,8 @@ public class MagnetInfo implements Serializable{
         this.name = name;
     }
 
-    public String getSize() {
+    public long getSize() {
         return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     public String getCount() {

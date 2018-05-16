@@ -57,7 +57,9 @@ public class MagnetWService {
                 info.setName(nameValue);
                 //大小
                 String sizeValue = ((Node) xPath.evaluate(size, node, XPathConstants.NODE)).getTextContent();
-                info.setSize(sizeValue);
+                info.setFormatSize(sizeValue);
+
+                info.setSize(transformSize(sizeValue));
                 //时间
                 String countValue = ((Node) xPath.evaluate(count, node, XPathConstants.NODE)).getTextContent();
                 info.setCount(countValue);
@@ -138,6 +140,30 @@ public class MagnetWService {
             return "1080P";
         }
         return "";
+    }
+
+
+    private long transformSize(String formatSize) {
+        long newSize = 0;
+        try {
+            long baseNumber = 0;
+            String newFormatSize = formatSize.toUpperCase();
+            if (formatSize.endsWith("GB")) {
+                baseNumber = 1024 * 1024 * 1024;
+                newFormatSize = formatSize.replace("GB", "");
+            } else if (formatSize.endsWith("MB")) {
+                baseNumber = 1024 * 1024;
+                newFormatSize = formatSize.replace("MB", "");
+            } else if (formatSize.endsWith("KB")) {
+                baseNumber = 1024;
+                newFormatSize = formatSize.replace("KB", "");
+            }
+            float size = Float.parseFloat(newFormatSize);
+            newSize = (long) (size * baseNumber);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return newSize;
     }
 
 }

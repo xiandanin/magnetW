@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * author  dengyuhan
@@ -41,6 +40,31 @@ public class MagnetWController extends BaseController {
     private List<String> sites;
 
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String searchMagnetPage(Model model, HttpServletRequest request) {
+        return "search_result";
+    }
+
+    /**
+     * 获取源站信息
+     * @param model
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "api/source-site", method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public List<String> getMagnetSourceSiteList(Model model, HttpServletRequest request) {
+        logger(request);
+        if (sites == null) {
+            sites = new ArrayList<String>();
+            Set<Map.Entry<String, MagnetRule>> entries = getMagnetRule().entrySet();
+            for (Map.Entry<String, MagnetRule> entry : entries) {
+                sites.add(entry.getKey());
+            }
+        }
+        return sites;
+    }
+
     /**
      * @param model
      * @param keyword
@@ -49,33 +73,24 @@ public class MagnetWController extends BaseController {
      */
     @RequestMapping(value = "api/search", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public MagnetPageResponse getSearchMagnetJson(Model model, HttpServletRequest request, HttpServletResponse response1, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
+    public MagnetPageResponse getSearchMagnetJson(Model model, HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
         logger(request);
-        response1.addHeader("Access-Control-Allow-Origin","*");
         MagnetPageResponse response = new MagnetPageResponse();
         try {
             int newPage = magnetWService.transformPage(page);
 
-            List<String> siteNames = getSiteNames();
-            if (StringUtils.isEmpty(source)) {
-                source = siteNames.get(0);
-            }
             List<MagnetInfo> infos = null;
             if (!StringUtils.isEmpty(keyword)) {
                 MagnetRule rule = getMagnetRule().get(source);
                 infos = magnetWService.parser(rule, keyword, newPage);
             }
             response.setCurrentPage(newPage);
-            response.setSourceNames(siteNames);
             response.setResults(infos);
-            response.setCurrentSourceName(source);
             return response;
         } catch (Exception e) {
             error(model, e);
             return response;
         }
-
-
     }
 
     /**
@@ -95,17 +110,5 @@ public class MagnetWController extends BaseController {
             }
         }
         return magnetRuleMap;
-    }
-
-
-    private List<String> getSiteNames() {
-        if (sites == null) {
-            sites = new ArrayList<String>();
-            Set<Map.Entry<String, MagnetRule>> entries = getMagnetRule().entrySet();
-            for (Map.Entry<String, MagnetRule> entry : entries) {
-                sites.add(entry.getKey());
-            }
-        }
-        return sites;
     }
 }

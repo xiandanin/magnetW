@@ -4,10 +4,56 @@ package com.dyhdyh.magnetw.model;
  * author  dengyuhan
  * created 2018/3/7 11:52
  */
-public class MagnetRule extends MagnetInfo{
+public class MagnetRule{
     private String source;
     private String site;
     private String waiting;
+
+    private String group;
+    private String magnet;
+    private String name;
+    private String size;
+    private String count;
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getMagnet() {
+        return magnet;
+    }
+
+    public void setMagnet(String magnet) {
+        this.magnet = magnet;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
+    }
 
     public String getSource() {
         return source;
