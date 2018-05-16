@@ -6,9 +6,12 @@ import com.dyhdyh.magnetw.model.MagnetRule;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XPatherException;
 import org.jsoup.Jsoup;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -31,35 +34,44 @@ import javax.xml.xpath.XPathFactory;
 @Service
 public class MagnetWService {
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#rule.source,#keyword,#page)")
-    public List<MagnetInfo> parser(MagnetRule rule, String keyword, int page) throws IOException, XPathExpressionException, ParserConfigurationException {
+    public List<MagnetInfo> parser(MagnetRule rule, String keyword, int page) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
         return parser(rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getCount());
     }
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#url,#keyword,#page)")
-    public List<MagnetInfo> parser(String url, String keyword, int page, String group, String magnet, String name, String size, String count) throws IOException, XPathExpressionException, ParserConfigurationException {
+    public List<MagnetInfo> parser(String url, String keyword, int page, String group, String magnet, String name, String size, String count) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
         String newUrl = transformUrl(url, keyword, page);
         String html = Jsoup.connect(newUrl).get().body().html();
+
+
         XPath xPath = XPathFactory.newInstance().newXPath();
-        Document dom = new DomSerializer(new CleanerProperties()).createDOM(new HtmlCleaner().clean(html));
+        TagNode tagNode = new HtmlCleaner().clean(html);
+        Document dom = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
 
         NodeList result = (NodeList) xPath.evaluate(group, dom, XPathConstants.NODESET);
         List<MagnetInfo> infos = new ArrayList<MagnetInfo>();
         for (int i = 0; i < result.getLength(); i++) {
             Node node = result.item(i);
             if (node != null) {
+                if (StringUtils.isEmpty(node.getTextContent().trim())) {
+                    continue;
+                }
                 MagnetInfo info = new MagnetInfo();
                 Node magnetNote = (Node) xPath.evaluate(magnet, node, XPathConstants.NODE);
                 //磁力链
-                String magnetValue = magnetNote.getNodeValue();
+                String magnetValue = magnetNote.getTextContent();
                 info.setMagnet(transformMagnet(magnetValue));
                 //名称
                 String nameValue = ((Node) xPath.evaluate(name, node, XPathConstants.NODE)).getTextContent();
                 info.setName(nameValue);
                 //大小
-                String sizeValue = ((Node) xPath.evaluate(size, node, XPathConstants.NODE)).getTextContent();
-                info.setFormatSize(sizeValue);
+                Node sizeNote = ((Node) xPath.evaluate(size, node, XPathConstants.NODE));
+                if (sizeNote != null) {
+                    String sizeValue = sizeNote.getTextContent();
+                    info.setFormatSize(sizeValue);
 
-                info.setSize(transformSize(sizeValue));
+                    info.setSize(transformSize(sizeValue));
+                }
                 //时间
                 String countValue = ((Node) xPath.evaluate(count, node, XPathConstants.NODE)).getTextContent();
                 info.setCount(countValue);
@@ -147,16 +159,16 @@ public class MagnetWService {
         long newSize = 0;
         try {
             long baseNumber = 0;
-            String newFormatSize = formatSize.toUpperCase();
+            String newFormatSize = formatSize.toUpperCase().replace(" ", "");
             if (formatSize.endsWith("GB")) {
                 baseNumber = 1024 * 1024 * 1024;
-                newFormatSize = formatSize.replace("GB", "");
+                newFormatSize = newFormatSize.replace("GB", "");
             } else if (formatSize.endsWith("MB")) {
                 baseNumber = 1024 * 1024;
-                newFormatSize = formatSize.replace("MB", "");
+                newFormatSize = newFormatSize.replace("MB", "");
             } else if (formatSize.endsWith("KB")) {
                 baseNumber = 1024;
-                newFormatSize = formatSize.replace("KB", "");
+                newFormatSize = newFormatSize.replace("KB", "");
             }
             float size = Float.parseFloat(newFormatSize);
             newSize = (long) (size * baseNumber);

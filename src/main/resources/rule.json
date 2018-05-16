@@ -30,56 +30,6 @@
     "source": "http://www.aoyoso.com/search/XXX_ctime_PPP.html"
   },
   {
-    "site": "SOBT",
-    "waiting": "0",
-    "group": "//div[@class='search-list col-md-8']//div[@class='search-item']",
-    "magnet": ".//a//@href",
-    "name": ".//a[@target='_blank']",
-    "size": ".//div[@class='item-bar']//span[2]//b",
-    "count": ".//div[@class='item-bar']//span[1]//b",
-    "source": "http://www.sobt5.org/q/XXX_PPP.html"
-  },
-  {
-    "site": "BT岛",
-    "waiting": "0",
-    "group": "//ul[@class='mlist']//li",
-    "magnet": ".//a//@href",
-    "name": ".//a[@target='_blank']",
-    "size": ".//dt//span[1]",
-    "count": ".//dt//span[2]",
-    "source": "http://www.btdao5.com/list/XXX-s1d-PPP.html"
-  },
-  {
-    "site": "bt177",
-    "waiting": "0",
-    "group": "//li",
-    "magnet": ".//a//@href",
-    "name": ".//a",
-    "size": ".//span[1]",
-    "count": ".//span[2]",
-    "source": "http://www.bt177.net/word/XXX_PPP.html"
-  },
-  {
-    "site": "zhongzidi",
-    "waiting": "0",
-    "group": "//div[@class='panel-body']//ul",
-    "magnet": ".//dl[2]/a[1]//@href",
-    "name": ".//a",
-    "size": ".//dl[1]/dd[2]",
-    "count": ".//dl[1]/dd[3]",
-    "source": "https://m.zhongzidi.com/list/XXX/PPP"
-  },
-  {
-    "site": "cililiana",
-    "waiting": "0",
-    "group": "//ul[@class='mlist']//li",
-    "magnet": ".//div[2]/a[1]//@href",
-    "name": ".//div[1]/a",
-    "size": ".//dl/dt/span[1]",
-    "count": ".//dl/dt/span[3]",
-    "source": "http://cililiana.com/list/XXX/PPP.html"
-  },
-  {
     "site": "屌丝搜",
     "waiting": "0",
     "group": "//ul[@class='mlist']//li",
@@ -88,5 +38,25 @@
     "size": ".//dl/dt/span[1]",
     "count": ".//dl/dt/span[3]",
     "source": "http://www.diaosisou.org/list/XXX/PPP"
+  },
+  {
+    "site": "BT樱桃",
+    "waiting": "0",
+    "group": "//div[@class='r']",
+    "magnet": ".//a//@href",
+    "name": ".//a/h5",
+    "size": ".//div/span[2]//span",
+    "count": "//div/span[1]//span",
+    "source": "http://www.btcerises.com/search?keyword=XXX&p=PPP"
+  },
+  {
+    "site": "BT兔子",
+    "waiting": "0",
+    "group": "//div[@class='search-item detail-width']",
+    "magnet": ".//div[1]//h3//a//@href",
+    "name": ".//div[1]//h3//a",
+    "size": ".//div[3]//span[3]//b",
+    "count": ".//div[3]//span[2]//b",
+    "source": "https://www.btrabbit.tv/search/XXX/default-PPP.html"
   }
 ]

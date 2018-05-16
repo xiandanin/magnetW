@@ -20,7 +20,7 @@
     <link href="${contextpath}/css/search_result.css" rel="stylesheet">
 
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link href="https://cdn.bootcss.com/element-ui/2.3.7/theme-chalk/index.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
 
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
@@ -168,6 +168,7 @@
                     })
                     .catch(function (response) {
                         this.fullscreenLoading = false;
+                        this.errorMessage()
                         console.log("error->" + response)
                     });
             },
@@ -181,19 +182,13 @@
 
                 this.loadMoreLoading = true
                 this.loadingBtnMessage = "正在加载下一页"
-                this.$http.get("api/search?source=" + sourceSite + "&keyword=" + keyword + "&page=" + page, {
-                    before(request) {
-
-                        // abort previous request, if exists
-                        if (this.previousRequest) {
-                            this.previousRequest.abort();
+                this.$http.get("api/search?source=" + sourceSite + "&keyword=" + keyword + "&page=" + page
+                )
+                    .then(function (response) {
+                        if (response.body.currentSourceSite != null && response.body.currentSourceSite != ''&& response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {
+                            return
                         }
 
-                        // set previous request on Vue instance
-                        this.previousRequest = request;
-                    }
-                })
-                    .then(function (response) {
                         this.loading = false
                         this.loadMoreLoading = false
                         this.loadingBtnMessage = "点击加载更多"
@@ -214,7 +209,8 @@
                         this.loading = false
                         this.loadMoreLoading = false
                         this.loadingBtnMessage = "加载失败 点击重试"
-                        console.log("error->" + response)
+                        console.log('error', response)
+                        this.errorMessage()
                     });
             },
             openDisclaimerDialog: function () {
@@ -231,6 +227,13 @@
                 this.$message({
                     message: '复制成功',
                     type: 'success'
+                });
+            },
+            errorMessage: function () {
+                this.$message({
+                    showClose: true,
+                    message: '加载失败',
+                    type: 'error'
                 });
             },
             sortSize(a, b) {

@@ -8,7 +8,17 @@ import java.util.List;
  */
 public class MagnetPageResponse {
     private int currentPage;
+    private String currentSourceSite;
     private List<MagnetInfo> results;
+
+
+    public String getCurrentSourceSite() {
+        return currentSourceSite;
+    }
+
+    public void setCurrentSourceSite(String currentSourceSite) {
+        this.currentSourceSite = currentSourceSite;
+    }
 
     public int getCurrentPage() {
         return currentPage;

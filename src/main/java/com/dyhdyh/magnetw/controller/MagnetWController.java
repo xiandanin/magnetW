@@ -76,21 +76,21 @@ public class MagnetWController extends BaseController {
     public MagnetPageResponse getSearchMagnetJson(Model model, HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
         logger(request);
         MagnetPageResponse response = new MagnetPageResponse();
+        List<MagnetInfo> infos = new ArrayList<MagnetInfo>();
         try {
             int newPage = magnetWService.transformPage(page);
 
-            List<MagnetInfo> infos = null;
             if (!StringUtils.isEmpty(keyword)) {
                 MagnetRule rule = getMagnetRule().get(source);
                 infos = magnetWService.parser(rule, keyword, newPage);
             }
             response.setCurrentPage(newPage);
+            response.setCurrentSourceSite(source);
             response.setResults(infos);
-            return response;
         } catch (Exception e) {
             error(model, e);
-            return response;
         }
+        return response;
     }
 
     /**
