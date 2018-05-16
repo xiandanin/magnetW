@@ -37,8 +37,10 @@
                    class="am-icon-github am-icon-sm"
                    target="_blank"> Star一下 不迷路</a>&nbsp;&nbsp;|&nbsp;&nbsp;
                 <a @click="openDisclaimerDialog" href="javascript:;">免责声明</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://github.com/dengyuhan/magnetW/issues"
+                &nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://github.com/dengyuhan/magnetW/issues/new"
                                             target="_blank">反馈失效</a>
+                |&nbsp;&nbsp;<a href="https://github.com/dengyuhan/magnetW/issues/new"
+                                target="_blank">提交网站</a>
             </div>
         </el-header>
         <el-main>
@@ -116,6 +118,11 @@
             </div>
         </el-main>
     </el-container>
+</div>
+
+<!--统计代码-->
+<div style="display:none">
+    <script src="https://s22.cnzz.com/z_stat.php?id=1273076204&web_id=1273076204" language="JavaScript"></script>
 </div>
 </body>
 
