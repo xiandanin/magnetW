@@ -35,11 +35,11 @@ import javax.xml.xpath.XPathFactory;
 public class MagnetWService {
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#rule.source,#keyword,#page)")
     public List<MagnetInfo> parser(MagnetRule rule, String keyword, int page) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
-        return parser(rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getCount());
+        return parser(rule.getUrl(), rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getCount());
     }
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#url,#keyword,#page)")
-    public List<MagnetInfo> parser(String url, String keyword, int page, String group, String magnet, String name, String size, String count) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
+    public List<MagnetInfo> parser(String rootUrl, String url, String keyword, int page, String group, String magnet, String name, String size, String count) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
         String newUrl = transformUrl(url, keyword, page);
         String html = Jsoup.connect(newUrl).get().body().html();
 
@@ -62,8 +62,11 @@ public class MagnetWService {
                 String magnetValue = magnetNote.getTextContent();
                 info.setMagnet(transformMagnet(magnetValue));
                 //名称
-                String nameValue = ((Node) xPath.evaluate(name, node, XPathConstants.NODE)).getTextContent();
+                Node nameNote = ((Node) xPath.evaluate(name, node, XPathConstants.NODE));
+                String nameValue = nameNote.getTextContent();
                 info.setName(nameValue);
+                String nameHref = nameNote.getAttributes().getNamedItem("href").getTextContent();
+                info.setDetailUrl(transformDetailUrl(rootUrl, nameHref));
                 //大小
                 Node sizeNote = ((Node) xPath.evaluate(size, node, XPathConstants.NODE));
                 if (sizeNote != null) {
@@ -101,6 +104,11 @@ public class MagnetWService {
     private String transformUrl(String url, String keyword, int page) {
         return url.replaceFirst("XXX", keyword)
                 .replaceFirst("PPP", String.valueOf(page));
+    }
+
+
+    private String transformDetailUrl(String url, String magnetValue) {
+        return magnetValue.startsWith("http") ? magnetValue : url + magnetValue;
     }
 
     /**
@@ -159,14 +167,14 @@ public class MagnetWService {
         long newSize = 0;
         try {
             long baseNumber = 0;
-            String newFormatSize = formatSize.toUpperCase().replace(" ", "");
-            if (formatSize.endsWith("GB")) {
+            String newFormatSize = formatSize.toUpperCase().replace(" ", "").replace(" ", "");
+            if (newFormatSize.endsWith("GB")) {
                 baseNumber = 1024 * 1024 * 1024;
                 newFormatSize = newFormatSize.replace("GB", "");
-            } else if (formatSize.endsWith("MB")) {
+            } else if (newFormatSize.endsWith("MB")) {
                 baseNumber = 1024 * 1024;
                 newFormatSize = newFormatSize.replace("MB", "");
-            } else if (formatSize.endsWith("KB")) {
+            } else if (newFormatSize.endsWith("KB")) {
                 baseNumber = 1024;
                 newFormatSize = newFormatSize.replace("KB", "");
             }

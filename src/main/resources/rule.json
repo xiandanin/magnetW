@@ -7,6 +7,7 @@
     "name": ".//tbody//a",
     "size": ".//tbody//tr//td[2]//strong",
     "count": ".//tbody//tr//td[1]//strong",
+    "url": "http://www.zhongziso.com",
     "source": "http://www.zhongziso.com/list/XXX/PPP"
   },
   {
@@ -17,6 +18,7 @@
     "name": ".//a",
     "size": ".//span[3]//b",
     "count": ".//span[2]//b",
+    "url": "http://www.ciliba.org",
     "source": "http://www.ciliba.org/s/XXX_rel_PPP.html"
   },
   {
@@ -27,6 +29,7 @@
     "name": ".//div[1]/a",
     "size": ".//dl/dt/span[1]",
     "count": ".//dl/dt/span[3]",
+    "url": "http://www.diaosisou.org",
     "source": "http://www.diaosisou.org/list/XXX/PPP"
   },
   {
@@ -34,9 +37,10 @@
     "waiting": "0",
     "group": "//div[@class='r']",
     "magnet": ".//a//@href",
-    "name": ".//a/h5",
+    "name": ".//a",
     "size": ".//div/span[2]//span",
     "count": "//div/span[1]//span",
+    "url": "http://www.btcerises.com",
     "source": "http://www.btcerises.com/search?keyword=XXX&p=PPP"
   },
   {
@@ -47,6 +51,7 @@
     "name": ".//div[1]//h3//a",
     "size": ".//div[3]//span[3]//b",
     "count": ".//div[3]//span[2]//b",
+    "url": "https://www.btrabbit.tv",
     "source": "https://www.btrabbit.tv/search/XXX/default-PPP.html"
   },
   {
@@ -57,6 +62,7 @@
     "name": ".//a",
     "size": ".//table//tr//td[2]",
     "count": ".//table//tr//td[1]",
+    "url": "http://www.aoyoso.com",
     "source": "http://www.aoyoso.com/search/XXX_ctime_PPP.html"
   }
 ]

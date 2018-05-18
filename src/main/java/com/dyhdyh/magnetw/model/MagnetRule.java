@@ -13,7 +13,16 @@ public class MagnetRule{
     private String magnet;
     private String name;
     private String size;
+    private String url;
     private String count;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public String getGroup() {
         return group;

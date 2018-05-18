@@ -14,8 +14,17 @@ public class MagnetInfo implements Serializable{
     private String formatSize;
     private long size;
     private String count;
+    private String detailUrl;
 
     private String resolution;//清晰度
+
+    public String getDetailUrl() {
+        return detailUrl;
+    }
+
+    public void setDetailUrl(String detailUrl) {
+        this.detailUrl = detailUrl;
+    }
 
     public String getFormatSize() {
         return formatSize;

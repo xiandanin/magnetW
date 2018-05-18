@@ -16,16 +16,16 @@
     <title>磁力搜</title>
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <link href="${contextpath}/css/base.css" rel="stylesheet">
-    <link href="${contextpath}/css/search_result.css" rel="stylesheet">
 
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/element-ui/2.3.7/theme-chalk/index.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
+    <link href="${contextpath}/css/base.css" rel="stylesheet">
+    <link href="${contextpath}/css/search_result.css" rel="stylesheet">
 
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
     <script src="${contextpath}/js/dist/vue-clipboard.min.js"></script>
 </head>
 <body>
@@ -56,20 +56,40 @@
                     </el-input>
                 </div>
                 <div class="search_site">
-                    <el-radio-group v-model="currentSourceSite" @change="handleTabClick">
-                        <el-radio-button :label="item" v-for="item in sourceSites">{{item}}
-                        </el-radio-button>
-                    </el-radio-group>
+                    <el-row type="flex">
+
+                        <el-col :span="20">
+                            <el-radio-group v-model="currentSourceSite" @change="handleTabClick">
+                                <el-radio-button :label="item" v-for="item in sourceSites">{{item}}
+                                </el-radio-button>
+                            </el-radio-group>
+                        </el-col>
+
+                        <el-col :span="4">
+                            <div style="text-align: right;display: none">
+                                <el-dropdown @command="handleSortClick">
+                                    <el-button>发布时间
+                                        <i class="el-icon-arrow-down el-icon--right"></i>
+                                    </el-button>
+                                    <el-dropdown-menu slot="dropdown">
+                                        <el-dropdown-item command="release_time">发布时间</el-dropdown-item>
+                                        <el-dropdown-item command="file_size">文件大小</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </el-dropdown>
+                            </div>
+                        </el-col>
+                    </el-row>
                 </div>
                 <div v-loading="loading" style="min-height: 40%">
                     <template v-if="response.results != null">
                         <el-table
+                                ref="tableWrapper"
                                 size="mini"
                                 :data="response.results"
                                 border
                                 style="width: 100%">
                             <el-table-column
-                                    width="50"
+                                    width="60"
                                     type="index">
                             </el-table-column>
                             <el-table-column
@@ -98,12 +118,16 @@
                             <el-table-column
                                     label="操作"
                                     align="center"
-                                    width="90">
+                                    width="160">
                                 <template slot-scope="scope">
                                     <el-button size="mini"
                                                type="button"
                                                v-clipboard:copy="scope.row.magnet"
                                                v-clipboard:success="onCopy">复制
+                                    </el-button>
+                                    <el-button size="mini"
+                                               type="button">
+                                        <a :href="scope.row.detailUrl" target="_blank">详情</a>
                                     </el-button>
                                 </template>
                             </el-table-column>
@@ -116,13 +140,18 @@
                     </template>
                 </div>
             </div>
+
         </el-main>
     </el-container>
+
+    <div id="page-component-up" style="" @click="scrollTop" v-show="showTopButton"><i
+            class="el-icon-caret-top"></i></div>
 </div>
 
 <!--统计代码-->
 <div style="display:none">
-    <script src="https://s22.cnzz.com/z_stat.php?id=1273076204&web_id=1273076204" language="JavaScript"></script>
+    <script src="https://s22.cnzz.com/z_stat.php?id=1273076204&web_id=1273076204"
+            language="JavaScript"></script>
 </div>
 </body>
 
@@ -133,6 +162,7 @@
             fullscreenLoading: false,
             loading: false,
             loadMoreLoading: false,
+            showTopButton: false,
             loadingBtnMessage: "点击加载更多",
             isShowLoadMore: false,
             currentSourceSite: "",
@@ -144,6 +174,7 @@
             response: {}
         },
         mounted: function () {
+            window.addEventListener('scroll', this.onScrollTopButtonState);  //滚动事件监听
             this.initMagnetPage()
         },
         methods: {
@@ -153,6 +184,9 @@
                 if (this.inputSearch != null && this.inputSearch != '') {
                     this.clickSearch()
                 }
+            },
+            handleSortClick(command) {
+                console.log(command)
             },
             clickSearch() {
                 this.loading = true
@@ -192,7 +226,7 @@
                 this.$http.get("api/search?source=" + sourceSite + "&keyword=" + keyword + "&page=" + page
                 )
                     .then(function (response) {
-                        if (response.body.currentSourceSite != null && response.body.currentSourceSite != ''&& response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {
+                        if (response.body.currentSourceSite != null && response.body.currentSourceSite != '' && response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {
                             return
                         }
 
@@ -246,6 +280,18 @@
             sortSize(a, b) {
                 console.log(parseFloat(a.size))
                 return true;
+            },
+            scrollTop() {
+                document.body.scrollTop = 0;
+            },
+            onScrollTopButtonState() {
+                let curHeight = document.documentElement.scrollTop || document.body.scrollTop;
+                let viewHeight = document.body.clientHeight;
+                if (curHeight > viewHeight / 3) {
+                    this.showTopButton = true;
+                } else {
+                    this.showTopButton = false;
+                }
             }
         }
     })

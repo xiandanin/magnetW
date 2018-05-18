@@ -2,6 +2,32 @@
     margin-top: 1.5%;
     margin-bottom: 1.5%;
 }
+
 .container-margin-bottom {
     margin-bottom: 1.5%;
+}
+
+#page-component-up {
+    background-color: #fff;
+    position: fixed;
+    right: 100px;
+    bottom: 150px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .12);
+    z-index: 5;
+}
+
+#page-component-up i {
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    text-align: center;
+    /* bottom: 10px; */
+    top: 12px;
+    position: relative;
+    color: #409EFF;
 }
