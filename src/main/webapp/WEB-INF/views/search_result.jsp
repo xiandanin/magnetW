@@ -125,10 +125,10 @@
                                                v-clipboard:copy="scope.row.magnet"
                                                v-clipboard:success="onCopy">复制
                                     </el-button>
+                                    <a :href="scope.row.detailUrl" target="_blank">
                                     <el-button size="mini"
-                                               type="button">
-                                        <a :href="scope.row.detailUrl" target="_blank">详情</a>
-                                    </el-button>
+                                               type="button">详情
+                                    </el-button></a>
                                 </template>
                             </el-table-column>
                         </el-table>
