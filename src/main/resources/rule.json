@@ -55,6 +55,16 @@
     "source": "https://www.btrabbit.tv/search/XXX/default-PPP.html"
   },
   {
+    "site": "idope",
+    "waiting": "0",
+    "group": "//div[@class='resultdiv']",
+    "magnet": ".//div[1]//a//@href",
+    "name": ".//div[1]//a",
+    "size": ".//div[@class='resultdivbottonlength']",
+    "count": ".//div[@class='resultdivbottontime']",
+    "source": "https://idope.se/torrent-list/XXX/?p=PPP"
+  },
+  {
     "site": "AOYOSO",
     "waiting": "0",
     "group": "//div[@class='col-md-8']//div[@class='panel panel-default']",
