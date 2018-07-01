@@ -72,8 +72,10 @@
                                         <i class="el-icon-arrow-down el-icon--right"></i>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item command="release_time">发布时间</el-dropdown-item>
-                                        <el-dropdown-item command="file_size">文件大小</el-dropdown-item>
+                                        <el-dropdown-item command="release_time">发布时间
+                                        </el-dropdown-item>
+                                        <el-dropdown-item command="file_size">文件大小
+                                        </el-dropdown-item>
                                     </el-dropdown-menu>
                                 </el-dropdown>
                             </div>
@@ -112,7 +114,7 @@
                             </el-table-column>
                             <el-table-column
                                     label="发布时间"
-                                    width="140"
+                                    width="200"
                                     prop="count">
                             </el-table-column>
                             <el-table-column
@@ -126,9 +128,10 @@
                                                v-clipboard:success="onCopy">复制
                                     </el-button>
                                     <a :href="scope.row.detailUrl" target="_blank">
-                                    <el-button size="mini"
-                                               type="button">详情
-                                    </el-button></a>
+                                        <el-button size="mini"
+                                                   type="button">详情
+                                        </el-button>
+                                    </a>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -138,6 +141,9 @@
                             {{loadingBtnMessage}}
                         </el-button>
                     </template>
+                </div>
+                <div v-show="response.errorMessage!=null" style="text-align: center">
+                    <h2>{{response.errorMessage}}</h2>
                 </div>
             </div>
 
@@ -171,7 +177,7 @@
             requestPageNumber: 1,
 
             sourceSites: [],
-            response: {}
+            response: {},
         },
         mounted: function () {
             window.addEventListener('scroll', this.onScrollTopButtonState);  //滚动事件监听
@@ -226,6 +232,7 @@
                 this.$http.get("api/search?source=" + sourceSite + "&keyword=" + keyword + "&page=" + page
                 )
                     .then(function (response) {
+                        Vue.set(this, "response.errorMessage", response.body.errorMessage)
                         if (response.body.currentSourceSite != null && response.body.currentSourceSite != '' && response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {
                             return
                         }

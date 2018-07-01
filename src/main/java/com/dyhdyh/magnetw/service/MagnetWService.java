@@ -76,8 +76,10 @@ public class MagnetWService {
                     info.setSize(transformSize(sizeValue));
                 }
                 //时间
-                String countValue = ((Node) xPath.evaluate(count, node, XPathConstants.NODE)).getTextContent();
-                info.setCount(countValue);
+                Node countNode = (Node) xPath.evaluate(count, node, XPathConstants.NODE);
+                if (countNode != null) {
+                    info.setCount(countNode.getTextContent());
+                }
                 //一些加工的额外信息
                 String resolution = transformResolution(nameValue);
                 info.setResolution(resolution);
@@ -149,6 +151,7 @@ public class MagnetWService {
 
 
     private String transformResolution(String name) {
+        String regex4k = ".*(2160|4k).*";
         String regex720 = ".*(1280|720p|720P).*";
         String regex1080 = ".*(1920|1080p|1080P).*";
         boolean matches720 = Pattern.matches(regex720, name);
@@ -158,6 +161,10 @@ public class MagnetWService {
         boolean matches1080 = Pattern.matches(regex1080, name);
         if (matches1080) {
             return "1080P";
+        }
+        boolean matches4k = Pattern.matches(regex4k, name);
+        if (matches4k) {
+            return "4K";
         }
         return "";
     }

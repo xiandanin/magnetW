@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,6 +49,7 @@ public class MagnetWController extends BaseController {
 
     /**
      * 获取源站信息
+     *
      * @param model
      * @param request
      * @return
@@ -88,7 +91,12 @@ public class MagnetWController extends BaseController {
             response.setCurrentSourceSite(source);
             response.setResults(infos);
         } catch (Exception e) {
-            error(model, e);
+            e.printStackTrace();
+            if (e instanceof SocketTimeoutException || e instanceof UnknownHostException) {
+                response.setErrorMessage("请求源站超时");
+            } else {
+                response.setErrorMessage("解析失败");
+            }
         }
         return response;
     }

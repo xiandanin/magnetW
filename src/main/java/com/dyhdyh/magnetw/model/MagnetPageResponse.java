@@ -10,7 +10,15 @@ public class MagnetPageResponse {
     private int currentPage;
     private String currentSourceSite;
     private List<MagnetInfo> results;
+    private String errorMessage;
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 
     public String getCurrentSourceSite() {
         return currentSourceSite;
