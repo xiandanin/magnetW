@@ -41,6 +41,11 @@ public class MagnetWController extends BaseController {
     private Map<String, MagnetRule> magnetRuleMap;
     private List<String> sites;
 
+    @RequestMapping(value = "clear", method = RequestMethod.GET)
+    public String clearCache(Model model) {
+        magnetWService.clearListCache();
+        return "列表缓存清空";
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String searchMagnetPage(Model model, HttpServletRequest request) {

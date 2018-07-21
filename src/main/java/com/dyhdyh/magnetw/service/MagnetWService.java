@@ -9,6 +9,7 @@ import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
 import org.htmlcleaner.XPatherException;
 import org.jsoup.Jsoup;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -33,6 +34,12 @@ import javax.xml.xpath.XPathFactory;
  */
 @Service
 public class MagnetWService {
+
+    @CacheEvict(value = "magnetList", allEntries = true)
+    public void clearListCache() {
+        System.out.println("列表缓存清空");
+    }
+
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#rule.source,#keyword,#page)")
     public List<MagnetInfo> parser(MagnetRule rule, String keyword, int page) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
         return parser(rule.getUrl(), rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getCount());

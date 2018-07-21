@@ -155,10 +155,10 @@
 </div>
 
 <!--统计代码-->
-<div style="display:none">
+<%--<div style="display:none">
     <script src="https://s22.cnzz.com/z_stat.php?id=1273076204&web_id=1273076204"
             language="JavaScript"></script>
-</div>
+</div>--%>
 </body>
 
 <script>
