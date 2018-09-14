@@ -118,9 +118,14 @@ public class MagnetWController extends BaseController {
             InputStream inputStream = getClass().getResourceAsStream("/rule.json");
             List<MagnetRule> rules = GsonUtil.fromJson(inputStream, new TypeToken<List<MagnetRule>>() {
             });
+            StringBuffer log = new StringBuffer();
             for (MagnetRule rule : rules) {
                 magnetRuleMap.put(rule.getSite(), rule);
+                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl());
+                log.append("\n");
             }
+            log.append(magnetRuleMap.size() + "个网站规则加载成功");
+            logger(log.toString());
         }
         return magnetRuleMap;
     }

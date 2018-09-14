@@ -5,7 +5,7 @@
     <groupId>com.dyhdyh</groupId>
     <artifactId>magnetw</artifactId>
     <packaging>war</packaging>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
     <name>magnetW</name>
     <url>http://maven.apache.org</url>
     <dependencies>

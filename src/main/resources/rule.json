@@ -33,16 +33,6 @@
     "source": "https://www.btrabbit.tv/search/XXX/default-PPP.html"
   },
   {
-    "site": "idope",
-    "waiting": "0",
-    "group": "//div[@class='resultdiv']",
-    "magnet": ".//div[1]//a//@href",
-    "name": ".//div[1]//a",
-    "size": ".//div[@class='resultdivbottonlength']",
-    "count": ".//div[@class='resultdivbottontime']",
-    "source": "https://idope.se/torrent-list/XXX/?p=PPP"
-  },
-  {
     "site": "BTDB",
     "waiting": "0",
     "group": "//li[@class='search-ret-item']",
@@ -85,5 +75,16 @@
     "count": ".//table//tr//td[1]",
     "url": "http://www.aoyoso.com",
     "source": "http://www.aoyoso.com/search/XXX_ctime_PPP.html"
+  },
+  {
+    "site": "idope",
+    "waiting": "0",
+    "group": "//div[@class='resultdiv']",
+    "magnet": ".//div[1]//a//@href",
+    "name": ".//div[1]//a",
+    "size": ".//div[@class='resultdivbottonlength']",
+    "count": ".//div[@class='resultdivbottontime']",
+    "url": "https://idope.se",
+    "source": "https://idope.se/torrent-list/XXX/?p=PPP"
   }
 ]

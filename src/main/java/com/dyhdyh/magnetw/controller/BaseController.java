@@ -6,6 +6,8 @@ import org.springframework.util.StringUtils;
 
 import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,10 +19,31 @@ public class BaseController {
     private Logger logger = Logger.getLogger(getClass());
 
     protected void logger(HttpServletRequest request) {
-        String queryString = request.getQueryString();
-        if (!StringUtils.isEmpty(queryString)) {
-            logger.info(request.getRequestURL() + "?" + URLDecoder.decode(queryString));
+        try {
+            String queryString = request.getQueryString();
+            if (!StringUtils.isEmpty(queryString)) {
+                logger.info(request.getRequestURL() + "?" + URLDecoder.decode(queryString));
+            } else {
+                Set<Map.Entry<String, String[]>> entrySet = request.getParameterMap().entrySet();
+                StringBuffer sb = new StringBuffer();
+                for (Map.Entry<String, String[]> entry : entrySet) {
+                    sb.append(entry.getKey());
+                    sb.append("=");
+                    sb.append(entry.getValue()[0]);
+                    sb.append("&");
+                }
+                if (entrySet.size() > 0) {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+                logger.info(request.getRequestURL() + "?" + sb.toString());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+    }
+
+    protected void logger(String message) {
+        logger.info(message);
     }
 
     protected String error(Model model, Throwable e) {

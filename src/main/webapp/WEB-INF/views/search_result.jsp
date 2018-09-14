@@ -153,12 +153,6 @@
     <div id="page-component-up" style="" @click="scrollTop" v-show="showTopButton"><i
             class="el-icon-caret-top"></i></div>
 </div>
-
-<!--统计代码-->
-<%--<div style="display:none">
-    <script src="https://s22.cnzz.com/z_stat.php?id=1273076204&web_id=1273076204"
-            language="JavaScript"></script>
-</div>--%>
 </body>
 
 <script>
@@ -229,8 +223,7 @@
 
                 this.loadMoreLoading = true
                 this.loadingBtnMessage = "正在加载下一页"
-                this.$http.get("api/search?source=" + sourceSite + "&keyword=" + keyword + "&page=" + page
-                )
+                this.$http.post("api/search", {source: sourceSite, keyword: keyword, page: page},{emulateJSON: true})
                     .then(function (response) {
                         Vue.set(this, "response.errorMessage", response.body.errorMessage)
                         if (response.body.currentSourceSite != null && response.body.currentSourceSite != '' && response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {
