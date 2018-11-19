@@ -72,6 +72,7 @@ public class MagnetWService {
                 Node nameNote = ((Node) xPath.evaluate(name, node, XPathConstants.NODE));
                 String nameValue = nameNote.getTextContent();
                 info.setName(nameValue);
+                info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));//高亮关键字
                 String nameHref = nameNote.getAttributes().getNamedItem("href").getTextContent();
                 info.setDetailUrl(transformDetailUrl(rootUrl, nameHref));
                 //大小

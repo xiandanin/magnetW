@@ -11,17 +11,6 @@
     "source": "http://www.zhongzijun.com/list/XXX/PPP"
   },
   {
-    "site": "磁力吧",
-    "waiting": "0",
-    "group": "//div[@class='search-item']",
-    "magnet": ".//a//@href",
-    "name": ".//a",
-    "size": ".//span[3]//b",
-    "count": ".//span[2]//b",
-    "url": "http://www.ciliba.org",
-    "source": "http://www.ciliba.org/s/XXX_rel_PPP.html"
-  },
-  {
     "site": "BT兔子",
     "waiting": "0",
     "group": "//div[@class='search-item detail-width']",
@@ -53,6 +42,17 @@
     "count": "./div[3]/span[2]/b",
     "url": "https://cn.bt4g.com",
     "source": "https://cn.bt4g.com/search/XXX/PPP"
+  },
+  {
+    "site": "磁力吧",
+    "waiting": "0",
+    "group": "//div[@class='search-item']",
+    "magnet": ".//a//@href",
+    "name": ".//a",
+    "size": ".//span[3]//b",
+    "count": ".//span[2]//b",
+    "url": "http://www.ciliba.org",
+    "source": "http://www.ciliba.org/s/XXX_rel_PPP.html"
   },
   {
     "site": "屌丝搜",

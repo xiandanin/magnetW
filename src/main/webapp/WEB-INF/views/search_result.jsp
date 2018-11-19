@@ -32,21 +32,23 @@
 <div class="container" style="margin-top: 2%" id="app">
     <el-container>
         <el-header style="height: 30px">
-            <div>
-                <a href="https://github.com/dengyuhan/magnetW"
-                   class="am-icon-github am-icon-sm"
-                   target="_blank"> Star一下 不迷路</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                <a @click="openDisclaimerDialog" href="javascript:;">免责声明</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;<a href="https://github.com/dengyuhan/magnetW/issues/new"
-                                            target="_blank">反馈失效</a>
-                |&nbsp;&nbsp;<a href="https://github.com/dengyuhan/magnetW/issues/new"
+            <div style="text-align: right">
+                <a style="float: left" href="https://github.com/dengyuhan/magnetW/releases" target="_blank">当前版本：v1.1.6</a>
+
+                <a href="https://github.com/dengyuhan/magnetW/issues/new"
                                 target="_blank">提交网站</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a @click="openDisclaimerDialog" href="javascript:;">免责声明</a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="https://github.com/dengyuhan/magnetW"
+                   target="_blank">点个赞吧<i id="header-github" class="am-icon-github am-icon-sm"></i></a>
+
             </div>
         </el-header>
         <el-main>
             <div v-loading.fullscreen.lock="fullscreenLoading"
                  class="container-margin-bottom">
-                <div>
+                <div id="search-input-container">
                     <el-input :placeholder="searchPlaceholder" class="input-with-select"
                               @keyup.enter.native="clickSearch"
                               v-model="inputSearch">
@@ -97,7 +99,7 @@
                             <el-table-column
                                     label="名称">
                                 <template slot-scope="scope">
-                                    <a :href="scope.row.magnet">{{scope.row.name}}</a>
+                                    <a :href="scope.row.magnet" v-html="scope.row.nameHtml"></a>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -255,7 +257,7 @@
                     });
             },
             openDisclaimerDialog: function () {
-                this.$alert('本网站完全开源，仅用于技术交流学习，用户使用本工具进行的任何操作，本服务器均不保存。<br/><br/>' +
+                this.$alert('本网站作为开源项目示例，仅用于技术交流学习，用户使用本工具进行的任何操作，本服务器均不保存。<br/><br/>' +
                     '本网站不会存储，不能分享，也不提供任何传播信息与资源的功能, 对此工具的非法使用概不负责。', '免责声明', {
                     dangerouslyUseHTMLString: true,
                     confirmButtonText: '确定',

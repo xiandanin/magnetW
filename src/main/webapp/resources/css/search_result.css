@@ -7,6 +7,10 @@
     margin-bottom: 1.5%;
 }
 
+#search-input-container .el-button {
+    width: 200px;
+}
+
 #page-component-up {
     background-color: #fff;
     position: fixed;
@@ -30,4 +34,8 @@
     top: 12px;
     position: relative;
     color: #409EFF;
+}
+
+#header-github {
+    margin-left: 10px;
 }

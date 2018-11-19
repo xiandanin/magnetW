@@ -11,12 +11,21 @@ public class MagnetInfo implements Serializable{
     private String group;
     private String magnet;
     private String name;
+    private String nameHtml;
     private String formatSize;
     private long size;
     private String count;
     private String detailUrl;
 
     private String resolution;//清晰度
+
+    public String getNameHtml() {
+        return nameHtml;
+    }
+
+    public void setNameHtml(String nameHtml) {
+        this.nameHtml = nameHtml;
+    }
 
     public String getDetailUrl() {
         return detailUrl;
