@@ -42,11 +42,11 @@ public class MagnetWService {
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#rule.source,#keyword,#page)")
     public List<MagnetInfo> parser(MagnetRule rule, String keyword, int page) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
-        return parser(rule.getUrl(), rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getCount());
+        return parser(rule.getUrl(), rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getDate());
     }
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#url,#keyword,#page)")
-    public List<MagnetInfo> parser(String rootUrl, String url, String keyword, int page, String group, String magnet, String name, String size, String count) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
+    public List<MagnetInfo> parser(String rootUrl, String url, String keyword, int page, String group, String magnet, String name, String size, String date) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
         String newUrl = transformUrl(url, keyword, page);
         String html = Jsoup.connect(newUrl).get().body().html();
 
@@ -84,7 +84,7 @@ public class MagnetWService {
                     info.setSize(transformSize(sizeValue));
                 }
                 //时间
-                Node countNode = (Node) xPath.evaluate(count, node, XPathConstants.NODE);
+                Node countNode = (Node) xPath.evaluate(date, node, XPathConstants.NODE);
                 if (countNode != null) {
                     info.setCount(countNode.getTextContent());
                 }
@@ -112,8 +112,7 @@ public class MagnetWService {
      * @return
      */
     private String transformUrl(String url, String keyword, int page) {
-        return url.replaceFirst("XXX", keyword)
-                .replaceFirst("PPP", String.valueOf(page));
+        return String.format(url, keyword, page);
     }
 
 

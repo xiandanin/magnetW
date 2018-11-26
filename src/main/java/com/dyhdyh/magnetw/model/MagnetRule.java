@@ -14,7 +14,7 @@ public class MagnetRule{
     private String name;
     private String size;
     private String url;
-    private String count;
+    private String date;
 
     public String getUrl() {
         return url;
@@ -56,12 +56,12 @@ public class MagnetRule{
         this.size = size;
     }
 
-    public String getCount() {
-        return count;
+    public String getDate() {
+        return date;
     }
 
-    public void setCount(String count) {
-        this.count = count;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getSource() {

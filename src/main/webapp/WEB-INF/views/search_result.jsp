@@ -33,7 +33,7 @@
     <el-container>
         <el-header style="height: 30px">
             <div style="text-align: right">
-                <a style="float: left" href="https://github.com/dengyuhan/magnetW/releases" target="_blank">当前版本：v1.1.6</a>
+                <a style="float: left" href="https://github.com/dengyuhan/magnetW/releases" target="_blank">当前版本：v1.1.7</a>
 
                 <a href="https://github.com/dengyuhan/magnetW/issues/new"
                                 target="_blank">提交网站</a>
