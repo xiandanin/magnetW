@@ -42,5 +42,49 @@
     "count": "./div[3]/span[2]/b",
     "url": "https://cn.bt4g.com",
     "source": "https://cn.bt4g.com/search/XXX/PPP"
+  },
+  {
+    "site": "磁力吧",
+    "waiting": "0",
+    "group": "//div[@class='search-item']",
+    "magnet": ".//a//@href",
+    "name": ".//a",
+    "size": ".//span[3]//b",
+    "count": ".//span[2]//b",
+    "url": "http://www.ciliba.org",
+    "source": "http://www.ciliba.org/s/XXX_rel_PPP.html"
+  },
+  {
+    "site": "屌丝搜",
+    "waiting": "0",
+    "group": "//ul[@class='mlist']//li",
+    "magnet": ".//div[2]/a[1]//@href",
+    "name": ".//div[1]/a",
+    "size": ".//dl/dt/span[1]",
+    "count": ".//dl/dt/span[3]",
+    "url": "http://www.diaosisou.org",
+    "source": "http://www.diaosisou.org/list/XXX/PPP"
+  },
+  {
+    "site": "AOYOSO",
+    "waiting": "0",
+    "group": "//div[@class='col-md-8']//div[@class='panel panel-default']",
+    "magnet": ".//a//@href",
+    "name": ".//a",
+    "size": ".//table//tr//td[2]",
+    "count": ".//table//tr//td[1]",
+    "url": "http://www.aoyoso.com",
+    "source": "http://www.aoyoso.com/search/XXX_ctime_PPP.html"
+  },
+  {
+    "site": "idope",
+    "waiting": "0",
+    "group": "//div[@class='resultdiv']",
+    "magnet": ".//div[1]//a//@href",
+    "name": ".//div[1]//a",
+    "size": ".//div[@class='resultdivbottonlength']",
+    "count": ".//div[@class='resultdivbottontime']",
+    "url": "https://idope.se",
+    "source": "https://idope.se/torrent-list/XXX/?p=PPP"
   }
 ]

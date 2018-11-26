@@ -41,7 +41,7 @@
                 <a @click="openDisclaimerDialog" href="javascript:;">免责声明</a>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 <a href="https://github.com/dengyuhan/magnetW"
-                   target="_blank">点个赞吧<i id="header-github" class="am-icon-github am-icon-sm"></i></a>
+                   target="_blank">Star一下 不迷路<i id="header-github" class="am-icon-github am-icon-sm"></i></a>
 
             </div>
         </el-header>
