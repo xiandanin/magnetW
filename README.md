@@ -1,8 +1,8 @@
 ## Demo
-#### [直接体验](http://bt.xiandan.in)
+### [直接体验](http://bt.xiandan.in)
 
-## 截屏
-![](screenshots2.gif)
+## 截图
+![](screenshots.gif)
 
 ## 其它版本
 #### Mac版：[magnetX](https://github.com/youusername/magnetX)
