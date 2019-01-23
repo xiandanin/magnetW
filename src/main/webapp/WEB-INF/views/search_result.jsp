@@ -33,16 +33,7 @@
     <el-container>
         <el-header style="height: 30px">
             <div style="text-align: right">
-                <a style="float: left" href="https://github.com/dengyuhan/magnetW/releases" target="_blank">当前版本：v1.1.7</a>
-
-                <a href="https://github.com/dengyuhan/magnetW/issues/new"
-                                target="_blank">提交网站</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                <a @click="openDisclaimerDialog" href="javascript:;">免责声明</a>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                <a href="https://github.com/dengyuhan/magnetW"
-                   target="_blank">Star一下 不迷路<i id="header-github" class="am-icon-github am-icon-sm"></i></a>
-
+                <span style="float: left">当前版本：v1.1.8</span>
             </div>
         </el-header>
         <el-main>
@@ -68,18 +59,16 @@
                         </el-col>
 
                         <el-col :span="4">
-                            <div style="text-align: right;display: none">
-                                <el-dropdown @command="handleSortClick">
-                                    <el-button>发布时间
-                                        <i class="el-icon-arrow-down el-icon--right"></i>
-                                    </el-button>
-                                    <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item command="release_time">发布时间
-                                        </el-dropdown-item>
-                                        <el-dropdown-item command="file_size">文件大小
-                                        </el-dropdown-item>
-                                    </el-dropdown-menu>
-                                </el-dropdown>
+                            <div>
+                                <el-select v-model="currentSortOptions" placeholder="排序"
+                                           @change="handleSortChanged">
+                                    <el-option
+                                            v-for="item in sortOptions"
+                                            :key="item.value"
+                                            :label="item.label"
+                                            :value="item.value">
+                                    </el-option>
+                                </el-select>
                             </div>
                         </el-col>
                     </el-row>
@@ -158,6 +147,7 @@
 </body>
 
 <script>
+    Vue.http.options.timeout = 20000;
     new Vue({
         el: '#app',
         data: {
@@ -171,9 +161,19 @@
             searchPlaceholder: "钢铁侠",
             inputSearch: "",
             requestPageNumber: 1,
+            currentSortOptions: "default",
 
             sourceSites: [],
             response: {},
+            sortOptions: [
+                {
+                    value: "default",
+                    label: "默认排序"
+                }, {
+                    value: "size",
+                    label: "文件大小"
+                }
+            ],
         },
         mounted: function () {
             window.addEventListener('scroll', this.onScrollTopButtonState);  //滚动事件监听
@@ -214,18 +214,28 @@
                         this.errorMessage()
                         console.log("error->" + response)
                     });
+            }, handleSortChanged: function (value) {
+                console.log(value)
+                this.currentSortOptions = value
+                this.clickSearch()
             },
             requestMagnetList: function () {
                 var sourceSite = this.currentSourceSite
                 var keyword = this.inputSearch;
 
                 var page = this.requestPageNumber
+                var sort = this.currentSortOptions
 
                 console.log(sourceSite + " " + keyword + " " + page)
 
                 this.loadMoreLoading = true
                 this.loadingBtnMessage = "正在加载下一页"
-                this.$http.post("api/search", {source: sourceSite, keyword: keyword, page: page},{emulateJSON: true})
+                this.$http.post("api/search", {
+                    source: sourceSite,
+                    keyword: keyword,
+                    page: page,
+                    sort: sort
+                }, {emulateJSON: true})
                     .then(function (response) {
                         Vue.set(this, "response.errorMessage", response.body.errorMessage)
                         if (response.body.currentSourceSite != null && response.body.currentSourceSite != '' && response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {

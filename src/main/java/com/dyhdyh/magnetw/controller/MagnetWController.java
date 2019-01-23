@@ -81,17 +81,19 @@ public class MagnetWController extends BaseController {
      */
     @RequestMapping(value = "api/search", method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
-    public MagnetPageResponse getSearchMagnetJson(Model model, HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword, @RequestParam(required = false) Integer page) {
+    public MagnetPageResponse getSearchMagnetJson(Model model, HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword, @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) {
         logger(request);
         MagnetPageResponse response = new MagnetPageResponse();
         List<MagnetInfo> infos = new ArrayList<MagnetInfo>();
         try {
             int newPage = magnetWService.transformPage(page);
 
+            String newSort = StringUtils.isEmpty(sort) ? MagnetPageResponse.SORT_OPTION_DEFAULT : sort;
             if (!StringUtils.isEmpty(keyword)) {
                 MagnetRule rule = getMagnetRule().get(source);
-                infos = magnetWService.parser(rule, keyword, newPage);
+                infos = magnetWService.parser(rule, keyword, newSort, newPage);
             }
+            response.setCurrentSortOption(newSort);
             response.setCurrentPage(newPage);
             response.setCurrentSourceSite(source);
             response.setResults(infos);

@@ -7,10 +7,22 @@ import java.util.List;
  * created 2018/5/15 23:01
  */
 public class MagnetPageResponse {
+    public static final String SORT_OPTION_DEFAULT = "default";
+    public static final String SORT_OPTION_SIZE = "size";
+
     private int currentPage;
     private String currentSourceSite;
+    private String currentSortOption;
     private List<MagnetInfo> results;
     private String errorMessage;
+
+    public String getCurrentSortOption() {
+        return currentSortOption;
+    }
+
+    public void setCurrentSortOption(String currentSortOption) {
+        this.currentSortOption = currentSortOption;
+    }
 
     public String getErrorMessage() {
         return errorMessage;

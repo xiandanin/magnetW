@@ -1,6 +1,7 @@
 package com.dyhdyh.magnetw.service;
 
 import com.dyhdyh.magnetw.model.MagnetInfo;
+import com.dyhdyh.magnetw.model.MagnetPageResponse;
 import com.dyhdyh.magnetw.model.MagnetRule;
 
 import org.htmlcleaner.CleanerProperties;
@@ -40,16 +41,16 @@ public class MagnetWService {
         System.out.println("列表缓存清空");
     }
 
-    @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#rule.source,#keyword,#page)")
-    public List<MagnetInfo> parser(MagnetRule rule, String keyword, int page) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
-        return parser(rule.getUrl(), rule.getSource(), keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getDate());
+    @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%d',#rule.url,#keyword,#sort,#page)")
+    public List<MagnetInfo> parser(MagnetRule rule, String keyword, String sort, int page) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
+        String source = MagnetPageResponse.SORT_OPTION_SIZE.equals(sort) ? rule.getSource_size() : rule.getSource();
+        return parser(rule.getUrl(), source, keyword, page, rule.getGroup(), rule.getMagnet(), rule.getName(), rule.getSize(), rule.getDate());
     }
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%d',#url,#keyword,#page)")
     public List<MagnetInfo> parser(String rootUrl, String url, String keyword, int page, String group, String magnet, String name, String size, String date) throws IOException, XPathExpressionException, ParserConfigurationException, XPatherException {
         String newUrl = transformUrl(url, keyword, page);
         String html = Jsoup.connect(newUrl).get().body().html();
-
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         TagNode tagNode = new HtmlCleaner().clean(html);
@@ -58,41 +59,45 @@ public class MagnetWService {
         NodeList result = (NodeList) xPath.evaluate(group, dom, XPathConstants.NODESET);
         List<MagnetInfo> infos = new ArrayList<MagnetInfo>();
         for (int i = 0; i < result.getLength(); i++) {
-            Node node = result.item(i);
-            if (node != null) {
-                if (StringUtils.isEmpty(node.getTextContent().trim())) {
-                    continue;
-                }
-                MagnetInfo info = new MagnetInfo();
-                Node magnetNote = (Node) xPath.evaluate(magnet, node, XPathConstants.NODE);
-                //磁力链
-                String magnetValue = magnetNote.getTextContent();
-                info.setMagnet(transformMagnet(magnetValue));
-                //名称
-                Node nameNote = ((Node) xPath.evaluate(name, node, XPathConstants.NODE));
-                String nameValue = nameNote.getTextContent();
-                info.setName(nameValue);
-                info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));//高亮关键字
-                String nameHref = nameNote.getAttributes().getNamedItem("href").getTextContent();
-                info.setDetailUrl(transformDetailUrl(rootUrl, nameHref));
-                //大小
-                Node sizeNote = ((Node) xPath.evaluate(size, node, XPathConstants.NODE));
-                if (sizeNote != null) {
-                    String sizeValue = sizeNote.getTextContent();
-                    info.setFormatSize(sizeValue);
+            try {
+                Node node = result.item(i);
+                if (node != null) {
+                    if (StringUtils.isEmpty(node.getTextContent().trim())) {
+                        continue;
+                    }
+                    MagnetInfo info = new MagnetInfo();
+                    Node magnetNote = (Node) xPath.evaluate(magnet, node, XPathConstants.NODE);
+                    //磁力链
+                    String magnetValue = magnetNote.getTextContent();
+                    info.setMagnet(transformMagnet(magnetValue));
+                    //名称
+                    Node nameNote = ((Node) xPath.evaluate(name, node, XPathConstants.NODE));
+                    String nameValue = nameNote.getTextContent();
+                    info.setName(nameValue);
+                    info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));//高亮关键字
+                    String nameHref = nameNote.getAttributes().getNamedItem("href").getTextContent();
+                    info.setDetailUrl(transformDetailUrl(rootUrl, nameHref));
+                    //大小
+                    Node sizeNote = ((Node) xPath.evaluate(size, node, XPathConstants.NODE));
+                    if (sizeNote != null) {
+                        String sizeValue = sizeNote.getTextContent();
+                        info.setFormatSize(sizeValue);
 
-                    info.setSize(transformSize(sizeValue));
-                }
-                //时间
-                Node countNode = (Node) xPath.evaluate(date, node, XPathConstants.NODE);
-                if (countNode != null) {
-                    info.setCount(countNode.getTextContent());
-                }
-                //一些加工的额外信息
-                String resolution = transformResolution(nameValue);
-                info.setResolution(resolution);
+                        info.setSize(transformSize(sizeValue));
+                    }
+                    //时间
+                    Node countNode = (Node) xPath.evaluate(date, node, XPathConstants.NODE);
+                    if (countNode != null) {
+                        info.setCount(countNode.getTextContent());
+                    }
+                    //一些加工的额外信息
+                    String resolution = transformResolution(nameValue);
+                    info.setResolution(resolution);
 
-                infos.add(info);
+                    infos.add(info);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return infos;

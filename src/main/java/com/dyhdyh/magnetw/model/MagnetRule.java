@@ -5,7 +5,8 @@ package com.dyhdyh.magnetw.model;
  * created 2018/3/7 11:52
  */
 public class MagnetRule{
-    private String source;
+    private String source;//默认排序的地址
+    private String source_size;//文件大小排序的地址
     private String site;
     private String waiting;
 
@@ -15,6 +16,14 @@ public class MagnetRule{
     private String size;
     private String url;
     private String date;
+
+    public String getSource_size() {
+        return source_size;
+    }
+
+    public void setSource_size(String source_size) {
+        this.source_size = source_size;
+    }
 
     public String getUrl() {
         return url;
