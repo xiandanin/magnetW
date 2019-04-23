@@ -1,11 +1,5 @@
-package com.dyhdyh.magnetw.controller;
+package in.xiandan.magnetw.controller;
 
-import com.dyhdyh.magnetw.model.MagnetInfo;
-import com.dyhdyh.magnetw.model.MagnetPageResponse;
-import com.dyhdyh.magnetw.model.MagnetRule;
-import com.dyhdyh.magnetw.service.MagnetWService;
-import com.dyhdyh.magnetw.util.GsonUtil;
-import com.google.gson.reflect.TypeToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,16 +10,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+
+import in.xiandan.magnetw.model.MagnetInfo;
+import in.xiandan.magnetw.model.MagnetPageResponse;
+import in.xiandan.magnetw.model.MagnetRule;
+import in.xiandan.magnetw.service.MagnetRuleService;
+import in.xiandan.magnetw.service.MagnetWService;
 
 /**
  * author  dengyuhan
@@ -36,9 +34,11 @@ import javax.servlet.http.HttpServletRequest;
 public class MagnetWController extends BaseController {
 
     @Autowired
+    MagnetRuleService ruleService;
+
+    @Autowired
     MagnetWService magnetWService;
 
-    private Map<String, MagnetRule> magnetRuleMap;
     private List<String> sites;
 
     @RequestMapping(value = "clear", method = RequestMethod.GET)
@@ -63,14 +63,7 @@ public class MagnetWController extends BaseController {
     @ResponseBody
     public List<String> getMagnetSourceSiteList(Model model, HttpServletRequest request) {
         logger(request);
-        if (sites == null) {
-            sites = new ArrayList<String>();
-            Set<Map.Entry<String, MagnetRule>> entries = getMagnetRule().entrySet();
-            for (Map.Entry<String, MagnetRule> entry : entries) {
-                sites.add(entry.getKey());
-            }
-        }
-        return sites;
+        return ruleService.getSites();
     }
 
     /**
@@ -90,7 +83,7 @@ public class MagnetWController extends BaseController {
 
             String newSort = StringUtils.isEmpty(sort) ? MagnetPageResponse.SORT_OPTION_DEFAULT : sort;
             if (!StringUtils.isEmpty(keyword)) {
-                MagnetRule rule = getMagnetRule().get(source);
+                MagnetRule rule = ruleService.getRuleBySite(source);
                 infos = magnetWService.parser(rule, keyword, newSort, newPage);
             }
             response.setCurrentSortOption(newSort);
@@ -108,27 +101,4 @@ public class MagnetWController extends BaseController {
         return response;
     }
 
-    /**
-     * 网站的筛选规则
-     *
-     * @return
-     */
-    private Map<String, MagnetRule> getMagnetRule() {
-        if (magnetRuleMap == null) {
-            magnetRuleMap = new LinkedHashMap<String, MagnetRule>();
-
-            InputStream inputStream = getClass().getResourceAsStream("/rule.json");
-            List<MagnetRule> rules = GsonUtil.fromJson(inputStream, new TypeToken<List<MagnetRule>>() {
-            });
-            StringBuffer log = new StringBuffer();
-            for (MagnetRule rule : rules) {
-                magnetRuleMap.put(rule.getSite(), rule);
-                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl());
-                log.append("\n");
-            }
-            log.append(magnetRuleMap.size() + "个网站规则加载成功");
-            logger(log.toString());
-        }
-        return magnetRuleMap;
-    }
 }

@@ -1,4 +1,4 @@
-package com.dyhdyh.magnetw.model;
+package in.xiandan.magnetw.model;
 
 import java.util.List;
 

@@ -1,8 +1,4 @@
-package com.dyhdyh.magnetw.service;
-
-import com.dyhdyh.magnetw.model.MagnetInfo;
-import com.dyhdyh.magnetw.model.MagnetPageResponse;
-import com.dyhdyh.magnetw.model.MagnetRule;
+package in.xiandan.magnetw.service;
 
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
@@ -28,6 +24,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
+import in.xiandan.magnetw.model.MagnetInfo;
+import in.xiandan.magnetw.model.MagnetPageResponse;
+import in.xiandan.magnetw.model.MagnetRule;
 
 /**
  * author  dengyuhan

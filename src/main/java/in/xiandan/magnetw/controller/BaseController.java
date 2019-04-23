@@ -1,4 +1,4 @@
-package com.dyhdyh.magnetw.controller;
+package in.xiandan.magnetw.controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.ui.Model;

@@ -8,8 +8,11 @@
 http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd">
 
     <!--扫描包路径-->
-    <context:component-scan base-package="com.dyhdyh.magnetw.controller" />
-    <context:component-scan base-package="com.dyhdyh.magnetw.service" />
+    <context:component-scan base-package="in.xiandan.magnetw.config" />
+    <context:component-scan base-package="in.xiandan.magnetw.controller" />
+    <context:component-scan base-package="in.xiandan.magnetw.service" />
+
+    <context:property-placeholder location="classpath:config.properties"/>
 
     <!-- 开启注解 -->
     <context:annotation-config />
