@@ -1,62 +1,57 @@
 ﻿[
   {
     "site": "种子搜",
-    "waiting": "0",
     "group": "//table[@class='table table-bordered table-striped']",
     "magnet": ".//a//@href",
     "name": ".//tbody//a",
     "size": ".//tbody//tr//td[2]//strong",
     "date": ".//tbody//tr//td[1]//strong",
     "url": "http://www.zhongzijun.com",
-    "source": "http://www.zhongzijun.com/list/%s/%d",
-    "source_size": "http://www.zhongzijun.com/list_length/%s/%d"
+    "path": "/list/%s/%d",
+    "path_size": "/list_length/%s/%d"
   },
   {
     "site": "BT兔子",
-    "waiting": "0",
     "group": "//div[@class='search-item detail-width']",
     "magnet": ".//div[1]//h3//a//@href",
     "name": ".//div[1]//h3//a",
     "size": ".//div[3]//span[3]//b",
     "date": ".//div[3]//span[2]//b",
-    "url": "https://www.btrabbit.tv",
-    "source": "https://www.btrabbit.tv/search/%s/default-%d.html",
-    "source_size": "https://www.btrabbit.tv/search/%s/size-%d.html"
+    "url": "https://www.btrabbit.win",
+    "path": "/search/%s/default-%d.html",
+    "path_size": "/search/%s/size-%d.html"
   },
   {
     "site": "BT4G",
-    "waiting": "0",
     "group": "//div[@class='search-item detail-width']",
     "magnet": "./div[1]/h3/a/@href",
     "name": "./div[1]/h3/a",
     "size": "./div[3]/span[4]/b",
     "date": "./div[3]/span[2]/b",
     "url": "https://cn.bt4g.com",
-    "source": "https://cn.bt4g.com/search/%s/%d",
-    "source_size": "https://cn.bt4g.com/search/%s/bysize/%d"
+    "path": "/search/%s/%d",
+    "path_size": "/search/%s/bysize/%d"
   },
   {
     "site": "BT蚂蚁",
-    "waiting": "0",
     "group": "//div[@id='wall']/div[@class='search-item']",
     "magnet": "./div[@class='item-title']/a/@href",
     "name": "./div[@class='item-title']/a",
     "size": "./div[@class='item-bar']/span[4]/b",
     "date": "./div[@class='item-bar']/span[1]/b",
     "url": "http://www.btanf.com",
-    "source": "http://www.btanf.com/search/%s-first-asc-%d",
-    "source_size": "http://www.btanf.com/search/%s-size-desc-%d"
+    "path": "/search/%s-first-asc-%d",
+    "path_size": "/search/%s-size-desc-%d"
   },
   {
     "site": "BT磁力链",
-    "waiting": "0",
     "group": "//li",
     "magnet": "./h3/a/@href",
     "name": "./h3/a",
     "size": "./dl/dt/span[2]",
     "date": "./dl/dt/span[1]",
     "url": "https://www.bturl.at",
-    "source": "https://www.bturl.at/search/%s_ctime_%d.html",
-    "source_size": "https://www.bturl.at/search/%s_length_%d.html"
+    "path": "/search/%s_ctime_%d.html",
+    "path_size": "/search/%s_length_%d.html"
   }
 ]

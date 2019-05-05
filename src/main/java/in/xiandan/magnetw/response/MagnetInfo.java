@@ -1,11 +1,8 @@
-package in.xiandan.magnetw.model;
+package in.xiandan.magnetw.response;
 
 import java.io.Serializable;
 
-/**
- * author  dengyuhan
- * created 2018/3/7 11:29
- */
+
 public class MagnetInfo implements Serializable{
 
     private String group;

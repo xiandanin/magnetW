@@ -18,8 +18,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import in.xiandan.magnetw.config.ApplicationConfig;
-import in.xiandan.magnetw.model.MagnetRule;
+import in.xiandan.magnetw.response.MagnetRule;
 
 /**
  * 规则服务
@@ -35,13 +37,13 @@ public class MagnetRuleService {
     private Gson gson = new Gson();
 
     private Map<String, MagnetRule> magnetRuleMap;
-    private List<String> sites;
 
     /**
      * 重新加载规则
      *
      * @return
      */
+    @PostConstruct
     public void reload() {
         magnetRuleMap = null;
         getMagnetRule();
@@ -59,6 +61,11 @@ public class MagnetRuleService {
     }
 
     public List<String> getSites() {
+        List<String> sites = new ArrayList<String>();
+        Map<String, MagnetRule> ruleMap = getMagnetRule();
+        for (Map.Entry<String, MagnetRule> entry : ruleMap.entrySet()) {
+            sites.add(entry.getKey());
+        }
         return sites;
     }
 
@@ -70,16 +77,13 @@ public class MagnetRuleService {
     public Map<String, MagnetRule> getMagnetRule() {
         if (magnetRuleMap == null) {
             magnetRuleMap = new LinkedHashMap<String, MagnetRule>();
-            sites = new ArrayList<String>();
 
             List<MagnetRule> rules = loadMagnetRule();
 
             StringBuffer log = new StringBuffer();
             for (MagnetRule rule : rules) {
                 magnetRuleMap.put(rule.getSite(), rule);
-                sites.add(rule.getSite());
-                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl());
-                log.append("\n");
+                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl()+"\n");
             }
             log.append(magnetRuleMap.size() + "个网站规则加载成功");
             logger.info(log.toString());
@@ -88,10 +92,10 @@ public class MagnetRuleService {
     }
 
     private List<MagnetRule> loadMagnetRule() {
-        if (mConfig.isRuleJsonUrl()) {
-            return requestMagnetRule();
-        } else {
+        if (mConfig.isLocalRule()) {
             return loadResourceMagnetRule();
+        } else {
+            return requestMagnetRule();
         }
     }
 

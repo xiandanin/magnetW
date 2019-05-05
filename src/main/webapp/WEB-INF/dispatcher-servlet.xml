@@ -11,15 +11,16 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
     <context:component-scan base-package="in.xiandan.magnetw.config" />
     <context:component-scan base-package="in.xiandan.magnetw.controller" />
     <context:component-scan base-package="in.xiandan.magnetw.service" />
+    <context:component-scan base-package="in.xiandan.magnetw.handler" />
 
-    <context:property-placeholder location="classpath:config.properties"/>
+    <context:property-placeholder location="classpath:config.properties" />
 
     <!-- 开启注解 -->
     <context:annotation-config />
     <mvc:annotation-driven />
 
     <!-- 静态资源(js、image等)的访问 -->
-    <mvc:default-servlet-handler />
+    <mvc:resources mapping="/resources/**" location="/resources/"/>
 
     <!--ViewResolver 视图解析器-->
     <!--用于支持Servlet、JSP视图解析-->
@@ -40,4 +41,5 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
         p:shared="true">
         <property name="configLocation" value="classpath:ehcache.xml"></property>
     </bean>
+
 </beans>
