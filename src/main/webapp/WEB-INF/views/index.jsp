@@ -14,35 +14,41 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/element-ui/2.3.7/theme-chalk/index.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
-    <link href="/resources/css/base.css" rel="stylesheet">
-    <link href="/resources/css/search_result.css" rel="stylesheet">
 
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
     <script src="/resources/js/dist/vue-clipboard.min.js"></script>
+    <link href="/resources/css/search_result.css" rel="stylesheet">
 </head>
 <body>
-<div class="container" style="margin-top: 2%" id="app">
+<div class="container" style="margin-top: 2%;" id="app">
     <el-container>
         <!--头-->
         <el-header style="height: 30px">
             <div style="text-align: right">
-                <span style="float: left">当前版本：v${version_name}</span>
+                <span style="float: left">
+                    <c:choose>
+                        <c:when test="${config.versionLink.length()>0}">
+                            <a href="${config.versionLink}">当前版本 v${config.versionName}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a>当前版本 v${config.versionName}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </span>
             </div>
         </el-header>
 
         <!--内容-->
         <el-main>
-            <div v-loading.fullscreen.lock="fullscreenLoading"
-                 class="container-margin-bottom">
+            <div>
                 <div id="search-input-container">
                     <el-input :placeholder="searchPlaceholder" class="input-with-select"
                               @keyup.enter.native="clickSearch"
-                              v-model="inputSearch">
+                              v-model="current.keyword">
                         <el-button slot="append" icon="el-icon-search" @click="clickSearch">
                             搜索
                         </el-button>
@@ -51,24 +57,70 @@
 
                 <!--源站列表-->
                 <div class="search_site">
-                    <el-tabs type="card" v-show="sourceSites.length > 0">
+                    <el-tabs type="card" v-model="current.site"
+                             @tab-click="handleTabClick">
                         <c:forEach var="it" items="${source_sites}">
                             <el-tab-pane label="${it}"
                                          key="${it}"
                                          name="${it}">
-                                    ${it}
                             </el-tab-pane>
                         </c:forEach>
                     </el-tabs>
                 </div>
 
                 <!--列表-->
-                <div v-loading="loading" style="min-height: 40%">
-                    <template v-if="response.results != null">
+                <div id="table-container">
+                    <div v-loading="loading" v-cloak v-show="list != null&&list.length>0">
+                        <div style="margin-bottom: 2%">
+                            <el-row>
+                                <el-col :span="6">
+                                    <div class="grid-content bg-purple-dark"></div>
+                                    <el-select v-model="current.sort" placeholder="排序"
+                                               size="small"
+                                               @change="handleSortChanged">
+                                        <c:forEach var="it" items="${sort_by}">
+                                            <el-option key="${it.sort}"
+                                                       label="${it.sortName}"
+                                                       value="${it.sort}">
+                                            </el-option>
+                                        </c:forEach>
+                                    </el-select>
+                                </el-col>
+
+                                <el-col :span="18">
+                                    <div style="text-align: right;">
+                                        <div class="el-pagination is-background">
+                                            <button type="button" class="btn-prev"
+                                                    @click="handlePageChanged(current.page-1)"><i
+                                                    class="el-icon el-icon-arrow-left"></i></button>
+                                            <ul class="el-pager">
+                                                <!--最多只显示3个页码-->
+                                                <template
+                                                        v-for="n in current.page>3?3:current.page-1">
+                                                    <li class="number"
+                                                        @click="handlePageChanged(n)">{{n}}
+                                                    </li>
+                                                </template>
+                                                <template v-if="current.page>3">
+                                                    <li class="el-icon more btn-quickprev el-icon-more"></li>
+                                                </template>
+                                                <li class="number active">{{current.page}}
+                                                </li>
+                                            </ul>
+                                            <button type="button" class="btn-next"
+                                                    @click="handlePageChanged(current.page+1)">
+                                                <i class="el-icon el-icon-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </el-col>
+                            </el-row>
+                        </div>
                         <el-table
+                                :empty-text="message"
                                 ref="tableWrapper"
                                 size="mini"
-                                :data="response.results"
+                                :data="list"
                                 border
                                 style="width: 100%">
                             <el-table-column
@@ -76,26 +128,26 @@
                                     type="index">
                             </el-table-column>
                             <el-table-column
+                                    min-width="150"
                                     label="名称">
                                 <template slot-scope="scope">
-                                    <a :href="scope.row.magnet" v-html="scope.row.nameHtml"></a>
+                                    <a :href="scope.row.magnet" @click="handleClickMagnet"
+                                       v-html="scope.row.nameHtml"></a>
                                 </template>
                             </el-table-column>
                             <el-table-column
                                     width="120"
-                                    :sortable="false"
                                     label="大小"
-                                    sort-by="size"
                                     prop="formatSize">
                             </el-table-column>
                             <el-table-column
-                                    width="120"
+                                    width="80"
                                     label="清晰度"
                                     prop="resolution">
                             </el-table-column>
                             <el-table-column
                                     label="发布时间"
-                                    width="200"
+                                    width="90"
                                     prop="count">
                             </el-table-column>
                             <el-table-column
@@ -116,141 +168,158 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <el-button type="primary" :loading="loadMoreLoading" style="width: 100%"
-                                   v-on:click="requestMagnetList"
-                                   v-show="isShowLoadMore">
-                            {{loadingBtnMessage}}
-                        </el-button>
-                    </template>
+                        <div style="text-align: right;margin-top: 2%">
+                            <div class="el-pagination is-background">
+                                <button type="button" class="btn-prev"
+                                        @click="handlePageChanged(current.page-1)"><i
+                                        class="el-icon el-icon-arrow-left"></i></button>
+                                <ul class="el-pager">
+                                    <!--最多只显示3个页码-->
+                                    <template
+                                            v-for="n in current.page>3?3:current.page-1">
+                                        <li class="number"
+                                            @click="handlePageChanged(n)">{{n}}
+                                        </li>
+                                    </template>
+                                    <template v-if="current.page>3">
+                                        <li class="el-icon more btn-quickprev el-icon-more"></li>
+                                    </template>
+                                    <li class="number active">{{current.page}}
+                                    </li>
+                                </ul>
+                                <button type="button" class="btn-next"
+                                        @click="handlePageChanged(current.page+1)">
+                                    <i class="el-icon el-icon-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="message" v-cloak
+                         v-show="(list == null||list.length<=0)&&message!=null&&message.length>0">
+                        <h2 style="font-weight: lighter">{{message}}</h2>
+                    </div>
                 </div>
 
-                <div v-show="message!=null" style="text-align: center">
-                    <h2>{{message}}</h2>
+
+                <!--不蒜子统计-->
+                <div id="busuanzi" style="display: none">
+                    <c:if test="${config.busuanziEnabled}">
+                        <script async
+                                src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+                        </script>
+                        <c:if test="${config.busuanziShow}">
+                            <div class="busuanzi">
+                                <span id="busuanzi_title">流量统计</span> |
+            <span id="busuanzi_container_site_pv">
+    总访问量[<span id="busuanzi_value_site_pv"></span>]
+</span> | <span id="busuanzi_container_site_uv">
+  总访客数[<span id="busuanzi_value_site_uv"></span>]
+</span>
+                            </div>
+                        </c:if>
+                    </c:if>
                 </div>
             </div>
 
         </el-main>
     </el-container>
-
-    <div id="page-component-up" style="" @click="scrollTop" v-show="showTopButton"><i
+    <div id="page-component-up" @click="scrollTop" v-cloak v-show="showTopButton"><i
             class="el-icon-caret-top"></i></div>
 </div>
 </body>
 <script>
-    Vue.http.options.timeout = 20000;
+    Vue.http.options.timeout = 15000;
     new Vue({
         el: '#app',
         data: {
-            message: null,
-
-            fullscreenLoading: false,
-            loading: false,
-            loadMoreLoading: false,
             showTopButton: false,
-            loadingBtnMessage: "点击加载更多",
-            isShowLoadMore: false,
-            currentSourceSite: "",
-            searchPlaceholder: "钢铁侠",
-            inputSearch: "",
-            requestPageNumber: 1,
-            currentSortOptions: "default",
-
-            sourceSites: "${source_sites}",
-            response: {},
-            sortOptions: [
-                {
-                    value: "default",
-                    label: "默认排序"
-                }, {
-                    value: "size",
-                    label: "文件大小"
-                }
-            ],
+            searchPlaceholder: "${config.searchPlaceholder}",
+            message: null,
+            loading: false,
+            list: [],
+            current: {
+                site: "${current.site}",
+                keyword: "${current.keyword}",
+                sort: "${current.sort.sort}",
+                sortName: "${current.sort.sortName}",
+                page: ${current.page},
+            }
         },
         mounted: function () {
-            window.addEventListener('scroll', this.onScrollTopButtonState);  //滚动事件监听
-            this.initMagnetPage()
+            setTimeout(function () {
+                document.getElementById("busuanzi").style.display = "block"
+            }, 400);
+            window.addEventListener('scroll', this.onScrollTopButtonState);
+            this.requestMagnetList()
         },
         methods: {
-            handleTabClick(tab) {
-                this.currentSourceSite = tab
-                this.requestPageNumber = 1
-                if (this.inputSearch != null && this.inputSearch != '') {
-                    this.clickSearch()
+            getParamsString() {
+                let keywordString = "";
+                if (this.current.keyword != null && this.current.keyword.length > 0) {
+                    keywordString = "?k=" + this.current.keyword + "&s=" + this.current.sort + "&p=" + this.current.page;
                 }
+                return keywordString
+            },
+            redirectSearch() {
+                window.location.href = "/search/" + this.current.site + this.getParamsString()
+            },
+            /**
+             * 刷新地址栏地址
+             */
+            updateAddress() {
+                let host = window.location.protocol + "//" + window.location.host;
+                let url = host + "/search/" + this.current.site + this.getParamsString();
+                history.replaceState(0, document.title, url);
+            },
+            handleTabClick(tab) {
+                this.redirectSearch()
             },
             clickSearch() {
-                this.loading = true
-                this.requestPageNumber = 1
-                if (this.inputSearch == null || this.inputSearch == '') {
-                    this.inputSearch = this.searchPlaceholder
+                this.current.page = 1;
+                if (this.current.keyword == null || this.current.keyword === '') {
+                    this.current.keyword = this.searchPlaceholder
                 }
-                this.response.results = null
-                this.requestMagnetList()
+                this.requestMagnetList(true)
             },
-            initMagnetPage: function () {
-
-            }, handleSortChanged: function (value) {
-                console.log(value)
-                this.currentSortOptions = value
-                this.clickSearch()
+            handlePageChanged(page) {
+                if (page <= 0) {
+                    return
+                }
+                this.current.page = page;
+                this.requestMagnetList(true)
             },
-            requestMagnetList: function () {
-                var sourceSite = this.currentSourceSite
-                var keyword = this.inputSearch;
-
-                var page = this.requestPageNumber
-                var sort = this.currentSortOptions
-
-                console.log(sourceSite + " " + keyword + " " + page)
-
-                this.loadMoreLoading = true
-                this.loadingBtnMessage = "正在加载下一页"
-                this.$http.post("api/search", {
-                    source: sourceSite,
-                    keyword: keyword,
-                    page: page,
-                    sort: sort
-                }, {emulateJSON: true})
-                    .then(function (response) {
-                        Vue.set(this, "response.errorMessage", response.body.errorMessage)
-                        if (response.body.currentSourceSite != null && response.body.currentSourceSite != '' && response.body.currentSourceSite != undefined && this.currentSourceSite != response.body.currentSourceSite) {
-                            return
-                        }
-
-                        this.loading = false
-                        this.loadMoreLoading = false
-                        this.loadingBtnMessage = "点击加载更多"
-                        this.isShowLoadMore = response.body.results !== null && response.body.results !== undefined && response.body.results.length > 0
-
-                        if (response.body.currentPage <= 1) {
-                            this.requestPageNumber++
-                            Vue.set(this, "response", response.body)
-                        } else {
-                            if (this.isShowLoadMore) {
-                                this.requestPageNumber++
-                                this.response.results.push.apply(this.response.results, response.body.results)
-                            }
-                        }
-                        //console.log(this.response.results)
-                    })
-                    .catch(function (response) {
-                        this.loading = false
-                        this.loadMoreLoading = false
-                        this.loadingBtnMessage = "加载失败 点击重试"
-                        console.log('error', response)
-                        this.errorMessage()
-                    });
+            handleSortChanged(sort) {
+                this.current.sort = sort;
+                this.requestMagnetList(true)
             },
-            openDisclaimerDialog: function () {
-                this.$alert('本网站作为开源项目示例，仅用于技术交流学习，用户使用本工具进行的任何操作，本服务器均不保存。<br/><br/>' +
-                    '本网站不会存储，不能分享，也不提供任何传播信息与资源的功能, 对此工具的非法使用概不负责。', '免责声明', {
-                    dangerouslyUseHTMLString: true,
-                    confirmButtonText: '确定',
-                    callback: action => {
+            handleClickMagnet(a) {
+                a.target.className = "visited-a"
+            },
+            /**
+             * 请求列表
+             * @param updateAddr 是否刷新地址栏
+             */
+            requestMagnetList(updateAddr) {
+                if (this.current.keyword != null && this.current.keyword.length > 0) {
 
+                    //修改地址栏参数
+                    if (updateAddr) {
+                        this.updateAddress()
                     }
-                });
+
+                    var that = this;
+                    this.request(this.$http.get("/api/search", {
+                            params: {
+                                source: this.current.site,
+                                keyword: this.current.keyword,
+                                page: this.current.page,
+                                sort: this.current.sort
+                            }
+                        }, {emulateJSON: true})
+                        , function (rsp) {
+                            that.list = rsp.results;
+                        });
+                }
             },
             onCopy: function (e) {
                 this.$message({
@@ -258,59 +327,44 @@
                     type: 'success'
                 });
             },
-            errorMessage: function () {
-                this.$message({
-                    showClose: true,
-                    message: '加载失败',
-                    type: 'error'
-                });
-            },
-            sortSize(a, b) {
-                console.log(parseFloat(a.size))
-                return true;
+            onScrollTopButtonState() {
+                let viewHeight = document.body.clientHeight;
+                let curHeight = document.body.scrollTop;
+                this.showTopButton = curHeight > viewHeight / 10;
             },
             scrollTop() {
                 document.body.scrollTop = 0;
-            },
-            onScrollTopButtonState() {
-                let curHeight = document.documentElement.scrollTop || document.body.scrollTop;
-                let viewHeight = document.body.clientHeight;
-                if (curHeight > viewHeight / 3) {
-                    this.showTopButton = true;
-                } else {
-                    this.showTopButton = false;
-                }
             },
             /**
              * 成功处理
              */
             request(http, success) {
-                this.fullscreenLoading = true;
+                this.loading = true;
                 http.then(function (response) {
-                    this.fullscreenLoading = false;
-                    this.handlingResponse(response, success)
+                    this.loading = false;
+                    this.handeResponse(response, success)
                 }).catch(function (error) {
-                    this.fullscreenLoading = false;
-                    this.handlingError(error)
+                    console.log(error);
+                    this.loading = false;
+                    this.handleError(error)
                 });
             },
             /**
              * 成功处理
              */
-            handlingResponse(response, callback) {
+            handeResponse(response, callback) {
                 if (response.body.success) {
                     console.log("成功-->" + response.body.data);
                     callback(response.body.data)
                 } else {
-                    this.handlingError(response)
+                    this.handleError(response)
                 }
             },
             /**
              * 异常处理
              */
-            handlingError(error) {
-                console.log("异常-->" + error);
-                this.message = error.message
+            handleError(error) {
+                this.message = error.body.message;
             }
         }
     })

@@ -5,20 +5,18 @@ import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ import javax.xml.xpath.XPathFactory;
 import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
 import in.xiandan.magnetw.response.MagnetInfo;
+import in.xiandan.magnetw.response.MagnetOption;
 import in.xiandan.magnetw.response.MagnetRule;
 import in.xiandan.magnetw.response.MagnetSortOption;
 
@@ -43,6 +42,9 @@ public class MagnetService {
     private Logger logger = Logger.getLogger(getClass());
 
     @Autowired
+    private MagnetRuleService ruleService;
+
+    @Autowired
     private ApplicationConfig config;
 
     @CacheEvict(value = "magnetList", allEntries = true)
@@ -50,26 +52,40 @@ public class MagnetService {
         logger.info("列表缓存清空");
     }
 
+
+    public MagnetOption transformCurrentOption(String sourceParam, String keyword,
+                                               String sortParam, Integer pageParam) {
+        //默认参数
+        String source = StringUtils.isEmpty(sourceParam) ? ruleService.getSites().get(0) : sourceParam;
+        String sort = MagnetSortOption.sortValue(sortParam);
+        int page = pageParam == null || pageParam <= 0 ? 1 : pageParam;
+
+        MagnetOption option = new MagnetOption();
+        option.setPage(page);
+        option.setSort(new MagnetSortOption(sort));
+        option.setSite(source);
+        option.setKeyword(keyword);
+        return option;
+    }
+
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%s-%d',#rule.url,#rule.path,#keyword,#sort,#page)")
-    public List<MagnetInfo> parser(MagnetRule rule, String keyword, String sort, int page) throws MagnetParserException {
+    public List<MagnetInfo> parser(MagnetRule rule, String keyword, String sort, int page) throws MagnetParserException, IOException {
         //用页码和关键字 拼接源站的url
         String sortPath = String.format(MagnetSortOption.SORT_OPTION_SIZE.equals(sort) ? rule.getPath_size() : rule.getPath(), keyword, page);
         String url = String.format("%s%s", rule.getUrl(), sortPath);
 
-        RestTemplate rest = new RestTemplate();
+        logger.info("正在请求--->" + rule.getSite() + "-->" + url);
+
+        Connection connect = Jsoup.connect(url);
         //代理设置
         if (config.proxyEnabled && rule.isProxy()) {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(config.proxyHost, config.proxyPort));
-            SimpleClientHttpRequestFactory httpRequestFactory = new SimpleClientHttpRequestFactory();
-            httpRequestFactory.setProxy(proxy);
-            rest.setRequestFactory(httpRequestFactory);
+            connect.proxy(proxy);
         }
-
-        ResponseEntity<String> response = rest.exchange(url, HttpMethod.GET, null, String.class);
+        String html = connect.get().body().html();
 
         List<MagnetInfo> infos = new ArrayList<MagnetInfo>();
         try {
-            String html = Jsoup.parse(response.getBody()).body().html();
             XPath xPath = XPathFactory.newInstance().newXPath();
             TagNode tagNode = new HtmlCleaner().clean(html);
             Document dom = new DomSerializer(new CleanerProperties()).createDOM(tagNode);

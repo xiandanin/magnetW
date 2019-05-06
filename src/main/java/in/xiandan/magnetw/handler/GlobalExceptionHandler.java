@@ -10,7 +10,6 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-import in.xiandan.magnetw.exception.MagnetParserException;
 import in.xiandan.magnetw.response.BaseResponse;
 
 /**
@@ -30,8 +29,6 @@ public class GlobalExceptionHandler {
             return BaseResponse.error("请求源站超时");
         }else if (e instanceof MissingServletRequestParameterException) {
             return BaseResponse.error("缺少参数");
-        } else if (e instanceof MagnetParserException) {
-            return BaseResponse.error("解析失败");
         }
         return BaseResponse.error(e.getMessage());
     }

@@ -13,8 +13,6 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
     <context:component-scan base-package="in.xiandan.magnetw.service" />
     <context:component-scan base-package="in.xiandan.magnetw.handler" />
 
-    <context:property-placeholder location="classpath:config.properties" />
-
     <!-- 开启注解 -->
     <context:annotation-config />
     <mvc:annotation-driven />

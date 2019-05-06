@@ -37,6 +37,7 @@ public class MagnetRuleService {
     private Gson gson = new Gson();
 
     private Map<String, MagnetRule> magnetRuleMap;
+    private List<String> sites;
 
     /**
      * 重新加载规则
@@ -46,6 +47,7 @@ public class MagnetRuleService {
     @PostConstruct
     public void reload() {
         magnetRuleMap = null;
+        sites = null;
         getMagnetRule();
     }
 
@@ -61,10 +63,12 @@ public class MagnetRuleService {
     }
 
     public List<String> getSites() {
-        List<String> sites = new ArrayList<String>();
-        Map<String, MagnetRule> ruleMap = getMagnetRule();
-        for (Map.Entry<String, MagnetRule> entry : ruleMap.entrySet()) {
-            sites.add(entry.getKey());
+        if (sites == null) {
+            sites = new ArrayList<String>();
+            Map<String, MagnetRule> ruleMap = getMagnetRule();
+            for (Map.Entry<String, MagnetRule> entry : ruleMap.entrySet()) {
+                sites.add(entry.getKey());
+            }
         }
         return sites;
     }
@@ -83,7 +87,7 @@ public class MagnetRuleService {
             StringBuffer log = new StringBuffer();
             for (MagnetRule rule : rules) {
                 magnetRuleMap.put(rule.getSite(), rule);
-                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl()+"\n");
+                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
             }
             log.append(magnetRuleMap.size() + "个网站规则加载成功");
             logger.info(log.toString());

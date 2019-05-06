@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource(value = "classpath:config.properties")
+@PropertySource(value = "classpath:config.properties",encoding = "UTF-8")
 public class ApplicationConfig {
     @Value("${rule.json.uri}")
     public String ruleJsonUri;
@@ -24,6 +24,18 @@ public class ApplicationConfig {
 
     @Value("${proxy.port}")
     public int proxyPort;
+
+    @Value("${search.placeholder}")
+    public String searchPlaceholder;
+
+    @Value("${version.link}")
+    public String versionLink;
+
+    @Value("${busuanzi.enabled}")
+    public boolean busuanziEnabled;
+
+    @Value("${busuanzi.show}")
+    public boolean busuanziShow;
 
 
     /**

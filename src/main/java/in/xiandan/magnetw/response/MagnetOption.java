@@ -10,6 +10,15 @@ public class MagnetOption {
     private String keyword;
     private String site;
     private MagnetSortOption sort;
+    private int pageCount;
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
 
     public int getPage() {
         return page;

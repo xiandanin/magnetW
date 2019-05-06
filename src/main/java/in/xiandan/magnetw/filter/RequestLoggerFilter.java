@@ -38,7 +38,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
             sb.append(request.getHeader(header));
             sb.append("\n");
         }
-        logger.debug(sb.toString());
+        logger.info(sb.toString());
 
         chain.doFilter(request, response);
     }

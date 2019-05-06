@@ -1,6 +1,37 @@
+a {
+    color: #333;
+}
+
+a:hover {
+    color: #333;
+}
+
+.visited-a:link{
+    color: #0b618d;
+}
+
+a:link {
+    color: #0e90d2;
+}
+
+.container-margin-top {
+    margin-top: 2%;
+}
+
+.td-center {
+    text-align: center;
+}
+
+.no-padding {
+    padding: 0px;
+}
+
+[v-cloak] {
+    display: none;
+}
+
 .search_site {
     margin-top: 1.5%;
-    margin-bottom: 1.5%;
 }
 
 .container-margin-bottom {
@@ -38,4 +69,44 @@
 
 #header-github {
     margin-left: 10px;
+}
+
+#table-container {
+    min-height: 500px
+}
+
+#table-container .el-pagination {
+    padding-right: 0;
+}
+
+#table-container .btn-next {
+    margin-right: 0;
+}
+
+#message {
+    text-align: center;
+    padding-top: 250px;
+}
+
+.loadmore-loading {
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 10px;
+}
+
+.loadmore-loading i {
+    font-size: 16px;
+}
+
+.loadmore-loading span {
+    font-size: 14px;
+}
+
+.busuanzi{
+    text-align: center;
+    font-size: 14px;
+    margin-top: 1%;
+}
+#busuanzi_title{
+    font-weight: bold;
 }

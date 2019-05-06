@@ -16,7 +16,6 @@ import in.xiandan.magnetw.response.MagnetInfo;
 import in.xiandan.magnetw.response.MagnetOption;
 import in.xiandan.magnetw.response.MagnetPageData;
 import in.xiandan.magnetw.response.MagnetRule;
-import in.xiandan.magnetw.response.MagnetSortOption;
 import in.xiandan.magnetw.service.MagnetRuleService;
 import in.xiandan.magnetw.service.MagnetService;
 
@@ -89,35 +88,31 @@ public class MagnetApiController {
      */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public BaseResponse<MagnetPageData> getSourceSites(@RequestParam(required = false) String sourceParam, @RequestParam(required = false) String keyword,
-                                                       @RequestParam(required = false) String sortParam, @RequestParam(required = false) Integer pageParam) throws Exception {
-        List<String> sites = ruleService.getSites();
+    public BaseResponse<MagnetPageData> getSourceSites(@RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
+                                                       @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws Exception {
         //默认参数
-        String source = StringUtils.isEmpty(sourceParam) ? sites.get(0) : sourceParam;
-        String sort = MagnetSortOption.sortValue(sortParam);
-        int page = pageParam == null || pageParam <= 0 ? 1 : pageParam;
-
-        MagnetRule rule = ruleService.getRuleBySite(source);
-        List<MagnetInfo> infos = magnetService.parser(rule, keyword, sort, page);
+        MagnetOption pageOption = magnetService.transformCurrentOption(source, keyword, sort, page);
+        MagnetRule rule = ruleService.getRuleBySite(pageOption.getSite());
+        List<MagnetInfo> infos = magnetService.parser(rule, keyword, pageOption.getSort().getSort(), pageOption.getPage());
 
         MagnetPageData data = new MagnetPageData();
-        MagnetOption option = new MagnetOption();
-        option.setPage(page);
-        option.setSort(new MagnetSortOption(sort));
-        option.setSite(source);
-        option.setKeyword(keyword);
-        data.setCurrent(option);
+        data.setCurrent(pageOption);
         data.setResults(infos);
+
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
     }
 
 
     private BaseResponse runHasPermission(String password, String message, Runnable runnable) {
-        if (config.adminPassword.equals(password)) {
-            runnable.run();
-            return BaseResponse.success(null, message);
+        if (StringUtils.isEmpty(config.adminPassword)) {
+            return BaseResponse.error("没有设置管理密码");
         } else {
-            return BaseResponse.error("没有权限");
+            if (config.adminPassword.equals(password)) {
+                runnable.run();
+                return BaseResponse.success(null, message);
+            } else {
+                return BaseResponse.error("没有权限");
+            }
         }
     }
 
