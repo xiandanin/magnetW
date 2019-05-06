@@ -6,8 +6,8 @@ import java.util.List;
 public class MagnetPageData {
 
     private List<String> sites;
-    private MagnetOption current;
-    private List<MagnetInfo> results;
+    private MagnetPageOption current;
+    private List<MagnetItem> results;
 
     public List<String> getSites() {
         return sites;
@@ -17,19 +17,19 @@ public class MagnetPageData {
         this.sites = sites;
     }
 
-    public MagnetOption getCurrent() {
+    public MagnetPageOption getCurrent() {
         return current;
     }
 
-    public void setCurrent(MagnetOption current) {
+    public void setCurrent(MagnetPageOption current) {
         this.current = current;
     }
 
-    public List<MagnetInfo> getResults() {
+    public List<MagnetItem> getResults() {
         return results;
     }
 
-    public void setResults(List<MagnetInfo> results) {
+    public void setResults(List<MagnetItem> results) {
         this.results = results;
     }
 }

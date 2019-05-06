@@ -16,6 +16,9 @@ public class ApplicationConfig {
     @Value("${project.version}")
     public String versionName;
 
+    @Value("${proxy.ignore}")
+    public boolean proxyIgnore;
+
     @Value("${proxy.enabled}")
     public boolean proxyEnabled;
 

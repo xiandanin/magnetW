@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
@@ -21,7 +22,9 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
+import in.xiandan.magnetw.response.MagnetPageSiteSort;
 import in.xiandan.magnetw.response.MagnetRule;
+import in.xiandan.magnetw.response.MagnetRulePath;
 
 /**
  * 规则服务
@@ -37,7 +40,7 @@ public class MagnetRuleService {
     private Gson gson = new Gson();
 
     private Map<String, MagnetRule> magnetRuleMap;
-    private List<String> sites;
+    private List<MagnetRule> sites;
 
     /**
      * 重新加载规则
@@ -59,18 +62,59 @@ public class MagnetRuleService {
      * @return
      */
     public MagnetRule getRuleBySite(String site) {
-        return getMagnetRule().get(site);
+        MagnetRule rule = getMagnetRule().get(site);
+        if (rule == null) {
+            return getSites().get(0);
+        }
+        return rule;
     }
 
-    public List<String> getSites() {
-        if (sites == null) {
-            sites = new ArrayList<String>();
-            Map<String, MagnetRule> ruleMap = getMagnetRule();
-            for (Map.Entry<String, MagnetRule> entry : ruleMap.entrySet()) {
-                sites.add(entry.getKey());
-            }
-        }
+    public List<MagnetRule> getSites() {
         return sites;
+    }
+
+
+    /**
+     * 获取支持的排序方式
+     *
+     * @return
+     */
+    public List<MagnetPageSiteSort> getSupportedSorts(MagnetRulePath rulePaths) {
+        List<MagnetPageSiteSort> options = new ArrayList<MagnetPageSiteSort>();
+        if (!StringUtils.isEmpty(rulePaths.getPreset())) {
+            options.add(new MagnetPageSiteSort(MagnetPageSiteSort.SORT_OPTION_DEFAULT));
+        }
+        if (!StringUtils.isEmpty(rulePaths.getTime())) {
+            options.add(new MagnetPageSiteSort(MagnetPageSiteSort.SORT_OPTION_TIME));
+        }
+        if (!StringUtils.isEmpty(rulePaths.getSize())) {
+            options.add(new MagnetPageSiteSort(MagnetPageSiteSort.SORT_OPTION_SIZE));
+        }
+        if (!StringUtils.isEmpty(rulePaths.getHot())) {
+            options.add(new MagnetPageSiteSort(MagnetPageSiteSort.SORT_OPTION_HOT));
+        }
+        return options;
+    }
+
+
+    /**
+     * 根据排序获取路径
+     *
+     * @param sortType
+     * @return
+     */
+    public String getPathBySort(String sortType, MagnetRulePath rulePaths) {
+        if (MagnetPageSiteSort.SORT_OPTION_SIZE.equals(sortType)) {
+            return rulePaths.getSize();
+        } else if (MagnetPageSiteSort.SORT_OPTION_HOT.equals(sortType)) {
+            return rulePaths.getHot();
+        } else if (MagnetPageSiteSort.SORT_OPTION_TIME.equals(sortType)) {
+            return rulePaths.getTime();
+        } else if (MagnetPageSiteSort.SORT_OPTION_DEFAULT.equals(sortType)) {
+            return rulePaths.getPreset();
+        }else{
+            return getSupportedSorts(rulePaths).get(0).getSort();
+        }
     }
 
     /**
@@ -78,15 +122,20 @@ public class MagnetRuleService {
      *
      * @return
      */
-    public Map<String, MagnetRule> getMagnetRule() {
-        if (magnetRuleMap == null) {
+    private Map<String, MagnetRule> getMagnetRule() {
+        if (magnetRuleMap == null || sites == null) {
             magnetRuleMap = new LinkedHashMap<String, MagnetRule>();
+            sites = new ArrayList<MagnetRule>();
 
             List<MagnetRule> rules = loadMagnetRule();
 
             StringBuffer log = new StringBuffer();
             for (MagnetRule rule : rules) {
+                if (mConfig.proxyIgnore && rule.isProxy()) {
+                    continue;
+                }
                 magnetRuleMap.put(rule.getSite(), rule);
+                sites.add(rule);
                 log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
             }
             log.append(magnetRuleMap.size() + "个网站规则加载成功");

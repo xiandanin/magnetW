@@ -24,7 +24,7 @@
     <link href="/resources/css/search_result.css" rel="stylesheet">
 </head>
 <body>
-<div class="container" style="margin-top: 2%;" id="app">
+<div style="width: 1080px;margin: 2% auto auto auto" id="app">
     <el-container>
         <!--头-->
         <el-header style="height: 30px">
@@ -60,17 +60,17 @@
                     <el-tabs type="card" v-model="current.site"
                              @tab-click="handleTabClick">
                         <c:forEach var="it" items="${source_sites}">
-                            <el-tab-pane label="${it}"
-                                         key="${it}"
-                                         name="${it}">
+                            <el-tab-pane label="${it.site}"
+                                         key="${it.site}"
+                                         name="${it.site}">
                             </el-tab-pane>
                         </c:forEach>
                     </el-tabs>
                 </div>
 
                 <!--列表-->
-                <div id="table-container">
-                    <div v-loading="loading" v-cloak v-show="list != null&&list.length>0">
+                <div v-loading="loading" id="table-container">
+                    <div v-cloak v-show="list != null&&list.length>0">
                         <div style="margin-bottom: 2%">
                             <el-row>
                                 <el-col :span="6">
@@ -136,19 +136,24 @@
                                 </template>
                             </el-table-column>
                             <el-table-column
+                                    width="90"
+                                    label="清晰度"
+                                    prop="resolution">
+                            </el-table-column>
+                            <el-table-column
                                     width="120"
                                     label="大小"
                                     prop="formatSize">
                             </el-table-column>
                             <el-table-column
-                                    width="80"
-                                    label="清晰度"
-                                    prop="resolution">
+                                    width="100"
+                                    label="人气"
+                                    prop="hot">
                             </el-table-column>
                             <el-table-column
                                     label="发布时间"
-                                    width="90"
-                                    prop="count">
+                                    width="120"
+                                    prop="date">
                             </el-table-column>
                             <el-table-column
                                     label="操作"
@@ -210,7 +215,7 @@
                         <c:if test="${config.busuanziShow}">
                             <div class="busuanzi">
                                 <span id="busuanzi_title">流量统计</span> |
-            <span id="busuanzi_container_site_pv">
+                                <span id="busuanzi_container_site_pv">
     总访问量[<span id="busuanzi_value_site_pv"></span>]
 </span> | <span id="busuanzi_container_site_uv">
   总访客数[<span id="busuanzi_value_site_uv"></span>]
@@ -228,7 +233,7 @@
 </div>
 </body>
 <script>
-    Vue.http.options.timeout = 15000;
+    Vue.http.options.timeout = 20000;
     new Vue({
         el: '#app',
         data: {
@@ -240,8 +245,7 @@
             current: {
                 site: "${current.site}",
                 keyword: "${current.keyword}",
-                sort: "${current.sort.sort}",
-                sortName: "${current.sort.sortName}",
+                sort: "${current.sort}",
                 page: ${current.page},
             }
         },
@@ -261,7 +265,11 @@
                 return keywordString
             },
             redirectSearch() {
-                window.location.href = "/search/" + this.current.site + this.getParamsString()
+                let keywordString = "";
+                if (this.current.keyword != null && this.current.keyword.length > 0) {
+                    keywordString = "?k=" + this.current.keyword;
+                }
+                window.location.href = "/search/" + this.current.site + keywordString
             },
             /**
              * 刷新地址栏地址
@@ -318,6 +326,10 @@
                         }, {emulateJSON: true})
                         , function (rsp) {
                             that.list = rsp.results;
+
+                            if (that.list.length <= 0) {
+                                that.message = "什么也没搜到"
+                            }
                         });
                 }
             },
@@ -344,7 +356,6 @@
                     this.loading = false;
                     this.handeResponse(response, success)
                 }).catch(function (error) {
-                    console.log(error);
                     this.loading = false;
                     this.handleError(error)
                 });
@@ -354,7 +365,7 @@
              */
             handeResponse(response, callback) {
                 if (response.body.success) {
-                    console.log("成功-->" + response.body.data);
+                    console.log(JSON.stringify(response.body.data));
                     callback(response.body.data)
                 } else {
                     this.handleError(response)
@@ -364,6 +375,7 @@
              * 异常处理
              */
             handleError(error) {
+                console.log(error);
                 this.message = error.body.message;
             }
         }

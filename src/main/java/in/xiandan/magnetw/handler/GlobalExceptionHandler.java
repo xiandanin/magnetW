@@ -10,6 +10,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import in.xiandan.magnetw.exception.MagnetParserException;
 import in.xiandan.magnetw.response.BaseResponse;
 
 /**
@@ -21,13 +22,16 @@ import in.xiandan.magnetw.response.BaseResponse;
 public class GlobalExceptionHandler {
     private Logger logger = Logger.getLogger(getClass());
 
-    @ExceptionHandler(Exception.class)
-    public BaseResponse handleException(Exception e) {
+    @ExceptionHandler(Throwable.class)
+    public BaseResponse handleException(Throwable e) {
         logger.error(e.getMessage(), e);
 
+        if (e instanceof MagnetParserException) {
+            e = e.getCause();
+        }
         if (e instanceof SocketTimeoutException || e instanceof UnknownHostException || e instanceof ConnectException) {
             return BaseResponse.error("请求源站超时");
-        }else if (e instanceof MissingServletRequestParameterException) {
+        } else if (e instanceof MissingServletRequestParameterException) {
             return BaseResponse.error("缺少参数");
         }
         return BaseResponse.error(e.getMessage());

@@ -1,36 +1,35 @@
 ﻿[
   {
     "site": "种子搜",
+    "proxy": false,
     "group": "//table[@class='table table-bordered table-striped']",
     "magnet": ".//a//@href",
     "name": ".//tbody//a",
     "size": ".//tbody//tr//td[2]//strong",
     "date": ".//tbody//tr//td[1]//strong",
-    "url": "http://www.zhongzijun.com",
-    "path": "/list/%s/%d",
-    "path_size": "/list_length/%s/%d"
+    "hot": "./tbody/tr[2]/td[3]/strong",
+    "url": "https://www.zhongzilou.com",
+    "paths": {
+      "time": "/list/%s/%d",
+      "size": "/list_length/%s/%d",
+      "hot": "/list_click/%s/%d"
+    }
   },
   {
     "site": "BT兔子",
+    "proxy": false,
     "group": "//div[@class='search-item detail-width']",
     "magnet": ".//div[1]//h3//a//@href",
     "name": ".//div[1]//h3//a",
     "size": ".//div[3]//span[3]//b",
     "date": ".//div[3]//span[2]//b",
+    "hot": "./div[3]/span[4]/b",
     "url": "https://www.btrabbit.win",
-    "path": "/search/%s/default-%d.html",
-    "path_size": "/search/%s/size-%d.html"
-  },
-  {
-    "site": "BT4G",
-    "group": "//div[@class='search-item detail-width']",
-    "magnet": "./div[1]/h3/a/@href",
-    "name": "./div[1]/h3/a",
-    "size": "./div[3]/span[4]/b",
-    "date": "./div[3]/span[2]/b",
-    "url": "https://cn.bt4g.com",
-    "path": "/search/%s/%d",
-    "path_size": "/search/%s/bysize/%d"
+    "paths": {
+      "preset": "/search/%s/default-%d.html",
+      "time": "/search/%s/time-%d.html",
+      "size": "/search/%s/size-%d.html"
+    }
   },
   {
     "site": "BT蚂蚁",
@@ -39,9 +38,107 @@
     "name": "./div[@class='item-title']/a",
     "size": "./div[@class='item-bar']/span[4]/b",
     "date": "./div[@class='item-bar']/span[1]/b",
-    "url": "http://www.btanf.com",
-    "path": "/search/%s-first-asc-%d",
-    "path_size": "/search/%s-size-desc-%d"
+    "hot": "./div[@class='item-bar']/span[2]/b",
+    "url": "http://www.btaot.com",
+    "paths": {
+      "time": "/search/%s-first-asc-%d",
+      "size": "/search/%s-size-desc-%d",
+      "hot": "/search/%s-hot-desc-%d"
+    }
+  },
+  {
+    "site": "BT4G",
+    "proxy": true,
+    "group": "//div[@class='search-item detail-width']",
+    "magnet": "./div[1]/h3/a/@href",
+    "name": "./div[1]/h3/a",
+    "size": "./div[3]/span[4]/b",
+    "date": "./div[3]/span[2]/b",
+    "hot": "./div[3]/span[5]/b",
+    "url": "https://cn.bt4g.com",
+    "paths": {
+      "time": "/search/%s/%d",
+      "size": "/search/%s/bysize/%d",
+      "hot": "/search/%s/byrequests/%d"
+    }
+  },
+  {
+    "site": "SkrBT",
+    "proxy": false,
+    "group": "//li[@class='search-ret-item']",
+    "magnet": "./h2/a/@href",
+    "name": "./h2/a",
+    "size": "./div/span[1]",
+    "date": "./div/span[3]",
+    "hot": "./div/span[4]",
+    "url": "https://www.skrbt.world",
+    "paths": {
+      "time": "/search?keyword=%s&s=relevance&p=%d",
+      "size": "/search?keyword=%s&s=length&p=%d"
+    }
+  },
+  {
+    "site": "Nyaa",
+    "proxy": false,
+    "group": "//div[@class='table-responsive']/table/tbody/tr",
+    "magnet": "./td[3]/a[2]/@href",
+    "name": "./td[2]/a",
+    "size": "./td[4]",
+    "date": "./td[5]",
+    "hot": "./td[8]",
+    "url": "https://nyaa.si",
+    "paths": {
+      "time": "?q=%s&p=%d",
+      "size": "?q=%s&s=size&o=desc",
+      "hot": "?q=%s&s=downloads&o=desc"
+    }
+  },
+  {
+    "site": "CiLiWiKi",
+    "proxy": false,
+    "group": "//*[@id=\"wall\"]/div[2]/div",
+    "magnet": "./div[1]/h3/a/@href",
+    "name": "./div[1]/h3/a",
+    "size": "./div[3]/span[2]/b",
+    "date": "./div[3]/span[5]/b",
+    "hot":"./div[3]/span[4]/b",
+    "url": "https://www.ciliwiki.com",
+    "paths": {
+      "preset": "/search/%s-%d.html",
+      "time": "/search/%s-%d-time.html",
+      "size": "/search/%s-%d-size.html",
+      "hot": "/search/%s-%d-views.html"
+    }
+  },
+  {
+    "site": "BTEXE",
+    "proxy": false,
+    "group": "//div[@class='media-body']",
+    "magnet": "./h4/a/@href",
+    "name": "./h4/a",
+    "size": "./div/span[2]",
+    "date": "./div/span[1]",
+    "hot": "./div/span[3]",
+    "url": "https://www.btexe.la",
+    "paths": {
+      "time": "/search/%s_ctime_%d.html",
+      "size": "/search/%s_length_%d.html",
+      "hot": "/search/%s_click_%d.html"
+    }
+  },
+  {
+    "site": "磁力柠檬",
+    "proxy": false,
+    "group": "//div[@class='panel panel-default border-radius']",
+    "magnet": "./div[1]/h3/a/@href",
+    "name": "./div[1]/h3/a",
+    "size": "./div[3]/h4/small/span[1]",
+    "date": "./div[3]/h4/small/span[3]",
+    "url": "https://lemoncili.com",
+    "paths": {
+      "time": "/search?keyword=%s&s=relevance&p=%d",
+      "size": "/search?keyword=%s&s=length&p=%d"
+    }
   },
   {
     "site": "BT磁力链",
@@ -50,8 +147,27 @@
     "name": "./h3/a",
     "size": "./dl/dt/span[2]",
     "date": "./dl/dt/span[1]",
-    "url": "https://www.bturl.at",
-    "path": "/search/%s_ctime_%d.html",
-    "path_size": "/search/%s_length_%d.html"
+    "hot": "./dl/dt/span[3]",
+    "url": "https://www.bturl.tv",
+    "paths": {
+      "time": "/search/%s_ctime_%d.html",
+      "size": "/search/%s_length_%d.html",
+      "hot": "/search/%s_click_%d.html"
+    }
+  },
+  {
+    "site": "磁力猫",
+    "proxy": false,
+    "group": "//*[@id=\"Search__content_left___2MajJ\"]/div[9]/div",
+    "magnet": "./a/@href",
+    "name": "./a",
+    "size": "./div[1]",
+    "date": "./div[1]",
+    "url": "https://www.cilimao.xyz",
+    "paths": {
+      "time": "/search?word=%s&sortProperties=created_time&page=%d",
+      "size": "/search?word=%s&sortProperties=content_size&page=%d",
+      "hot": "/search?word=%s&sortProperties=download_count&page=%d"
+    }
   }
 ]

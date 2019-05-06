@@ -29,7 +29,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
             sb.append("?");
             sb.append(URLDecoder.decode(queryString));
         }
-        sb.append("\nRequest Headers:\n");
+        sb.append("\n[Request Headers]\n");
         Enumeration<String> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String header = names.nextElement();

@@ -6,7 +6,7 @@ a:hover {
     color: #333;
 }
 
-.visited-a:link{
+.visited-a:link {
     color: #0b618d;
 }
 
@@ -102,11 +102,12 @@ a:link {
     font-size: 14px;
 }
 
-.busuanzi{
+.busuanzi {
     text-align: center;
     font-size: 14px;
     margin-top: 1%;
 }
-#busuanzi_title{
+
+#busuanzi_title {
     font-weight: bold;
 }

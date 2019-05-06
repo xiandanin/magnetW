@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
@@ -29,10 +32,10 @@ import javax.xml.xpath.XPathFactory;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
-import in.xiandan.magnetw.response.MagnetInfo;
-import in.xiandan.magnetw.response.MagnetOption;
+import in.xiandan.magnetw.response.MagnetItem;
+import in.xiandan.magnetw.response.MagnetPageOption;
+import in.xiandan.magnetw.response.MagnetPageSiteSort;
 import in.xiandan.magnetw.response.MagnetRule;
-import in.xiandan.magnetw.response.MagnetSortOption;
 
 /**
  * created 2018/3/6 16:04
@@ -47,45 +50,90 @@ public class MagnetService {
     @Autowired
     private ApplicationConfig config;
 
+    private Map<String, Map<String, String>> mCacheCookies = new HashMap<String, Map<String, String>>();
+
     @CacheEvict(value = "magnetList", allEntries = true)
     public void clearCache() {
         logger.info("列表缓存清空");
     }
 
 
-    public MagnetOption transformCurrentOption(String sourceParam, String keyword,
-                                               String sortParam, Integer pageParam) {
-        //默认参数
-        String source = StringUtils.isEmpty(sourceParam) ? ruleService.getSites().get(0) : sourceParam;
-        String sort = MagnetSortOption.sortValue(sortParam);
-        int page = pageParam == null || pageParam <= 0 ? 1 : pageParam;
-
-        MagnetOption option = new MagnetOption();
-        option.setPage(page);
-        option.setSort(new MagnetSortOption(sort));
-        option.setSite(source);
+    /**
+     * 变换参数
+     *
+     * @param sourceParam
+     * @param keyword
+     * @param sortParam
+     * @param pageParam
+     * @return
+     */
+    public MagnetPageOption transformCurrentOption(String sourceParam, String keyword,
+                                                   String sortParam, Integer pageParam) {
+        MagnetPageOption option = new MagnetPageOption();
         option.setKeyword(keyword);
+        int page = pageParam == null || pageParam <= 0 ? 1 : pageParam;
+        option.setPage(page);
+
+        //如果有这个网站规则 就使用 没有就取第一个
+        MagnetRule source = ruleService.getRuleBySite(sourceParam);
+        option.setSite(source.getSite());
+
+        //如果支持这个排序 不支持就取第一个排序
+        List<MagnetPageSiteSort> supportedSorts = ruleService.getSupportedSorts(source.getPaths());
+        for (MagnetPageSiteSort item : supportedSorts) {
+            if (item.getSort().equals(sortParam)) {
+                option.setSort(item.getSort());
+                break;
+            }
+        }
+        if (StringUtils.isEmpty(option.getSort())) {
+            option.setSort(supportedSorts.get(0).getSort());
+        }
+
         return option;
     }
 
-    @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%s-%d',#rule.url,#rule.path,#keyword,#sort,#page)")
-    public List<MagnetInfo> parser(MagnetRule rule, String keyword, String sort, int page) throws MagnetParserException, IOException {
+    @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%d',#rule.url,#keyword,#sort,#page)")
+    public List<MagnetItem> parser(MagnetRule rule, String keyword, String sort, int page) throws MagnetParserException, IOException {
         //用页码和关键字 拼接源站的url
-        String sortPath = String.format(MagnetSortOption.SORT_OPTION_SIZE.equals(sort) ? rule.getPath_size() : rule.getPath(), keyword, page);
+        String sortPath = String.format(ruleService.getPathBySort(sort, rule.getPaths()), keyword, page);
         String url = String.format("%s%s", rule.getUrl(), sortPath);
 
-        logger.info("正在请求--->" + rule.getSite() + "-->" + url);
-
-        Connection connect = Jsoup.connect(url);
+        Connection connect = Jsoup.connect(url).timeout(15000);
+        Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
+        if (cookies != null) {
+            connect.cookies(cookies);
+        }
         //代理设置
         if (config.proxyEnabled && rule.isProxy()) {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(config.proxyHost, config.proxyPort));
             connect.proxy(proxy);
         }
-        String html = connect.get().body().html();
 
-        List<MagnetInfo> infos = new ArrayList<MagnetInfo>();
+        StringBuffer log = new StringBuffer();
+        log.append("正在请求--->");
+        log.append(rule.getSite());
+        log.append("\n");
+        log.append(url);
+        log.append("\n[Request Headers]\n");
+        Map<String, String> headers = connect.request().headers();
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String header = entry.getKey();
+            log.append(header);
+            log.append(":");
+            log.append(headers.get(header));
+            log.append("\n");
+        }
+        logger.info(log.toString());
+
+        //缓存cookie
+        Connection.Response response = connect.execute();
+        if (response.cookies() != null) {
+            mCacheCookies.put(rule.getUrl(), response.cookies());
+        }
+        String html = response.parse().html();
         try {
+            List<MagnetItem> infos = new ArrayList<MagnetItem>();
             XPath xPath = XPathFactory.newInstance().newXPath();
             TagNode tagNode = new HtmlCleaner().clean(html);
             Document dom = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
@@ -98,7 +146,7 @@ public class MagnetService {
                     if (StringUtils.isEmpty(node.getTextContent().trim())) {
                         continue;
                     }
-                    MagnetInfo info = new MagnetInfo();
+                    MagnetItem info = new MagnetItem();
                     //磁力链
                     Node magnetNote = (Node) xPath.evaluate(rule.getMagnet(), node, XPathConstants.NODE);
                     if (magnetNote != null) {
@@ -106,13 +154,19 @@ public class MagnetService {
                         info.setMagnet(transformMagnet(magnetValue));
                     }
                     //名称
-                    Node nameNote = ((Node) xPath.evaluate(rule.getName(), node, XPathConstants.NODE));
-                    if (nameNote != null) {
+                    NodeList nameNotes = ((NodeList) xPath.evaluate(rule.getName(), node, XPathConstants.NODESET));
+                    if (nameNotes != null && nameNotes.getLength() > 0) {
+                        //少数名称有可能会找到多个 默认取最后一个 比如Nyaa
+                        Node nameNote = nameNotes.item(nameNotes.getLength() - 1);
+
                         String nameValue = nameNote.getTextContent();
                         info.setName(nameValue);
                         info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));//高亮关键字
-                        String nameHref = nameNote.getAttributes().getNamedItem("href").getTextContent();
-                        info.setDetailUrl(transformDetailUrl(rule.getUrl(), nameHref));
+
+                        Node hrefAttr = nameNote.getAttributes().getNamedItem("href");
+                        if (hrefAttr != null) {
+                            info.setDetailUrl(transformDetailUrl(rule.getUrl(), hrefAttr.getTextContent()));
+                        }
 
                         //一些加工的额外信息
                         String resolution = transformResolution(nameValue);
@@ -128,7 +182,14 @@ public class MagnetService {
                     //时间
                     Node countNode = (Node) xPath.evaluate(rule.getDate(), node, XPathConstants.NODE);
                     if (countNode != null) {
-                        info.setCount(countNode.getTextContent());
+                        info.setDate(countNode.getTextContent());
+                    }
+                    //人气/热度
+                    if (!StringUtils.isEmpty(rule.getHot())) {
+                        Node popularityNode = (Node) xPath.evaluate(rule.getHot(), node, XPathConstants.NODE);
+                        if (popularityNode != null) {
+                            info.setHot(popularityNode.getTextContent());
+                        }
                     }
 
                     if (!StringUtils.isEmpty(info.getName())) {
@@ -136,10 +197,10 @@ public class MagnetService {
                     }
                 }
             }
+            return infos;
         } catch (Exception e) {
             throw new MagnetParserException(e);
         }
-        return infos;
     }
 
 
@@ -217,20 +278,25 @@ public class MagnetService {
      * @return
      */
     private long transformSize(String formatSize) {
-        long baseNumber = 0;
-        String newFormatSize = formatSize.toUpperCase().replace(" ", "").replace(" ", "");
-        if (newFormatSize.endsWith("GB")) {
-            baseNumber = 1024 * 1024 * 1024;
-            newFormatSize = newFormatSize.replace("GB", "");
-        } else if (newFormatSize.endsWith("MB")) {
-            baseNumber = 1024 * 1024;
-            newFormatSize = newFormatSize.replace("MB", "");
-        } else if (newFormatSize.endsWith("KB")) {
-            baseNumber = 1024;
-            newFormatSize = newFormatSize.replace("KB", "");
+        try {
+            long baseNumber = 0;
+            if (formatSize.contains("G")) {
+                baseNumber = 1024 * 1024 * 1024;
+            } else if (formatSize.contains("M")) {
+                baseNumber = 1024 * 1024;
+            } else if (formatSize.contains("K")) {
+                baseNumber = 1024;
+            }
+            Matcher matcher = Pattern.compile("(\\d+(\\.\\d+)?)").matcher(formatSize);
+            if (matcher.find()) {
+                String newFormatSize = matcher.group();
+                float size = Float.parseFloat(newFormatSize);
+                return (long) (size * baseNumber);
+            }
+        } catch (NumberFormatException e) {
         }
-        float size = Float.parseFloat(newFormatSize);
-        return (long) (size * baseNumber);
+        return 0L;
     }
+
 
 }

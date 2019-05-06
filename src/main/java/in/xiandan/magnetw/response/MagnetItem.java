@@ -1,38 +1,21 @@
 package in.xiandan.magnetw.response;
 
-/**
- * 规则
- */
-public class MagnetRule {
+import java.io.Serializable;
 
-    private String site;//源站名称
-    private boolean proxy;//是否需要代理
+
+public class MagnetItem implements Serializable{
 
     private String group;
     private String magnet;
     private String name;
-    private String size;
+    private String nameHtml;
+    private String formatSize;
+    private long size;
     private String date;
     private String hot;
+    private String detailUrl;
 
-    private String url;//网站首页url
-    private MagnetRulePath paths;//搜索路径
-
-    public String getSite() {
-        return site;
-    }
-
-    public void setSite(String site) {
-        this.site = site;
-    }
-
-    public boolean isProxy() {
-        return proxy;
-    }
-
-    public void setProxy(boolean proxy) {
-        this.proxy = proxy;
-    }
+    private String resolution;//清晰度
 
     public String getGroup() {
         return group;
@@ -58,11 +41,27 @@ public class MagnetRule {
         this.name = name;
     }
 
-    public String getSize() {
+    public String getNameHtml() {
+        return nameHtml;
+    }
+
+    public void setNameHtml(String nameHtml) {
+        this.nameHtml = nameHtml;
+    }
+
+    public String getFormatSize() {
+        return formatSize;
+    }
+
+    public void setFormatSize(String formatSize) {
+        this.formatSize = formatSize;
+    }
+
+    public long getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(long size) {
         this.size = size;
     }
 
@@ -82,19 +81,19 @@ public class MagnetRule {
         this.hot = hot;
     }
 
-    public String getUrl() {
-        return url;
+    public String getDetailUrl() {
+        return detailUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setDetailUrl(String detailUrl) {
+        this.detailUrl = detailUrl;
     }
 
-    public MagnetRulePath getPaths() {
-        return paths;
+    public String getResolution() {
+        return resolution;
     }
 
-    public void setPaths(MagnetRulePath paths) {
-        this.paths = paths;
+    public void setResolution(String resolution) {
+        this.resolution = resolution;
     }
 }
