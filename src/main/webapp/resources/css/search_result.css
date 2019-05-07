@@ -1,17 +1,11 @@
-a {
+.empty-a {
     color: #333;
 }
-
-a:hover {
+.empty-a:hover{
     color: #333;
 }
-
 .visited-a:link {
     color: #0b618d;
-}
-
-a:link {
-    color: #0e90d2;
 }
 
 .container-margin-top {

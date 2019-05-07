@@ -1,3 +1,9 @@
+## 示例站点
+### [http://bt.xiandan.in](http://bt.xiandan.in)
+
+## 截图
+![](screenshots/5.gif)
+
 ## 2.0特性
 #### 2.0改动巨大，不支持从1.x升级到2.x，旧版请谨慎使用
 >1. 规则文件支持本地文件和网络文件
@@ -7,11 +13,7 @@
 >5. 增加搜索预加载
 >6. 增加管理API
 
-## 示例站点
-### [http://bt.xiandan.in](http://bt.xiandan.in)
 
-## 截图
-![](screenshots/5.gif)
 
 ## 快速搭建
 在[releases](https://github.com/dengyuhan/magnetW/releases)列表下载编译好的war包，发布到Tomcat即可。
