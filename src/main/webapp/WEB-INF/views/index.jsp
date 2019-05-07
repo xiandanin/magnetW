@@ -31,7 +31,7 @@
                 <span style="float: left">
                     <c:choose>
                         <c:when test="${config.versionLink.length()>0}">
-                            <a href="${config.versionLink}">当前版本 v${config.versionName}</a>
+                            <a href="${config.versionLink}" target="_blank">当前版本 v${config.versionName}</a>
                         </c:when>
                         <c:otherwise>
                             <a>当前版本 v${config.versionName}</a>
@@ -255,7 +255,7 @@
                     busuanzi.style.display = "block"
                 }, 400);
             }
-            
+
             window.addEventListener('scroll', this.onScrollTopButtonState);
 
             if (this.current.keyword != null && this.current.keyword.length > 0) {
