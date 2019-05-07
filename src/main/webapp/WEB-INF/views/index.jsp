@@ -249,9 +249,13 @@
             }
         },
         mounted: function () {
-            setTimeout(function () {
-                document.getElementById("busuanzi").style.display = "block"
-            }, 400);
+            var busuanzi = document.getElementById("busuanzi");
+            if (busuanzi != null && busuanzi !== undefined) {
+                setTimeout(function () {
+                    busuanzi.style.display = "block"
+                }, 400);
+            }
+            
             window.addEventListener('scroll', this.onScrollTopButtonState);
 
             if (this.current.keyword != null && this.current.keyword.length > 0) {
