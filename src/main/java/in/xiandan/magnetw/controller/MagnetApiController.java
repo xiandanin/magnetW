@@ -1,6 +1,7 @@
 package in.xiandan.magnetw.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,8 +16,8 @@ import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
 import in.xiandan.magnetw.response.BaseResponse;
 import in.xiandan.magnetw.response.MagnetItem;
-import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetPageData;
+import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetRule;
 import in.xiandan.magnetw.service.MagnetRuleService;
 import in.xiandan.magnetw.service.MagnetService;
@@ -78,7 +79,7 @@ public class MagnetApiController {
      */
     @ResponseBody
     @RequestMapping(value = "source", method = RequestMethod.GET)
-    public BaseResponse<List<MagnetRule>> getSourceSites() throws Exception {
+    public BaseResponse<List<MagnetRule>> source() throws Exception {
         List<MagnetRule> sites = ruleService.getSites();
         return BaseResponse.success(sites, String.format("%d个规则加载成功", sites.size()));
     }
@@ -90,26 +91,30 @@ public class MagnetApiController {
      */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public BaseResponse<MagnetPageData> getSourceSites(@RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
-                                                       @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws MagnetParserException, IOException {
+    public BaseResponse<MagnetPageData> search(@RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
+                                               @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws MagnetParserException, IOException {
         //默认参数
         MagnetPageOption pageOption = magnetService.transformCurrentOption(source, keyword, sort, page);
         MagnetRule rule = ruleService.getRuleBySite(pageOption.getSite());
-        List<MagnetItem> infos = magnetService.parser(rule, keyword, pageOption.getSort(), pageOption.getPage());
+
+        List<MagnetItem> infos = magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage());
 
         MagnetPageData data = new MagnetPageData();
         data.setCurrent(pageOption);
         data.setResults(infos);
 
+        if (config.preloadEnabled) {
+            magnetService.asyncPreloadNextPage(rule, pageOption);
+        }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
     }
 
 
     private BaseResponse runHasPermission(String password, String message, Runnable runnable) {
-        if (StringUtils.isEmpty(config.adminPassword)) {
+        if (StringUtils.isEmpty(config.adminPasswordMD5)) {
             return BaseResponse.error("没有设置管理密码");
         } else {
-            if (config.adminPassword.equals(password)) {
+            if (config.adminPasswordMD5.equals(DigestUtils.md5DigestAsHex(password.getBytes()))) {
                 runnable.run();
                 return BaseResponse.success(null, message);
             } else {
@@ -117,5 +122,6 @@ public class MagnetApiController {
             }
         }
     }
+
 
 }

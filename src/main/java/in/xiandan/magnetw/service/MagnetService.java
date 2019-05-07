@@ -1,5 +1,9 @@
 package in.xiandan.magnetw.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
 import org.apache.log4j.Logger;
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
@@ -10,6 +14,8 @@ import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
@@ -40,6 +46,7 @@ import in.xiandan.magnetw.response.MagnetRule;
 /**
  * created 2018/3/6 16:04
  */
+@EnableAsync
 @Service
 public class MagnetService {
     private Logger logger = Logger.getLogger(getClass());
@@ -59,7 +66,7 @@ public class MagnetService {
 
 
     /**
-     * 变换参数
+     * 修正参数
      *
      * @param sourceParam
      * @param keyword
@@ -95,6 +102,10 @@ public class MagnetService {
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%d',#rule.url,#keyword,#sort,#page)")
     public List<MagnetItem> parser(MagnetRule rule, String keyword, String sort, int page) throws MagnetParserException, IOException {
+        if (StringUtils.isEmpty(keyword)) {
+            return new ArrayList<MagnetItem>();
+        }
+
         //用页码和关键字 拼接源站的url
         String sortPath = String.format(ruleService.getPathBySort(sort, rule.getPaths()), keyword, page);
         String url = String.format("%s%s", rule.getUrl(), sortPath);
@@ -113,6 +124,8 @@ public class MagnetService {
         StringBuffer log = new StringBuffer();
         log.append("正在请求--->");
         log.append(rule.getSite());
+        log.append("--->");
+        log.append(Thread.currentThread().getName());
         log.append("\n");
         log.append(url);
         log.append("\n[Request Headers]\n");
@@ -203,6 +216,33 @@ public class MagnetService {
         }
     }
 
+
+    /**
+     * 异步加载下一页
+     */
+    @Async
+    public void asyncPreloadNextPage(MagnetRule rule, MagnetPageOption current) {
+        try {
+            int page = current.getPage() + 1;
+            String cacheName = "magnetList";
+            if (CacheManager.getInstance().cacheExists(cacheName)) {
+                String key = String.format("%s-%s-%s-%d", rule.getUrl(), current.getKeyword(), current.getSort(), page);
+                Cache cache = CacheManager.getInstance().getCache(cacheName);
+                Element element = cache.get(key);
+                //如果没有缓存 就缓存下一页
+                if (element == null) {
+                    List<MagnetItem> items = this.parser(rule, current.getKeyword(), current.getSort(), page);
+                    cache.put(new Element(key, items));
+
+                    logger.info(String.format("成功预加载 %s-%s-%d，缓存%d条数据", current.getSite(), current.getKeyword(), page, items.size()));
+                }
+            }
+        } catch (MagnetParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private String transformDetailUrl(String url, String magnetValue) {
         return magnetValue.startsWith("http") ? magnetValue : url + magnetValue;

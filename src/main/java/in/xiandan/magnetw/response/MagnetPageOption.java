@@ -10,7 +10,6 @@ public class MagnetPageOption {
     private String keyword;
     private String site;
     private String sort;
-    private int pageCount;
 
     public int getPage() {
         return page;
@@ -42,13 +41,5 @@ public class MagnetPageOption {
 
     public void setSort(String sort) {
         this.sort = sort;
-    }
-
-    public int getPageCount() {
-        return pageCount;
-    }
-
-    public void setPageCount(int pageCount) {
-        this.pageCount = pageCount;
     }
 }

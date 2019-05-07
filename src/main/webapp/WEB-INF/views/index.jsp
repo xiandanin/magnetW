@@ -7,7 +7,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <html>
 <head>
     <title>磁力搜</title>
@@ -94,15 +93,15 @@
                                                     @click="handlePageChanged(current.page-1)"><i
                                                     class="el-icon el-icon-arrow-left"></i></button>
                                             <ul class="el-pager">
-                                                <!--最多只显示3个页码-->
+                                                <!--最多只显示4个页码-->
                                                 <template
-                                                        v-for="n in current.page>3?3:current.page-1">
+                                                        v-for="n in current.page>4?4:current.page-1">
                                                     <li class="number"
                                                         @click="handlePageChanged(n)">{{n}}
                                                     </li>
                                                 </template>
-                                                <template v-if="current.page>3">
-                                                    <li class="el-icon more btn-quickprev el-icon-more"></li>
+                                                <template v-if="current.page>4">
+                                                    <li class="el-icon more btn-quickprev el-icon-more" @click="handlePageChanged(current.page-1)"></li>
                                                 </template>
                                                 <li class="number active">{{current.page}}
                                                 </li>
@@ -152,7 +151,7 @@
                             </el-table-column>
                             <el-table-column
                                     label="发布时间"
-                                    width="120"
+                                    width="130"
                                     prop="date">
                             </el-table-column>
                             <el-table-column
@@ -254,7 +253,10 @@
                 document.getElementById("busuanzi").style.display = "block"
             }, 400);
             window.addEventListener('scroll', this.onScrollTopButtonState);
-            this.requestMagnetList()
+
+            if (this.current.keyword != null && this.current.keyword.length > 0) {
+                this.requestMagnetList()
+            }
         },
         methods: {
             getParamsString() {
@@ -365,7 +367,7 @@
              */
             handeResponse(response, callback) {
                 if (response.body.success) {
-                    console.log(JSON.stringify(response.body.data));
+                    //console.log(JSON.stringify(response.body.data));
                     callback(response.body.data)
                 } else {
                     this.handleError(response)

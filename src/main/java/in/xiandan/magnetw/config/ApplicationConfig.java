@@ -10,8 +10,8 @@ public class ApplicationConfig {
     @Value("${rule.json.uri}")
     public String ruleJsonUri;
 
-    @Value("${admin.password}")
-    public String adminPassword;
+    @Value("${admin.password.md5}")
+    public String adminPasswordMD5;
 
     @Value("${project.version}")
     public String versionName;
@@ -39,6 +39,9 @@ public class ApplicationConfig {
 
     @Value("${busuanzi.show}")
     public boolean busuanziShow;
+
+    @Value("${preload.enabled}")
+    public boolean preloadEnabled;
 
 
     /**
