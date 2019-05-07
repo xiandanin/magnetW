@@ -1,5 +1,7 @@
 package in.xiandan.magnetw.controller;
 
+import com.google.gson.Gson;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,10 +49,11 @@ public class IndexController {
 
         MagnetRule rule = ruleService.getRuleBySite(source);
 
-        model.addAttribute("current", pageOption);
+        Gson gson = new Gson();
+        model.addAttribute("current",  gson.toJson(pageOption));
         model.addAttribute("config", new MagnetPageConfig(config));
-        model.addAttribute("sort_by", ruleService.getSupportedSorts(rule.getPaths()));
-        model.addAttribute("source_sites", ruleService.getSites());
+        model.addAttribute("sort_by", gson.toJson(ruleService.getSupportedSorts(rule.getPaths())));
+        model.addAttribute("source_sites", gson.toJson(ruleService.getSites()));
         return "index";
     }
 

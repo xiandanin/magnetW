@@ -31,7 +31,8 @@
                 <span style="float: left">
                     <c:choose>
                         <c:when test="${config.versionLink.length()>0}">
-                            <a href="${config.versionLink}" target="_blank">当前版本 v${config.versionName}</a>
+                            <a href="${config.versionLink}"
+                               target="_blank">当前版本 v${config.versionName}</a>
                         </c:when>
                         <c:otherwise>
                             <a>当前版本 v${config.versionName}</a>
@@ -58,12 +59,11 @@
                 <div class="search_site">
                     <el-tabs type="card" v-model="current.site"
                              @tab-click="handleTabClick">
-                        <c:forEach var="it" items="${source_sites}">
-                            <el-tab-pane label="${it.site}"
-                                         key="${it.site}"
-                                         name="${it.site}">
-                            </el-tab-pane>
-                        </c:forEach>
+                        <el-tab-pane v-for="it in sourceSites"
+                                     :label="it.site"
+                                     :key="it.site"
+                                     :name="it.site">
+                        </el-tab-pane>
                     </el-tabs>
                 </div>
 
@@ -77,12 +77,11 @@
                                     <el-select v-model="current.sort" placeholder="排序"
                                                size="small"
                                                @change="handleSortChanged">
-                                        <c:forEach var="it" items="${sort_by}">
-                                            <el-option key="${it.sort}"
-                                                       label="${it.sortName}"
-                                                       value="${it.sort}">
-                                            </el-option>
-                                        </c:forEach>
+                                        <el-option v-for="it in sortBy"
+                                                     :label="it.sortName"
+                                                     :key="it.sort"
+                                                     :value="it.sort">
+                                        </el-option>
                                     </el-select>
                                 </el-col>
 
@@ -240,13 +239,10 @@
             searchPlaceholder: "${config.searchPlaceholder}",
             message: null,
             loading: false,
+            sourceSites: ${source_sites},
             list: [],
-            current: {
-                site: "${current.site}",
-                keyword: "${current.keyword}",
-                sort: "${current.sort}",
-                page: ${current.page},
-            }
+            current: ${current},
+            sortBy:${sort_by}
         },
         mounted: function () {
             var busuanzi = document.getElementById("busuanzi");
@@ -332,7 +328,6 @@
                         }, {emulateJSON: true})
                         , function (rsp) {
                             that.list = rsp.results;
-
                             if (that.list.length <= 0) {
                                 that.message = "什么也没搜到"
                             }
