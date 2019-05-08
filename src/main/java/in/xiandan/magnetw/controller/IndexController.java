@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,13 +33,7 @@ public class IndexController {
     MagnetService magnetService;
 
     @RequestMapping(value = {"", "search"}, method = RequestMethod.GET)
-    public String index(Model model) throws Exception {
-        MagnetPageOption pageOption = magnetService.transformCurrentOption(null, null, null, null);
-        return search(model, pageOption.getSite(), null, null, null);
-    }
-
-    @RequestMapping(value = {"search/{source}"}, method = RequestMethod.GET)
-    public String search(Model model, @PathVariable String source, @RequestParam(value = "k", required = false) String keyword,
+    public String search(Model model, @RequestParam(required = false) String source, @RequestParam(value = "k", required = false) String keyword,
                          @RequestParam(value = "s", required = false) String sort, @RequestParam(value = "p", required = false) Integer page) throws Exception {
         //默认参数
         MagnetPageOption pageOption = magnetService.transformCurrentOption(source, keyword, sort, page);
@@ -50,7 +43,7 @@ public class IndexController {
         MagnetRule rule = ruleService.getRuleBySite(source);
 
         Gson gson = new Gson();
-        model.addAttribute("current",  gson.toJson(pageOption));
+        model.addAttribute("current", gson.toJson(pageOption));
         model.addAttribute("config", new MagnetPageConfig(config));
         model.addAttribute("sort_by", gson.toJson(ruleService.getSupportedSorts(rule.getPaths())));
         model.addAttribute("source_sites", gson.toJson(ruleService.getSites()));

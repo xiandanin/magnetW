@@ -19,8 +19,8 @@
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
-    <script src="/resources/js/dist/vue-clipboard.min.js"></script>
-    <link href="/resources/css/search_result.css" rel="stylesheet">
+    <script src="resources/js/dist/vue-clipboard.min.js"></script>
+    <link href="resources/css/search_result.css" rel="stylesheet">
 </head>
 <body>
 <div style="width: 1080px;margin: 2% auto auto auto" id="app">
@@ -78,9 +78,9 @@
                                                size="small"
                                                @change="handleSortChanged">
                                         <el-option v-for="it in sortBy"
-                                                     :label="it.sortName"
-                                                     :key="it.sort"
-                                                     :value="it.sort">
+                                                   :label="it.sortName"
+                                                   :key="it.sort"
+                                                   :value="it.sort">
                                         </el-option>
                                     </el-select>
                                 </el-col>
@@ -100,7 +100,8 @@
                                                     </li>
                                                 </template>
                                                 <template v-if="current.page>4">
-                                                    <li class="el-icon more btn-quickprev el-icon-more" @click="handlePageChanged(current.page-1)"></li>
+                                                    <li class="el-icon more btn-quickprev el-icon-more"
+                                                        @click="handlePageChanged(current.page-1)"></li>
                                                 </template>
                                                 <li class="number active">{{current.page}}
                                                 </li>
@@ -262,27 +263,21 @@
             getParamsString() {
                 let keywordString = "";
                 if (this.current.keyword != null && this.current.keyword.length > 0) {
-                    keywordString = "?k=" + this.current.keyword + "&s=" + this.current.sort + "&p=" + this.current.page;
+                    keywordString = "&k=" + this.current.keyword + "&s=" + this.current.sort + "&p=" + this.current.page;
                 }
-                return keywordString
+                return "?source=" + this.current.site + keywordString;
             },
-            redirectSearch() {
-                let keywordString = "";
-                if (this.current.keyword != null && this.current.keyword.length > 0) {
-                    keywordString = "?k=" + this.current.keyword;
-                }
-                window.location.href = "/search/" + this.current.site + keywordString
+            redirectCurrentURL() {
+                window.location.href = "search" + this.getParamsString()
             },
             /**
              * 刷新地址栏地址
              */
             updateAddress() {
-                let host = window.location.protocol + "//" + window.location.host;
-                let url = host + "/search/" + this.current.site + this.getParamsString();
-                history.replaceState(0, document.title, url);
+                history.replaceState(0, document.title, "search" + this.getParamsString());
             },
             handleTabClick(tab) {
-                this.redirectSearch()
+                this.redirectCurrentURL()
             },
             clickSearch() {
                 this.current.page = 1;
@@ -318,7 +313,7 @@
                     }
 
                     var that = this;
-                    this.request(this.$http.get("/api/search", {
+                    this.request(this.$http.get("api/search", {
                             params: {
                                 source: this.current.site,
                                 keyword: this.current.keyword,
