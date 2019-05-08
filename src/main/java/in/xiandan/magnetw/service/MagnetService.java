@@ -38,6 +38,7 @@ import javax.xml.xpath.XPathFactory;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
+import in.xiandan.magnetw.request.DefaultSslSocketFactory;
 import in.xiandan.magnetw.response.MagnetItem;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetPageSiteSort;
@@ -110,7 +111,9 @@ public class MagnetService {
         String sortPath = String.format(ruleService.getPathBySort(sort, rule.getPaths()), keyword, page);
         String url = String.format("%s%s", rule.getUrl(), sortPath);
 
-        Connection connect = Jsoup.connect(url).timeout(15000);
+        Connection connect = Jsoup.connect(url)
+                .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
+                .timeout(15000);
         Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
         if (cookies != null) {
             connect.cookies(cookies);
