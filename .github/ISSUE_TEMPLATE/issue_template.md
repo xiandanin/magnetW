@@ -1,6 +1,6 @@
 ---
 name: issue_template
-about: 通用模板
+about: 默认/通用
 title: ''
 labels: ''
 assignees: ''
