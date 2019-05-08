@@ -102,7 +102,7 @@
     "name": "./div[1]/h3/a",
     "size": "./div[3]/span[2]/b",
     "date": "./div[3]/span[5]/b",
-    "hot":"./div[3]/span[4]/b",
+    "hot": "./div[3]/span[4]/b",
     "url": "https://www.ciliwiki.com",
     "paths": {
       "preset": "/search/%s-%d.html",

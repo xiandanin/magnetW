@@ -1,7 +1,6 @@
 package in.xiandan.magnetw.response;
 
 /**
- * author  dengyuhan
  * created 2019/5/6 23:18
  */
 public class MagnetRulePath {

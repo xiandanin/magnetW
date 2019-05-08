@@ -44,7 +44,7 @@ public class IndexController {
 
         Gson gson = new Gson();
         model.addAttribute("current", gson.toJson(pageOption));
-        model.addAttribute("config", new MagnetPageConfig(config));
+        model.addAttribute("config", gson.toJson(new MagnetPageConfig(config)));
         model.addAttribute("sort_by", gson.toJson(ruleService.getSupportedSorts(rule.getPaths())));
         model.addAttribute("source_sites", gson.toJson(ruleService.getSites()));
         return "index";

@@ -11,7 +11,8 @@
 >3. 支持多种排序
 >4. 增加流量统计
 >5. 增加搜索预加载
->6. 增加管理API
+>6. 增加数据API
+>7. 增加管理API
 
 
 
@@ -26,6 +27,7 @@
 admin.password.md5=
 
 #规则json文件地址（支持URL和本地路径）本地路径以main/resources为根目录
+#修改规则后 访问重载规则API可热刷新配置
 //rule.json.uri=rule.json
 rule.json.uri=https://raw.githubusercontent.com/dengyuhan/magnetW/master/src/main/resources/rule.json
 
@@ -43,7 +45,7 @@ busuanzi.enabled=false
 busuanzi.show=false
 
 #是否忽略需要代理才能访问的源站
-proxy.ignore=false
+proxy.ignore=true
 ```
 
 ## 规则
@@ -73,7 +75,7 @@ proxy.ignore=false
 #### group
 选中列表其中一个Item，右键元素即可复制这个Item的XPath，示例中选中的是第5个，所以XPath是`//*[@id="wall"]/div[2]/div[5]`，把索引去掉并转义，所以最终是`//*[@id=\"wall\"]/div[2]/div`
 
-<img src="screenshots/1.png" width="700"/>
+![](screenshots/1.png)
 
 控制台用`$x("//*[@id=\"wall\"]/div[2]/div")`测试，打印出列表说明XPath正确
 
@@ -82,14 +84,14 @@ proxy.ignore=false
 #### magnet | name | size | date | hot
 以显示名称为例，选中包含名称的元素，复制出来的XPath是这样`//*[@id="wall"]/div[2]/div[5]/div[1]/h3/a`，因为每个属性都是在group下查找的，所以要把**group的部分去掉**在前面加`.`，**name**的XPath应该是`./div[1]/h3/a`
 
-<img src="screenshots/3.png" width="700"/>
+![](screenshots/3.png)
 
 <img src="screenshots/4.png" width="400"/>
 
 ## 管理API
 可以去[在线MD5](http://tool.chinaz.com/tools/md5.aspx)将密码转成32位小写，然后在`config.properties`中填入MD5，即可访问管理API
 
-<img src="screenshots/6.png" width="400"/>
+<img src="screenshots/6.png" width="700"/>
 
 ```
 admin.password.md5=529ca8050a00180790cf88b63468826a
@@ -107,6 +109,19 @@ admin.password.md5=529ca8050a00180790cf88b63468826a
 
 ```
 /api/clear-cache?p=[管理密码]
+```
+
+## 数据API
+支持返回Json的API，以扩展其它平台
+
+#### 获取源站列表
+```
+api/source
+```
+
+#### 搜索
+```
+api/search?source=[源站名称]&keyword=[关键字]&sort=[排序类型]&page=[页码]
 ```
 
 ## 其它版本

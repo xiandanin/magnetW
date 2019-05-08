@@ -3,7 +3,6 @@ package in.xiandan.magnetw.response;
 import in.xiandan.magnetw.config.ApplicationConfig;
 
 /**
- * author  dengyuhan
  * created 2019/5/6 19:20
  */
 public class MagnetPageConfig {

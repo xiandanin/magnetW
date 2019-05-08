@@ -1,7 +1,6 @@
 package in.xiandan.magnetw.response;
 
 /**
- * author  dengyuhan
  * created 2019/5/5 13:31
  */
 public class MagnetPageOption {

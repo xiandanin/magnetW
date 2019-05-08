@@ -1,6 +1,7 @@
 package in.xiandan.magnetw.handler;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,10 @@ public class GlobalExceptionHandler {
         } else if (e instanceof MissingServletRequestParameterException) {
             return BaseResponse.error("缺少参数");
         }
-        return BaseResponse.error(e.getMessage());
+        if (StringUtils.isEmpty(e.getMessage())){
+            return BaseResponse.error("未知异常");
+        }else{
+            return BaseResponse.error(e.getMessage());
+        }
     }
 }

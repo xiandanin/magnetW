@@ -6,7 +6,6 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page isELIgnored="false" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>磁力搜</title>
@@ -20,24 +19,21 @@
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
-    <link href="resources/css/search_result.css" rel="stylesheet">
+    <link href="resources/css/index.css" rel="stylesheet">
 </head>
 <body>
 <div style="width: 1080px;margin: 2% auto auto auto" id="app">
     <el-container>
         <!--头-->
-        <el-header style="height: 30px">
+        <el-header style="height: 30px;">
             <div style="text-align: right">
                 <span style="float: left">
-                    <c:choose>
-                        <c:when test="${config.versionLink.length()>0}">
-                            <a href="${config.versionLink}"
-                               target="_blank">当前版本 v${config.versionName}</a>
-                        </c:when>
-                        <c:otherwise>
-                            <a>当前版本 v${config.versionName}</a>
-                        </c:otherwise>
-                    </c:choose>
+                 <template v-if="config.versionLink.length>0">
+                     <a :href="config.versionLink" target="_blank">当前版本 v{{config.versionName}}</a>
+                 </template>
+                 <template v-else>
+                     <a class="empty-a" href="/">当前版本 v{{config.versionName}}</a>
+                 </template>
                 </span>
             </div>
         </el-header>
@@ -46,12 +42,13 @@
         <el-main>
             <div>
                 <div id="search-input-container">
-                    <el-input :placeholder="searchPlaceholder" class="input-with-select"
+                    <el-input :placeholder="config.searchPlaceholder"
+                              autocomplete="on"
                               @keyup.enter.native="clickSearch"
                               v-model="current.keyword">
-                        <el-button slot="append" icon="el-icon-search" @click="clickSearch">
-                            搜索
-                        </el-button>
+                        <template slot="append">
+                            <el-button icon="el-icon-search" @click="clickSearch">搜索</el-button>
+                        </template>
                     </el-input>
                 </div>
 
@@ -73,7 +70,6 @@
                         <div style="margin-bottom: 2%">
                             <el-row>
                                 <el-col :span="6">
-                                    <div class="grid-content bg-purple-dark"></div>
                                     <el-select v-model="current.sort" placeholder="排序"
                                                size="small"
                                                @change="handleSortChanged">
@@ -135,21 +131,25 @@
                                 </template>
                             </el-table-column>
                             <el-table-column
+                                    header-align="center"
                                     width="90"
                                     label="清晰度"
                                     prop="resolution">
                             </el-table-column>
                             <el-table-column
+                                    header-align="center"
                                     width="120"
                                     label="大小"
                                     prop="formatSize">
                             </el-table-column>
                             <el-table-column
+                                    header-align="center"
                                     width="100"
                                     label="人气"
                                     prop="hot">
                             </el-table-column>
                             <el-table-column
+                                    header-align="center"
                                     label="发布时间"
                                     width="130"
                                     prop="date">
@@ -206,22 +206,20 @@
 
 
                 <!--不蒜子统计-->
-                <div id="busuanzi" style="display: none">
-                    <c:if test="${config.busuanziEnabled}">
+                <div id="busuanzi" style="display: none;margin-top: 30px">
+                    <div v-if="config.busuanziEnabled">
                         <script async
                                 src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
                         </script>
-                        <c:if test="${config.busuanziShow}">
-                            <div class="busuanzi">
-                                <span id="busuanzi_title">流量统计</span> |
-                                <span id="busuanzi_container_site_pv">
+                        <div class="busuanzi">
+                            <span id="busuanzi_title">流量统计</span> |
+                            <span id="busuanzi_container_site_pv">
     总访问量[<span id="busuanzi_value_site_pv"></span>]
 </span> | <span id="busuanzi_container_site_uv">
   总访客数[<span id="busuanzi_value_site_uv"></span>]
 </span>
-                            </div>
-                        </c:if>
-                    </c:if>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -237,21 +235,16 @@
         el: '#app',
         data: {
             showTopButton: false,
-            searchPlaceholder: "${config.searchPlaceholder}",
             message: null,
             loading: false,
+            config: ${config},
             sourceSites: ${source_sites},
             list: [],
             current: ${current},
             sortBy:${sort_by}
         },
         mounted: function () {
-            var busuanzi = document.getElementById("busuanzi");
-            if (busuanzi != null && busuanzi !== undefined) {
-                setTimeout(function () {
-                    busuanzi.style.display = "block"
-                }, 400);
-            }
+            this.delayLoadBusuanzi();
 
             window.addEventListener('scroll', this.onScrollTopButtonState);
 
@@ -261,11 +254,10 @@
         },
         methods: {
             getParamsString() {
-                let keywordString = "";
+                var keywordString = "";
                 if (this.current.keyword != null && this.current.keyword.length > 0) {
                     keywordString = "&k=" + this.current.keyword + "&s=" + this.current.sort + "&p=" + this.current.page;
                 }
-                return "?source=" + this.current.site + keywordString;
             },
             redirectCurrentURL() {
                 window.location.href = "search" + this.getParamsString()
@@ -282,7 +274,7 @@
             clickSearch() {
                 this.current.page = 1;
                 if (this.current.keyword == null || this.current.keyword === '') {
-                    this.current.keyword = this.searchPlaceholder
+                    this.current.keyword = this.config.searchPlaceholder
                 }
                 this.requestMagnetList(true)
             },
@@ -329,15 +321,28 @@
                         });
                 }
             },
-            onCopy: function (e) {
+            onCopy() {
                 this.$message({
                     message: '复制成功',
                     type: 'success'
                 });
             },
+            /**
+             * 延迟显示不蒜子信息
+             */
+            delayLoadBusuanzi() {
+                if (this.config.busuanziEnabled && this.config.busuanziShow) {
+                    var busuanzi = document.getElementById("busuanzi");
+                    if (busuanzi != null && busuanzi !== undefined) {
+                        setTimeout(function () {
+                            busuanzi.style.display = "block"
+                        }, 400);
+                    }
+                }
+            },
             onScrollTopButtonState() {
-                let viewHeight = document.body.clientHeight;
-                let curHeight = document.body.scrollTop;
+                var viewHeight = document.body.clientHeight;
+                var curHeight = document.body.scrollTop;
                 this.showTopButton = curHeight > viewHeight / 10;
             },
             scrollTop() {
@@ -372,7 +377,11 @@
              */
             handleError(error) {
                 console.log(error);
-                this.message = error.body.message;
+                if (this.list == null || this.list.length <= 0) {
+                    this.message = error.body.message;
+                } else {
+                    this.$message.error(error.body.message);
+                }
             }
         }
     })

@@ -132,13 +132,14 @@ public class MagnetRuleService {
             StringBuffer log = new StringBuffer();
             for (MagnetRule rule : rules) {
                 if (mConfig.proxyIgnore && rule.isProxy()) {
+                    log.append("[忽略]--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
                     continue;
                 }
                 magnetRuleMap.put(rule.getSite(), rule);
                 sites.add(rule);
-                log.append("已加载网站规则--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
+                log.append("[加载]--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
             }
-            log.append(magnetRuleMap.size() + "个网站规则加载成功");
+            log.append(magnetRuleMap.size() + "个网站规则加载完成");
             logger.info(log.toString());
         }
         return magnetRuleMap;
