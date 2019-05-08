@@ -112,7 +112,7 @@ public class MagnetRuleService {
             return rulePaths.getTime();
         } else if (MagnetPageSiteSort.SORT_OPTION_DEFAULT.equals(sortType)) {
             return rulePaths.getPreset();
-        }else{
+        } else {
             return getSupportedSorts(rulePaths).get(0).getSort();
         }
     }
@@ -139,7 +139,10 @@ public class MagnetRuleService {
                 sites.add(rule);
                 log.append("[加载]--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
             }
-            log.append(magnetRuleMap.size() + "个网站规则加载完成");
+            log.append(rules.size());
+            log.append("个网站规则加载完成，忽略");
+            log.append(rules.size() - magnetRuleMap.size());
+            log.append("个");
             logger.info(log.toString());
         }
         return magnetRuleMap;

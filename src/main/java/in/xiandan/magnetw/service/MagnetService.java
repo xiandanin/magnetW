@@ -112,6 +112,7 @@ public class MagnetService {
         String url = String.format("%s%s", rule.getUrl(), sortPath);
 
         Connection connect = Jsoup.connect(url)
+                .ignoreContentType(true)
                 .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
                 .timeout(15000);
         Map<String, String> cookies = mCacheCookies.get(rule.getUrl());

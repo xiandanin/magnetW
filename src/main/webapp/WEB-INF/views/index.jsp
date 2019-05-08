@@ -258,6 +258,7 @@
                 if (this.current.keyword != null && this.current.keyword.length > 0) {
                     keywordString = "&k=" + this.current.keyword + "&s=" + this.current.sort + "&p=" + this.current.page;
                 }
+                return "?source=" + encodeURI(this.current.site + keywordString);
             },
             redirectCurrentURL() {
                 window.location.href = "search" + this.getParamsString()
