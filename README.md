@@ -1,6 +1,7 @@
 ## 示例站点
 ### [http://bt.xiandan.in](http://bt.xiandan.in)
->示例站点服务器的配置极低，所以不太稳定，最好自行搭建
+>示例站点所用图标来自[iconfont](https://www.iconfont.cn)  
+>示例服务器的配置极低，所以不太稳定，最好自行搭建  
 
 ## 截图
 ![](screenshots/5.gif)
