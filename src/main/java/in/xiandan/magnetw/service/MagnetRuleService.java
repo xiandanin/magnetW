@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,12 +37,16 @@ public class MagnetRuleService {
     private Logger logger = Logger.getLogger(getClass());
 
     @Autowired
-    private ApplicationConfig mConfig;
+    private ApplicationConfig config;
+
+    private long lastLoadTime;
 
     private Gson gson = new Gson();
 
     private Map<String, MagnetRule> magnetRuleMap;
     private List<MagnetRule> sites;
+    private List<String> trackers;
+    private String trackersStr;
 
     /**
      * 重新加载规则
@@ -52,6 +58,8 @@ public class MagnetRuleService {
         magnetRuleMap = null;
         sites = null;
         getMagnetRule();
+
+        reloadTrackers();
     }
 
 
@@ -129,15 +137,15 @@ public class MagnetRuleService {
 
             List<MagnetRule> rules = loadMagnetRule();
 
-            StringBuffer log = new StringBuffer();
+            StringBuilder log = new StringBuilder();
             for (MagnetRule rule : rules) {
-                if (mConfig.proxyIgnore && rule.isProxy()) {
-                    log.append("[忽略]--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
+                if (config.proxyIgnore && rule.isProxy()) {
+                    log.append("[忽略]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
                     continue;
                 }
                 magnetRuleMap.put(rule.getSite(), rule);
                 sites.add(rule);
-                log.append("[加载]--->" + rule.getSite() + " : " + rule.getUrl() + "\n");
+                log.append("[加载]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
             }
             log.append(rules.size());
             log.append("个网站规则加载完成，忽略");
@@ -148,8 +156,49 @@ public class MagnetRuleService {
         return magnetRuleMap;
     }
 
+    @Async
+    public void reloadTrackers() {
+        if (config.trackersEnabled) {
+            trackers = loadTrackers();
+            trackersStr = loadTrackersString();
+            lastLoadTime = System.currentTimeMillis();
+        }
+    }
+
+    public boolean isTrackersExpired() {
+        return config.trackersEnabled && System.currentTimeMillis() >= lastLoadTime + config.trackersUpdateIntervalHour * 60 * 60 * 1000;
+    }
+
+    private List<String> loadTrackers() {
+        String url = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt";
+        RestTemplate rest = new RestTemplate();
+        ResponseEntity<String> response = rest.exchange(url, HttpMethod.GET, null, String.class);
+        String body = response.getBody();
+        String[] split = body.split("\n\n");
+
+        logger.info(String.format("加载%d个Tracker服务器", split.length));
+        return Arrays.asList(split);
+    }
+
+    public String getTrackersString() {
+        if (StringUtils.isEmpty(trackersStr)) {
+            trackersStr = loadTrackersString();
+        }
+        return trackersStr;
+    }
+
+    public String loadTrackersString() {
+        StringBuilder sb = new StringBuilder();
+        String name = "&tr=";
+        for (String it : trackers) {
+            sb.append(name);
+            sb.append(it);
+        }
+        return sb.toString();
+    }
+
     private List<MagnetRule> loadMagnetRule() {
-        if (mConfig.isLocalRule()) {
+        if (config.isLocalRule()) {
             return loadResourceMagnetRule();
         } else {
             return requestMagnetRule();
@@ -162,7 +211,7 @@ public class MagnetRuleService {
      * @return
      */
     private List<MagnetRule> loadResourceMagnetRule() {
-        InputStream inputStream = getClass().getResourceAsStream(String.format("/%s", mConfig.ruleJsonUri));
+        InputStream inputStream = getClass().getResourceAsStream(String.format("/%s", config.ruleJsonUri));
         return gson.fromJson(new InputStreamReader(inputStream, Charset.forName("UTF-8")), new TypeToken<List<MagnetRule>>() {
         }.getType());
     }
@@ -174,7 +223,7 @@ public class MagnetRuleService {
      */
     private List<MagnetRule> requestMagnetRule() {
         RestTemplate rest = new RestTemplate();
-        ResponseEntity<String> response = rest.exchange(mConfig.ruleJsonUri, HttpMethod.GET, null, String.class);
+        ResponseEntity<String> response = rest.exchange(config.ruleJsonUri, HttpMethod.GET, null, String.class);
         return gson.fromJson(response.getBody(), new TypeToken<List<MagnetRule>>() {
         }.getType());
     }

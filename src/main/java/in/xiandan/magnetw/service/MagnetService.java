@@ -253,7 +253,8 @@ public class MagnetService {
     }
 
     /**
-     * 磁力链转换 当url不是磁力链时 手动拼接磁力链
+     * 磁力链转换
+     * 检查url是否磁力链，不是的话手动拼接磁力链
      *
      * @param url
      * @return

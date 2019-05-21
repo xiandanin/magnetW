@@ -43,6 +43,12 @@ public class ApplicationConfig {
     @Value("${preload.enabled}")
     public boolean preloadEnabled;
 
+    @Value("${trackers.enabled}")
+    public boolean trackersEnabled;
+
+    @Value("${trackers.update.interval.hour}")
+    public int trackersUpdateIntervalHour;
+
 
     /**
      * 规则json是否本地文件

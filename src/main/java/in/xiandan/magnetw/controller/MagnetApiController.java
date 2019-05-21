@@ -100,10 +100,15 @@ public class MagnetApiController {
         List<MagnetItem> infos = magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage());
 
         MagnetPageData data = new MagnetPageData();
+        data.setTrackersString(ruleService.getTrackersString());
+        //如果过期了就重新异步缓存Tracker服务器列表
+        if (ruleService.isTrackersExpired()) {
+            ruleService.reloadTrackers();
+        }
         data.setCurrent(pageOption);
         data.setResults(infos);
 
-        if (config.preloadEnabled) {
+        if (config.preloadEnabled && infos.size() > 0) {
             magnetService.asyncPreloadNextPage(rule, pageOption);
         }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));

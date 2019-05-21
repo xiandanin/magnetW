@@ -22,7 +22,7 @@
     <link href="resources/css/index.css" rel="stylesheet">
 </head>
 <body>
-<div style="width: 1080px;margin: 2% auto auto auto" id="app">
+<div style="min-width: 1080px;padding: 2% 7%;" id="app">
     <el-container>
         <!--头-->
         <el-header style="height: 30px;">
@@ -144,7 +144,7 @@
                             </el-table-column>
                             <el-table-column
                                     header-align="center"
-                                    width="100"
+                                    width="80"
                                     label="人气"
                                     prop="hot">
                             </el-table-column>
@@ -153,6 +153,21 @@
                                     label="发布时间"
                                     width="130"
                                     prop="date">
+                            </el-table-column>
+                            <el-table-column
+                                    v-if="config.trackersEnabled"
+                                    label="磁力优化"
+                                    align="center"
+                                    width="100">
+                                <template slot-scope="scope">
+                                    <el-tooltip effect="light" content="没有速度时可以试试这个"
+                                                placement="bottom">
+                                        <a :href="scope.row.magnet+trackersString" target="_blank">
+                                            <el-tag type="success" size="small" plain>Trackers
+                                            </el-tag>
+                                        </a>
+                                    </el-tooltip>
+                                </template>
                             </el-table-column>
                             <el-table-column
                                     label="操作"
@@ -240,6 +255,7 @@
             config: ${config},
             sourceSites: ${source_sites},
             list: [],
+            trackersString: null,
             current: ${current},
             sortBy:${sort_by}
         },
@@ -270,6 +286,7 @@
                 history.replaceState(0, document.title, "search" + this.getParamsString());
             },
             handleTabClick(tab) {
+                this.current.page = 1;
                 this.redirectCurrentURL()
             },
             clickSearch() {
@@ -315,6 +332,7 @@
                             }
                         }, {emulateJSON: true})
                         , function (rsp) {
+                            that.trackersString = rsp.trackersString;
                             that.list = rsp.results;
                             if (that.list.length <= 0) {
                                 that.message = "什么也没搜到"

@@ -15,6 +15,7 @@
 >5. 增加搜索预加载
 >6. 增加数据API
 >7. 增加管理API
+>8. 支持Tracker服务器
 
 
 
@@ -39,6 +40,9 @@ search.placeholder=钢铁侠
 version.link=
 #是否开启预加载 开启后会异步缓存下一页
 preload.enabled=true
+
+#是否开启tracker服务器 开启后会在新增一列拼接了tracker服务器列表的磁力链接
+trackers.enabled=true
 
 #不蒜子统计
 #是否开启

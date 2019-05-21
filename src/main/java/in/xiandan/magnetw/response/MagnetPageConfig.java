@@ -11,6 +11,7 @@ public class MagnetPageConfig {
     private String versionLink;
     private boolean busuanziEnabled;
     private boolean busuanziShow;
+    private boolean trackersEnabled;
 
     public MagnetPageConfig(ApplicationConfig config) {
         this.versionName = config.versionName;
@@ -18,6 +19,7 @@ public class MagnetPageConfig {
         this.versionLink = config.versionLink;
         this.busuanziEnabled = config.busuanziEnabled;
         this.busuanziShow = config.busuanziShow;
+        this.trackersEnabled = config.trackersEnabled;
     }
 
     public MagnetPageConfig() {
