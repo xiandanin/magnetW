@@ -43,6 +43,9 @@ preload.enabled=true
 
 #是否开启tracker服务器 开启后会在新增一列拼接了tracker服务器列表的磁力链接
 trackers.enabled=true
+#自动更新tracker列表的间隔时间（单位:小时）
+#列表来自https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt
+trackers.update.interval.hour=24
 
 #不蒜子统计
 #是否开启
