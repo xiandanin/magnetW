@@ -101,3 +101,7 @@
 #busuanzi_title {
     font-weight: bold;
 }
+
+.el-tag:hover{
+    cursor: pointer;
+}

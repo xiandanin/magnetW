@@ -162,10 +162,10 @@
                                 <template slot-scope="scope">
                                     <el-tooltip effect="light" content="没有速度时可以试试这个"
                                                 placement="bottom">
-                                        <a :href="scope.row.magnet+trackersString" target="_blank">
-                                            <el-tag type="success" size="small" plain>Trackers
-                                            </el-tag>
-                                        </a>
+                                        <el-tag type="success" size="small" plain
+                                                v-clipboard:copy="scope.row.magnet+trackersString"
+                                                v-clipboard:success="onCopy">Trackers
+                                        </el-tag>
                                     </el-tooltip>
                                 </template>
                             </el-table-column>
