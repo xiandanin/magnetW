@@ -95,36 +95,32 @@
     }
   },
   {
-    "site": "CiLiWiKi",
+    "site": "磁力天堂",
     "proxy": false,
-    "group": "//*[@id=\"wall\"]/div[2]/div",
-    "magnet": "./div[1]/h3/a/@href",
-    "name": "./div[1]/h3/a",
-    "size": "./div[3]/span[2]/b",
-    "date": "./div[3]/span[5]/b",
-    "hot": "./div[3]/span[4]/b",
-    "url": "https://www.ciliwiki.com",
-    "paths": {
-      "preset": "/search/%s-%d.html",
-      "time": "/search/%s-%d-time.html",
-      "size": "/search/%s-%d-size.html",
-      "hot": "/search/%s-%d-views.html"
-    }
-  },
-  {
-    "site": "BTEXE",
-    "proxy": false,
-    "group": "//div[@class='media-body']",
-    "magnet": "./h4/a/@href",
-    "name": "./h4/a",
-    "size": "./div/span[2]",
-    "date": "./div/span[1]",
-    "hot": "./div/span[3]",
-    "url": "https://www.btexe.la",
+    "group": "//div[@class='col-md-8']//div[@class='panel panel-default']",
+    "magnet": ".//a//@href",
+    "name": ".//a",
+    "size": ".//table//tr//td[2]",
+    "date": ".//table//tr//td[1]",
+    "hot": "./div/table/tbody/tr/td[3]/span/b",
+    "url": "http://www.cilisky.com",
     "paths": {
       "time": "/search/%s_ctime_%d.html",
       "size": "/search/%s_length_%d.html",
       "hot": "/search/%s_click_%d.html"
+    }
+  },
+  {
+    "site": "MAG磁力站",
+    "proxy": false,
+    "group": "//ul[@class='link-list']",
+    "magnet": "./li/@data-magnet",
+    "name": "./li/span[1]",
+    "size": "./li/span[2]/span[1]",
+    "date": "./li/span[2]/span[2]",
+    "url": "http://oabt005.com",
+    "paths": {
+      "preset": "/index/index/k/%s/p/%d"
     }
   },
   {
@@ -142,21 +138,6 @@
     }
   },
   {
-    "site": "BT磁力链",
-    "group": "//li",
-    "magnet": "./h3/a/@href",
-    "name": "./h3/a",
-    "size": "./dl/dt/span[2]",
-    "date": "./dl/dt/span[1]",
-    "hot": "./dl/dt/span[3]",
-    "url": "https://www.bturl.tv",
-    "paths": {
-      "time": "/search/%s_ctime_%d.html",
-      "size": "/search/%s_length_%d.html",
-      "hot": "/search/%s_click_%d.html"
-    }
-  },
-  {
     "site": "磁力猫",
     "proxy": false,
     "group": "//*[@id=\"Search__content_left___2MajJ\"]/div[9]/div",
@@ -169,6 +150,21 @@
       "time": "/search?word=%s&sortProperties=created_time&page=%d",
       "size": "/search?word=%s&sortProperties=content_size&page=%d",
       "hot": "/search?word=%s&sortProperties=download_count&page=%d"
+    }
+  },
+  {
+    "site": "BT磁力链",
+    "group": "//li",
+    "magnet": "./h3/a/@href",
+    "name": "./h3/a",
+    "size": "./dl/dt/span[2]",
+    "date": "./dl/dt/span[1]",
+    "hot": "./dl/dt/span[3]",
+    "url": "https://www.bturl.tv",
+    "paths": {
+      "time": "/search/%s_ctime_%d.html",
+      "size": "/search/%s_length_%d.html",
+      "hot": "/search/%s_click_%d.html"
     }
   }
 ]
