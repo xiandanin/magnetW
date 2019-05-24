@@ -1,10 +1,12 @@
 package in.xiandan.magnetw.controller;
 
-import com.google.gson.JsonArray;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,9 +28,17 @@ public class MacApiController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "rule", method = {RequestMethod.GET, RequestMethod.POST})
-    public JsonArray mac() throws Exception {
-        return macService.java2Mac();
+    @RequestMapping(value = "rule", method = {RequestMethod.GET, RequestMethod.POST}, produces = "application/json; charset=utf-8")
+    public String mac(@RequestParam(value = "f", required = false) Boolean format) throws Exception {
+        if (format == null) {
+            //默认格式化
+            format = true;
+        }
+        if (format) {
+            return new GsonBuilder().setPrettyPrinting().create().toJson(macService.java2Mac());
+        } else {
+            return new Gson().toJson(macService.java2Mac());
+        }
     }
 
 }
