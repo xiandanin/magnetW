@@ -19,6 +19,7 @@ import in.xiandan.magnetw.response.MagnetItem;
 import in.xiandan.magnetw.response.MagnetPageData;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetRule;
+import in.xiandan.magnetw.service.MacService;
 import in.xiandan.magnetw.service.MagnetRuleService;
 import in.xiandan.magnetw.service.MagnetService;
 
@@ -36,6 +37,7 @@ public class MagnetApiController {
 
     @Autowired
     MagnetService magnetService;
+
 
     /**
      * 重载配置
@@ -113,7 +115,6 @@ public class MagnetApiController {
         }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
     }
-
 
     private BaseResponse runHasPermission(String password, String message, Runnable runnable) {
         if (StringUtils.isEmpty(config.adminPasswordMD5)) {
