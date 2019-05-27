@@ -11,14 +11,16 @@
         diskExpiryThreadIntervalSeconds="120"
         memoryStoreEvictionPolicy="LRU"/>
 
-    <!-- 配置名为users的缓存区 -->
+    <!-- 配置名为magnetList的缓存区 -->
     <cache name="magnetList"
         maxElementsInMemory="10000"
         eternal="false"
         overflowToDisk="false"
-        diskPersistent="false"
-        timeToIdleSeconds="3600"
-        timeToLiveSeconds="86400" />
+        diskSpoolBufferSizeMB="300"
+        diskPersistent="true"
+        diskExpiryThreadIntervalSeconds="600"
+        timeToIdleSeconds="86400"
+        timeToLiveSeconds="259200" />
 </ehcache>
 
     <!--
@@ -33,7 +35,7 @@
     timeToIdleSeconds====缓存数据在失效前的允许闲置时间(单位:秒),仅当eternal=false时使用,默认值是0表示可闲置时间无穷大,此为可选属性
                          即访问这个cache中元素的最大间隔时间,若超过这个时间没有访问此Cache中的某个元素,那么此元素将被从Cache中清除
     timeToLiveSeconds====缓存数据在失效前的允许存活时间(单位:秒),仅当eternal=false时使用,默认值是0表示可存活时间无穷大
-                         即Cache中的某元素从创建到清楚的生存时间,也就是说从创建开始计时,当超过这个时间时,此元素将从Cache中清除
+                         即Cache中的某元素从创建到清除的生存时间,也就是说从创建开始计时,当超过这个时间时,此元素将从Cache中清除
     overflowToDisk=======内存不足时,是否启用磁盘缓存(即内存中对象数量达到maxElementsInMemory时,Ehcache会将对象写到磁盘中)
                          会根据标签中path值查找对应的属性值,写入磁盘的文件会放在path文件夹下,文件的名称是cache的名称,后缀名是data
     diskPersistent=======是否持久化磁盘缓存,当这个属性的值为true时,系统在初始化时会在磁盘中查找文件名为cache名称,后缀名为index的文件

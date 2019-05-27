@@ -126,15 +126,18 @@
                                     min-width="150"
                                     label="名称">
                                 <template slot-scope="scope">
+                                    <template
+                                            v-if="scope.row.resolution!=null&&scope.row.resolution.length>0">
+                                        <el-tag v-if="scope.row.resolution.indexOf('720')>=0||scope.row.resolution.indexOf('1080')>=0" disable-transitions
+                                                size="mini">{{scope.row.resolution}}
+                                        </el-tag>
+                                        <el-tag v-else-if="scope.row.resolution.indexOf('2')==0||scope.row.resolution.indexOf('4')==0" disable-transitions
+                                                type="success" size="mini">{{scope.row.resolution}}
+                                        </el-tag>
+                                    </template>
                                     <a :href="scope.row.magnet" @click="handleClickMagnet"
                                        v-html="scope.row.nameHtml"></a>
                                 </template>
-                            </el-table-column>
-                            <el-table-column
-                                    header-align="center"
-                                    width="90"
-                                    label="清晰度"
-                                    prop="resolution">
                             </el-table-column>
                             <el-table-column
                                     header-align="center"
