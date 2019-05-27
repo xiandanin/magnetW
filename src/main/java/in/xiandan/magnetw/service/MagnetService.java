@@ -178,7 +178,14 @@ public class MagnetService {
 
                         String nameValue = nameNote.getTextContent();
                         info.setName(nameValue);
-                        info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));//高亮关键字
+                        //兼容大小写
+                        int keywordIndex = nameValue.toLowerCase().indexOf(keyword.toLowerCase());
+                        if (keywordIndex >= 0) {
+                            StringBuilder buffer = new StringBuilder(nameValue);
+                            buffer.insert(keywordIndex + keyword.length(),"</span>");
+                            buffer.insert(keywordIndex,"<span style=\"color:#ff7a76\">");
+                            info.setNameHtml(buffer.toString());//高亮关键字
+                        }
 
                         Node hrefAttr = nameNote.getAttributes().getNamedItem("href");
                         if (hrefAttr != null) {
@@ -297,18 +304,19 @@ public class MagnetService {
      * @return
      */
     private String transformResolution(String name) {
+        String lowerName = name.toLowerCase();
         String regex4k = ".*(2160|4k).*";
         String regex720 = ".*(1280|720p|720P).*";
         String regex1080 = ".*(1920|1080p|1080P).*";
-        boolean matches720 = Pattern.matches(regex720, name);
+        boolean matches720 = Pattern.matches(regex720, lowerName);
         if (matches720) {
             return "720P";
         }
-        boolean matches1080 = Pattern.matches(regex1080, name);
+        boolean matches1080 = Pattern.matches(regex1080, lowerName);
         if (matches1080) {
             return "1080P";
         }
-        boolean matches4k = Pattern.matches(regex4k, name);
+        boolean matches4k = Pattern.matches(regex4k, lowerName);
         if (matches4k) {
             return "4K";
         }
