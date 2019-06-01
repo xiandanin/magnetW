@@ -1,6 +1,8 @@
 ## 示例站点
 [http://bt.xiandan.in](http://bt.xiandan.in)
 
+__示例站点现在被墙了，需要梯子才能访问__
+
 示例站点所用图标来自[iconfont](https://www.iconfont.cn)  
 示例服务器的配置极低，所以不太稳定，最好自行搭建  
 
