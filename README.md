@@ -29,8 +29,5 @@ __示例站点现在被墙了，需要梯子才能访问__
 ## 快速搭建
 在[releases](https://github.com/dengyuhan/magnetW/releases)列表下载编译好的war包，发布到Tomcat即可。
 
-## 赞赏
-<img src="screenshots/zanshang.jpg" width="200"/>
-
 ## 其它说明
 自定义配置和规则可以看[Config.md](Config.md)
