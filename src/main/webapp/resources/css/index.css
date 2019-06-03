@@ -105,3 +105,13 @@
 .el-tag:hover{
     cursor: pointer;
 }
+.el-tab-small .el-tabs__item{
+    padding-left: 15px;
+    padding-right: 15px;
+    line-height: 35px;
+    height: 35px;
+    font-size: 13px;
+}
+.el-table__row{
+    font-size: 15px;
+}

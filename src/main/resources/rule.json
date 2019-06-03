@@ -16,24 +16,8 @@
     }
   },
   {
-    "site": "BT兔子",
-    "proxy": false,
-    "group": "//div[@class='search-item detail-width']",
-    "magnet": ".//div[1]//h3//a//@href",
-    "name": ".//div[1]//h3//a",
-    "size": ".//div[3]//span[3]//b",
-    "date": ".//div[3]//span[2]//b",
-    "hot": "./div[3]/span[4]/b",
-    "url": "https://www.btrabbit.win",
-    "paths": {
-      "preset": "/search/%s/default-%d.html",
-      "time": "/search/%s/time-%d.html",
-      "size": "/search/%s/size-%d.html"
-    }
-  },
-  {
     "site": "BT蚂蚁",
-    "proxy": false,
+    "proxy": true,
     "group": "//div[@id='wall']/div[@class='search-item']",
     "magnet": "./div[@class='item-title']/a/@href",
     "name": "./div[@class='item-title']/a",
@@ -64,22 +48,7 @@
     }
   },
   {
-    "site": "SkrBT",
-    "proxy": false,
-    "group": "//li[@class='search-ret-item']",
-    "magnet": "./h2/a/@href",
-    "name": "./h2/a",
-    "size": "./div/span[1]",
-    "date": "./div/span[3]",
-    "hot": "./div/span[4]",
-    "url": "https://www.skrbt.world",
-    "paths": {
-      "time": "/search?keyword=%s&s=relevance&p=%d",
-      "size": "/search?keyword=%s&s=length&p=%d"
-    }
-  },
-  {
-    "site": "Nyaa",
+    "site": "Nyaa（动漫）",
     "proxy": false,
     "group": "//div[@class='table-responsive']/table/tbody/tr",
     "magnet": "./td[3]/a[2]/@href",
@@ -95,32 +64,93 @@
     }
   },
   {
-    "site": "磁力天堂",
-    "proxy": false,
-    "group": "//div[@class='col-md-8']//div[@class='panel panel-default']",
-    "magnet": ".//a//@href",
-    "name": ".//a",
-    "size": ".//table//tr//td[2]",
-    "date": ".//table//tr//td[1]",
-    "hot": "./div/table/tbody/tr/td[3]/span/b",
-    "url": "http://www.cilisky.com",
+    "site": "Sukebei Nyaa",
+    "proxy": true,
+    "group": "//div[@class='table-responsive']/table/tbody/tr",
+    "magnet": "./td[3]/a[2]/@href",
+    "name": "./td[2]/a",
+    "size": "./td[4]",
+    "date": "./td[5]",
+    "hot": "./td[8]",
+    "url": "https://sukebei.nyaa.si",
     "paths": {
-      "time": "/search/%s_ctime_%d.html",
-      "size": "/search/%s_length_%d.html",
-      "hot": "/search/%s_click_%d.html"
+      "time": "?q=%s&p=%d",
+      "size": "?q=%s&s=size&o=desc",
+      "hot": "?q=%s&s=downloads&o=desc"
     }
   },
   {
-    "site": "MAG磁力站",
-    "proxy": false,
-    "group": "//ul[@class='link-list']",
-    "magnet": "./li/@data-magnet",
-    "name": "./li/span[1]",
-    "size": "./li/span[2]/span[1]",
-    "date": "./li/span[2]/span[2]",
-    "url": "http://oabt005.com",
+    "site": "BTSOW",
+    "proxy": true,
+    "group": "//div[@class='row']",
+    "magnet": "./a/@href",
+    "name": "./a",
+    "size": "./div[1]",
+    "date": "./div[1]",
+    "url": "https://btsow.pw",
     "paths": {
-      "preset": "/index/index/k/%s/p/%d"
+      "preset": "/search/%s/page/%d"
+    }
+  },
+  {
+    "site": "Torrentz2",
+    "proxy": false,
+    "group": "//div[@class=\"results\"]/dl",
+    "magnet": "./dt/a/@href",
+    "name": "./dt/a",
+    "size": "./dd/span[3]",
+    "date": "./dd/span[2]",
+    "hot": "./dd/span[5]",
+    "url": "https://www.torrentz2.eu",
+    "paths": {
+      "preset": "/search?f=%s&p=%d",
+      "time": "/searchA?f=%s&p=%d",
+      "size": "/searchS?f=%s&p=%d"
+    }
+  },
+  {
+    "site": "idope",
+    "proxy": true,
+    "group": "//div[@class=\"resultdiv\"]",
+    "magnet": "./div[1]/a/@href",
+    "name": "./div[1]/a/div",
+    "size": "./div[2]/div[3]/div[2]",
+    "date": "./div[2]/div[2]/div[2]",
+    "url": "https://idope.se",
+    "paths": {
+      "preset": "/torrent-list/%s/?p=%d",
+      "size": "/torrent-list/%s/?p=%d&o=-2"
+    }
+  },
+  {
+    "site": "BTbook",
+    "proxy": false,
+    "group": "//div[@class='cili-item']",
+    "magnet": "./div[1]/h3/a/@href",
+    "name": "./div[1]/h3/a",
+    "size": "./div[3]/span[3]/b",
+    "date": "./div[3]/span[2]/b/b",
+    "hot": "./div[3]/span[4]/b",
+    "url": "https://btbookk.net",
+    "paths": {
+      "time": "/sou/%s/time-%d.html",
+      "size": "/sou/%s/size-%d.html",
+      "hot": "/sou/%s/default-%d.html"
+    }
+  },
+  {
+    "site": "SkrBT",
+    "proxy": false,
+    "group": "//li[@class='search-ret-item']",
+    "magnet": "./h2/a/@href",
+    "name": "./h2/a",
+    "size": "./div/span[1]",
+    "date": "./div/span[3]",
+    "hot": "./div/span[4]",
+    "url": "https://www.skrbt.world",
+    "paths": {
+      "time": "/search?keyword=%s&s=relevance&p=%d",
+      "size": "/search?keyword=%s&s=length&p=%d"
     }
   },
   {
@@ -138,21 +168,6 @@
     }
   },
   {
-    "site": "磁力猫",
-    "proxy": false,
-    "group": "//*[@id=\"Search__content_left___2MajJ\"]/div[9]/div",
-    "magnet": "./a/@href",
-    "name": "./a",
-    "size": "./div[1]",
-    "date": "./div[1]",
-    "url": "https://www.cilimao.xyz",
-    "paths": {
-      "time": "/search?word=%s&sortProperties=created_time&page=%d",
-      "size": "/search?word=%s&sortProperties=content_size&page=%d",
-      "hot": "/search?word=%s&sortProperties=download_count&page=%d"
-    }
-  },
-  {
     "site": "BT磁力链",
     "group": "//li",
     "magnet": "./h3/a/@href",
@@ -165,6 +180,19 @@
       "time": "/search/%s_ctime_%d.html",
       "size": "/search/%s_length_%d.html",
       "hot": "/search/%s_click_%d.html"
+    }
+  },
+  {
+    "site": "MAG磁力站",
+    "proxy": false,
+    "group": "//ul[@class='link-list']",
+    "magnet": "./li/@data-magnet",
+    "name": "./li/span[1]",
+    "size": "./li/span[2]/span[1]",
+    "date": "./li/span[2]/span[2]",
+    "url": "http://oabt005.com",
+    "paths": {
+      "preset": "/index/index/k/%s/p/%d"
     }
   }
 ]

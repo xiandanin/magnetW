@@ -54,7 +54,16 @@
 
                 <!--源站列表-->
                 <div class="search_site">
-                    <el-tabs type="card" v-model="current.site"
+                    <!--少于11个就用正常尺寸-->
+                    <el-tabs v-if="sourceSites.length<=11" type="card" v-model="current.site"
+                             @tab-click="handleTabClick">
+                        <el-tab-pane v-for="it in sourceSites"
+                                     :label="it.site"
+                                     :key="it.site"
+                                     :name="it.site">
+                        </el-tab-pane>
+                    </el-tabs>
+                    <el-tabs v-else type="card" v-model="current.site" class="el-tab-small"
                              @tab-click="handleTabClick">
                         <el-tab-pane v-for="it in sourceSites"
                                      :label="it.site"
@@ -119,7 +128,7 @@
                                 border
                                 style="width: 100%">
                             <el-table-column
-                                    width="60"
+                                    width="50"
                                     type="index">
                             </el-table-column>
                             <el-table-column
@@ -152,9 +161,9 @@
                                     prop="hot">
                             </el-table-column>
                             <el-table-column
-                                    header-align="center"
+                                    align="center"
                                     label="发布时间"
-                                    width="130"
+                                    width="170"
                                     prop="date">
                             </el-table-column>
                             <el-table-column
@@ -163,7 +172,7 @@
                                     align="center"
                                     width="100">
                                 <template slot-scope="scope">
-                                    <el-tooltip effect="light" content="没有速度时可以试试这个"
+                                    <el-tooltip effect="light" content="速度慢的可以试试这个"
                                                 placement="bottom">
                                         <el-tag type="success" size="small" plain
                                                 v-clipboard:copy="scope.row.magnet+trackersString"

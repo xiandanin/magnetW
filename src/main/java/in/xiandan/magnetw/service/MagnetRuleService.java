@@ -148,7 +148,9 @@ public class MagnetRuleService {
                 log.append("[加载]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
             }
             log.append(rules.size());
-            log.append("个网站规则加载完成，忽略");
+            log.append("个网站规则加载完成，其中启用");
+            log.append(magnetRuleMap.size());
+            log.append("个，忽略");
             log.append(rules.size() - magnetRuleMap.size());
             log.append("个");
             logger.info(log.toString());

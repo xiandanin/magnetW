@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -58,7 +57,7 @@ public class MagnetService {
     @Autowired
     private ApplicationConfig config;
 
-    private Map<String, Map<String, String>> mCacheCookies = new HashMap<String, Map<String, String>>();
+    //private Map<String, Map<String, String>> mCacheCookies = new HashMap<String, Map<String, String>>();
 
     @CacheEvict(value = "magnetList", allEntries = true)
     public void clearCache() {
@@ -114,11 +113,11 @@ public class MagnetService {
         Connection connect = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
-                .timeout(15000);
-        Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
+                .timeout(10000);
+        /*Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
         if (cookies != null) {
             connect.cookies(cookies);
-        }
+        }*/
         //代理设置
         if (config.proxyEnabled && rule.isProxy()) {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(config.proxyHost, config.proxyPort));
@@ -145,9 +144,9 @@ public class MagnetService {
 
         //缓存cookie
         Connection.Response response = connect.execute();
-        if (response.cookies() != null) {
+        /*if (response.cookies() != null) {
             mCacheCookies.put(rule.getUrl(), response.cookies());
-        }
+        }*/
         String html = response.parse().html();
         try {
             List<MagnetItem> infos = new ArrayList<MagnetItem>();
@@ -178,13 +177,15 @@ public class MagnetService {
 
                         String nameValue = nameNote.getTextContent();
                         info.setName(nameValue);
-                        //兼容大小写
+                        //高亮关键字 兼容大小写
                         int keywordIndex = nameValue.toLowerCase().indexOf(keyword.toLowerCase());
                         if (keywordIndex >= 0) {
                             StringBuilder buffer = new StringBuilder(nameValue);
                             buffer.insert(keywordIndex + keyword.length(),"</span>");
                             buffer.insert(keywordIndex,"<span style=\"color:#ff7a76\">");
-                            info.setNameHtml(buffer.toString());//高亮关键字
+                            info.setNameHtml(buffer.toString());
+                        }else{
+                            info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));
                         }
 
                         Node hrefAttr = nameNote.getAttributes().getNamedItem("href");
