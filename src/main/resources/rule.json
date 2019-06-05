@@ -86,7 +86,7 @@
     "magnet": "./a/@href",
     "name": "./a/div[1]",
     "size": "./div[1]",
-    "date": "./div[1]",
+    "date": "./div[2]",
     "url": "https://btsow.pw",
     "paths": {
       "preset": "/search/%s/page/%d"
