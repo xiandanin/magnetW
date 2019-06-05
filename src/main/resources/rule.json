@@ -84,7 +84,7 @@
     "proxy": true,
     "group": "//div[@class='row']",
     "magnet": "./a/@href",
-    "name": "./a",
+    "name": "./a/div[1]",
     "size": "./div[1]",
     "date": "./div[1]",
     "url": "https://btsow.pw",
