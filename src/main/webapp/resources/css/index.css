@@ -78,6 +78,13 @@
     padding-top: 250px;
 }
 
+.date-normal{
+    width: 100px;
+}
+.date-big{
+    width: 180px;
+}
+
 .loadmore-loading {
     text-align: center;
     background-color: #f0f0f0;

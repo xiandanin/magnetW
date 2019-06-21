@@ -7,7 +7,9 @@ __示例站点访问速度较慢，并且很不稳定，最好自行搭建__
 ## 快速搭建
 在[Releases](https://github.com/dengyuhan/magnetW/releases)下载编译好的`war`包，发布到`Tomcat`即可。
 
->Windows提供了一键启动版，下载[magnetw-windows-2.x.x.zip](https://github.com/dengyuhan/magnetW/releases) 解压即可用
+>部分平台提供了一键启动版  
+>Windows：下载[magnetw-windows-2.x.x.zip](https://github.com/dengyuhan/magnetW/releases)，解压即可用  
+>Mac：下载[magnetw-mac-2.x.x.zip](https://github.com/dengyuhan/magnetW/releases)，解压即可用
 
 ## 截图
 ![](screenshots/5.gif)

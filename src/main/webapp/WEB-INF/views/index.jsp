@@ -137,10 +137,12 @@
                                 <template slot-scope="scope">
                                     <template
                                             v-if="scope.row.resolution!=null&&scope.row.resolution.length>0">
-                                        <el-tag v-if="scope.row.resolution.indexOf('720')>=0||scope.row.resolution.indexOf('1080')>=0" disable-transitions
+                                        <el-tag v-if="scope.row.resolution.indexOf('720')>=0||scope.row.resolution.indexOf('1080')>=0"
+                                                disable-transitions
                                                 size="mini">{{scope.row.resolution}}
                                         </el-tag>
-                                        <el-tag v-else-if="scope.row.resolution.indexOf('2')==0||scope.row.resolution.indexOf('4')==0" disable-transitions
+                                        <el-tag v-else-if="scope.row.resolution.indexOf('2')==0||scope.row.resolution.indexOf('4')==0"
+                                                disable-transitions
                                                 type="success" size="mini">{{scope.row.resolution}}
                                         </el-tag>
                                     </template>
@@ -156,15 +158,15 @@
                             </el-table-column>
                             <el-table-column
                                     header-align="center"
-                                    width="80"
+                                    width="70"
                                     label="人气"
                                     prop="hot">
                             </el-table-column>
                             <el-table-column
+                                    width="120"
+                                    prop="date"
                                     align="center"
-                                    label="发布时间"
-                                    width="170"
-                                    prop="date">
+                                    label="发布时间">
                             </el-table-column>
                             <el-table-column
                                     v-if="config.trackersEnabled"
@@ -174,10 +176,10 @@
                                 <template slot-scope="scope">
                                     <el-tooltip effect="light" content="速度慢的可以试试这个"
                                                 placement="bottom">
-                                        <el-tag type="success" size="small" plain
-                                                v-clipboard:copy="scope.row.magnet+trackersString"
-                                                v-clipboard:success="onCopy">Trackers
-                                        </el-tag>
+                                        <el-button type="success" size="mini" plain
+                                                   v-clipboard:copy="scope.row.magnet+trackersString"
+                                                   v-clipboard:success="onCopy">复制
+                                        </el-button>
                                     </el-tooltip>
                                 </template>
                             </el-table-column>

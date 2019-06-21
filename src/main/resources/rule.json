@@ -161,25 +161,25 @@
     "name": "./div[1]/h3/a",
     "size": "./div[3]/h4/small/span[1]",
     "date": "./div[3]/h4/small/span[3]",
-    "url": "https://lemoncili.com",
+    "url": "https://lemencili1.xyz",
     "paths": {
       "time": "/search?keyword=%s&s=relevance&p=%d",
       "size": "/search?keyword=%s&s=length&p=%d"
     }
   },
   {
-    "site": "BT磁力链",
-    "group": "//li",
+    "site": "卧槽搜搜",
+    "group": "//td[@class='x-item']",
     "magnet": "./h3/a/@href",
     "name": "./h3/a",
-    "size": "./dl/dt/span[2]",
-    "date": "./dl/dt/span[1]",
-    "hot": "./dl/dt/span[3]",
-    "url": "https://www.bturl.tv",
+    "size": "./span[4]/b",
+    "date": "./span[2]/b",
+    "hot": "./span[3]/b",
+    "url": "http://www.wcs444.com",
     "paths": {
-      "time": "/search/%s_ctime_%d.html",
-      "size": "/search/%s_length_%d.html",
-      "hot": "/search/%s_click_%d.html"
+      "time": "/s/%s-first-asc-%d",
+      "size": "/s/%s-size-desc-%d",
+      "hot": "/s/%s-hot-desc-%d"
     }
   },
   {
