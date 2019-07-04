@@ -17,7 +17,7 @@ __示例站点访问速度较慢，并且很不稳定，最好自行搭建__
 ## 其它版本
 > Mac版：[magnetX](https://github.com/youusername/magnetX)
 > 
-> 小程序：  
+> 小程序：[magnetw-mini](https://github.com/dengyuhan/magnetw-mini)  
 > <img src="screenshots/mini.jpg" width="150"/>
 
 ## 2.0特性
@@ -33,3 +33,6 @@ __示例站点访问速度较慢，并且很不稳定，最好自行搭建__
 
 ## 其它说明
 自定义配置和规则可以看[Config.md](Config.md)
+
+### 注意事项
+涉及到本项目的文章或文档，请务必注明原项目出处
