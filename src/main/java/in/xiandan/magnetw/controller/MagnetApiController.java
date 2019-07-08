@@ -1,8 +1,6 @@
 package in.xiandan.magnetw.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,14 +12,15 @@ import java.util.List;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
+import in.xiandan.magnetw.handler.PermissionHandler;
 import in.xiandan.magnetw.response.BaseResponse;
 import in.xiandan.magnetw.response.MagnetItem;
 import in.xiandan.magnetw.response.MagnetPageData;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetRule;
-import in.xiandan.magnetw.service.MacService;
 import in.xiandan.magnetw.service.MagnetRuleService;
 import in.xiandan.magnetw.service.MagnetService;
+import in.xiandan.magnetw.service.PermissionService;
 
 /**
  * created 2019/05/05 12:04
@@ -31,6 +30,9 @@ import in.xiandan.magnetw.service.MagnetService;
 public class MagnetApiController {
     @Autowired
     ApplicationConfig config;
+
+    @Autowired
+    PermissionService permissionService;
 
     @Autowired
     MagnetRuleService ruleService;
@@ -48,10 +50,11 @@ public class MagnetApiController {
     @ResponseBody
     @RequestMapping(value = "reload", method = RequestMethod.GET)
     public BaseResponse reload(@RequestParam(value = "p") String password) throws Exception {
-        return runHasPermission(password, "规则重载成功", new Runnable() {
+        return permissionService.runAsPermission(password, "规则重载成功", new PermissionHandler<Void>() {
             @Override
-            public void run() {
+            public Void onPermissionGranted() {
                 ruleService.reload();
+                return null;
             }
         });
     }
@@ -65,10 +68,11 @@ public class MagnetApiController {
     @ResponseBody
     @RequestMapping(value = "clear-cache", method = RequestMethod.GET)
     public BaseResponse clearCache(@RequestParam(value = "p") String password) throws Exception {
-        return runHasPermission(password, "缓存清除成功", new Runnable() {
+        return permissionService.runAsPermission(password, "缓存清除成功", new PermissionHandler<Void>() {
             @Override
-            public void run() {
+            public Void onPermissionGranted() {
                 magnetService.clearCache();
+                return null;
             }
         });
     }
@@ -114,19 +118,6 @@ public class MagnetApiController {
             magnetService.asyncPreloadNextPage(rule, pageOption);
         }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
-    }
-
-    private BaseResponse runHasPermission(String password, String message, Runnable runnable) {
-        if (StringUtils.isEmpty(config.adminPasswordMD5)) {
-            return BaseResponse.error("没有设置管理密码");
-        } else {
-            if (config.adminPasswordMD5.equals(DigestUtils.md5DigestAsHex(password.getBytes()))) {
-                runnable.run();
-                return BaseResponse.success(null, message);
-            } else {
-                return BaseResponse.error("没有权限");
-            }
-        }
     }
 
 

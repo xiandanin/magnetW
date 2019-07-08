@@ -1,8 +1,8 @@
 ## 示例站点
-[http://bt.xiandan.in](http://bt.xiandan.in)
+[https://bt.xiandan.in](https://bt.xiandan.in)
 
 示例站点所用图标来自[iconfont](https://www.iconfont.cn)  
-__示例站点访问速度较慢，并且很不稳定，最好自行搭建__  
+__示例站点访问速度较慢，并且很不稳定，建议自行搭建__  
 
 ## 快速搭建
 在[Releases](https://github.com/dengyuhan/magnetW/releases)下载编译好的`war`包，发布到`Tomcat`即可。
