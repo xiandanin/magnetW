@@ -19,7 +19,7 @@ public class PermissionService {
             return BaseResponse.error("没有设置管理密码");
         } else {
             if (config.adminPasswordMD5.equals(DigestUtils.md5DigestAsHex(password.getBytes()))) {
-                return BaseResponse.success(handler.onPermissionGranted(), message);
+                return BaseResponse.success(handler == null ? null : handler.onPermissionGranted(), message);
             } else {
                 return BaseResponse.error("没有权限");
             }

@@ -22,7 +22,7 @@
     <link href="resources/css/index.css" rel="stylesheet">
 </head>
 <body>
-<div style="min-width: 1080px;padding: 2% 7%;" id="app">
+<div v-cloak style="min-width: 1080px;padding: 2% 7%;" id="app">
     <el-container>
         <!--头-->
         <el-header style="height: 30px;">
@@ -75,7 +75,7 @@
 
                 <!--列表-->
                 <div v-loading="loading" id="table-container">
-                    <div v-cloak v-show="list != null&&list.length>0">
+                    <div v-show="list != null&&list.length>0">
                         <div style="margin-bottom: 2%">
                             <el-row>
                                 <el-col :span="6">
@@ -227,7 +227,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="message" v-cloak
+                    <div id="message"
                          v-show="(list == null||list.length<=0)&&message!=null&&message.length>0">
                         <h2 style="font-weight: lighter">{{message}}</h2>
                     </div>
@@ -254,7 +254,7 @@
 
         </el-main>
     </el-container>
-    <div id="page-component-up" @click="scrollTop" v-cloak v-show="showTopButton"><i
+    <div id="page-component-up" @click="scrollTop" v-show="showTopButton"><i
             class="el-icon-caret-top"></i></div>
 </div>
 </body>
