@@ -12,7 +12,8 @@ __示例站点访问速度较慢，并且很不稳定，建议自行搭建__
 >Mac：下载[magnetw-mac-2.x.x.zip](https://github.com/dengyuhan/magnetW/releases)，解压即可用
 
 ## 截图
-![](screenshots/5.gif)
+<img src="screenshots/5.gif" height="320"/>
+<img src="screenshots/9.gif" height ="320"/>
 
 ## 其它版本
 > Mac版：[magnetX](https://github.com/youusername/magnetX)
