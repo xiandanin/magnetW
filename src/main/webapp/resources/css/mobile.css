@@ -28,6 +28,10 @@ a {
     color: #0b618d;
 }
 
+form{
+    margin: 0px;
+}
+
 .search-action {
     padding-left: 10px;
     padding-right: 10px;

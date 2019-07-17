@@ -38,11 +38,14 @@
                                :options="sortBy">
             </van-dropdown-item>
         </van-dropdown-menu>
-        <van-search class="search-header" :placeholder="config.searchPlaceholder" clearable
-                    v-model="current.keyword"
-                    show-action>
-            <div slot="action" class="search-action" @click="clickSearch">搜索</div>
-        </van-search>
+        <form action="/" class="search-header" >
+            <van-search :placeholder="config.searchPlaceholder" clearable
+                        v-model="current.keyword"
+                        @search="clickSearch"
+                        show-action>
+                <div slot="action" class="search-action" @click="clickSearch">搜索</div>
+            </van-search>
+        </form>
     </div>
     <div>
         <van-tabs v-model="current.site" color="409EFF" @click="handleTabClick">
