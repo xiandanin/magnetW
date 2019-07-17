@@ -36,3 +36,7 @@ __示例站点访问速度较慢，并且很不稳定，建议自行搭建__
 
 ### 注意事项
 涉及到本项目的文章或文档，请务必注明原项目出处
+
+## 相关项目
+[jsoup](https://github.com/jhy/jsoup)  
+[HtmlCleaner](https://mvnrepository.com/artifact/net.sourceforge.htmlcleaner/htmlcleaner)
