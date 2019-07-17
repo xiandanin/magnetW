@@ -1,9 +1,25 @@
+a {
+    color: #0e90d2;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+[v-cloak] {
+    display: none;
+}
+
 .empty-a {
     color: #333;
 }
-.empty-a:hover{
+
+.empty-a:hover {
     color: #333;
 }
+
+.el-tabs__item {
+    font-weight: normal;
+}
+
 .visited-a:link {
     color: #0b618d;
 }
@@ -18,10 +34,6 @@
 
 .no-padding {
     padding: 0px;
-}
-
-[v-cloak] {
-    display: none;
 }
 
 .search_site {
@@ -78,10 +90,11 @@
     padding-top: 250px;
 }
 
-.date-normal{
+.date-normal {
     width: 100px;
 }
-.date-big{
+
+.date-big {
     width: 180px;
 }
 
@@ -109,16 +122,18 @@
     font-weight: bold;
 }
 
-.el-tag:hover{
+.el-tag:hover {
     cursor: pointer;
 }
-.el-tab-small .el-tabs__item{
+
+.el-tab-small .el-tabs__item {
     padding-left: 15px;
     padding-right: 15px;
     line-height: 35px;
     height: 35px;
     font-size: 13px;
 }
-.el-table__row{
+
+.el-table__row {
     font-size: 15px;
 }

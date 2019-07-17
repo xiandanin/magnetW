@@ -17,8 +17,7 @@ __示例站点访问速度较慢，并且很不稳定，建议自行搭建__
 ## 其它版本
 > Mac版：[magnetX](https://github.com/youusername/magnetX)
 > 
-> 小程序：[magnetw-mini](https://github.com/dengyuhan/magnetw-mini)  
-> <img src="screenshots/mini.jpg" width="150"/>
+> 小程序：[magnetw-mini](https://github.com/dengyuhan/magnetw-mini)
 
 ## 2.0特性
 #### 2.0改动巨大，不支持从1.x升级到2.x，旧版请谨慎使用

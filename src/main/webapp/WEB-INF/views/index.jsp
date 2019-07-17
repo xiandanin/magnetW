@@ -146,7 +146,11 @@
                                                 type="success" size="mini">{{scope.row.resolution}}
                                         </el-tag>
                                     </template>
-                                    <a :href="scope.row.magnet" @click="handleClickMagnet"
+                                    <a v-if="status.clicks.indexOf(scope.row.magnet)!=-1" class="visited-a"
+                                       :href="scope.row.magnet"
+                                       v-html="scope.row.nameHtml"></a>
+                                    <a v-else :href="scope.row.magnet"
+                                       @click="handleClickMagnet(scope.row.magnet)"
                                        v-html="scope.row.nameHtml"></a>
                                 </template>
                             </el-table-column>
@@ -178,7 +182,7 @@
                                                 placement="bottom">
                                         <el-button type="success" size="mini" plain
                                                    v-clipboard:copy="scope.row.magnet+trackersString"
-                                                   v-clipboard:success="onCopy">复制
+                                                   v-clipboard:success="handleCopy">复制
                                         </el-button>
                                     </el-tooltip>
                                 </template>
@@ -191,7 +195,7 @@
                                     <el-button size="mini"
                                                type="button"
                                                v-clipboard:copy="scope.row.magnet"
-                                               v-clipboard:success="onCopy">复制
+                                               v-clipboard:success="handleCopy">复制
                                     </el-button>
                                     <a :href="scope.row.detailUrl" target="_blank">
                                         <el-button size="mini"
@@ -259,164 +263,56 @@
 </div>
 </body>
 <script>
-    Vue.http.options.timeout = 20000;
-    new Vue({
-        el: '#app',
-        data: {
-            showTopButton: false,
-            message: null,
-            loading: false,
-            config: ${config},
-            sourceSites: ${source_sites},
-            list: [],
-            trackersString: null,
-            current: ${current},
-            sortBy:${sort_by}
-        },
-        mounted: function () {
-            this.delayLoadBusuanzi();
+    function onVueCreated(vue) {
+        vue._data.config = ${config};
+        vue._data.sourceSites = ${source_sites};
+        vue._data.current = ${current};
+        vue._data.sortBy = ${sort_by};
 
-            window.addEventListener('scroll', this.onScrollTopButtonState);
-
-            if (this.current.keyword != null && this.current.keyword.length > 0) {
-                this.requestMagnetList()
+        vue.handlePageChanged = function (page) {
+            if (page <= 0) {
+                return
             }
-        },
-        methods: {
-            getParamsString() {
-                var keywordString = "";
-                if (this.current.keyword != null && this.current.keyword.length > 0) {
-                    keywordString = "&k=" + this.current.keyword + "&s=" + this.current.sort + "&p=" + this.current.page;
-                }
-                return "?source=" + encodeURI(this.current.site + keywordString);
-            },
-            redirectCurrentURL() {
-                window.location.href = "search" + this.getParamsString()
-            },
-            /**
-             * 刷新地址栏地址
-             */
-            updateAddress() {
-                history.replaceState(0, document.title, "search" + this.getParamsString());
-            },
-            handleTabClick(tab) {
-                this.current.page = 1;
-                this.redirectCurrentURL()
-            },
-            clickSearch() {
-                this.current.page = 1;
-                if (this.current.keyword == null || this.current.keyword === '') {
-                    this.current.keyword = this.config.searchPlaceholder
-                }
-                this.requestMagnetList(true)
-            },
-            handlePageChanged(page) {
-                if (page <= 0) {
-                    return
-                }
-                this.current.page = page;
-                this.requestMagnetList(true)
-            },
-            handleSortChanged(sort) {
-                this.current.sort = sort;
-                this.requestMagnetList(true)
-            },
-            handleClickMagnet(a) {
-                a.target.className = "visited-a"
-            },
-            /**
-             * 请求列表
-             * @param updateAddr 是否刷新地址栏
-             */
-            requestMagnetList(updateAddr) {
-                if (this.current.keyword != null && this.current.keyword.length > 0) {
+            this.current.page = page;
+            this.requestMagnetList(true)
+        };
 
-                    //修改地址栏参数
-                    if (updateAddr) {
-                        this.updateAddress()
-                    }
+        /************重写的回调************/
 
-                    var that = this;
-                    this.request(this.$http.get("api/search", {
-                            params: {
-                                source: this.current.site,
-                                keyword: this.current.keyword,
-                                page: this.current.page,
-                                sort: this.current.sort
-                            }
-                        }, {emulateJSON: true})
-                        , function (rsp) {
-                            that.trackersString = rsp.trackersString;
-                            that.list = rsp.results;
-                            if (that.list.length <= 0) {
-                                that.message = "什么也没搜到"
-                            }
-                        });
-                }
-            },
-            onCopy() {
-                this.$message({
-                    message: '复制成功',
-                    type: 'success'
+
+        /**
+         * 弹出消息提示
+         * @param message
+         * @param type
+         */
+        vue.onToastMessage = function (message, type) {
+            vue.$message({
+                message: message,
+                type: type
+            });
+        };
+
+        //请求失败的回调
+        vue.onRequestError = function (message) {
+            if (vue._data.list == null || vue._data.list.length <= 0) {
+                vue._data.message = message;
+            } else {
+                vue.$message({
+                    message: message,
+                    type: "error"
                 });
-            },
-            /**
-             * 延迟显示不蒜子信息
-             */
-            delayLoadBusuanzi() {
-                if (this.config.busuanziEnabled && this.config.busuanziShow) {
-                    var busuanzi = document.getElementById("busuanzi");
-                    if (busuanzi != null && busuanzi !== undefined) {
-                        setTimeout(function () {
-                            busuanzi.style.display = "block"
-                        }, 400);
-                    }
-                }
-            },
-            onScrollTopButtonState() {
-                var viewHeight = document.body.clientHeight;
-                var curHeight = document.body.scrollTop;
-                this.showTopButton = curHeight > viewHeight / 10;
-            },
-            scrollTop() {
-                document.body.scrollTop = 0;
-            },
-            /**
-             * 成功处理
-             */
-            request(http, success) {
-                this.loading = true;
-                http.then(function (response) {
-                    this.loading = false;
-                    this.handeResponse(response, success)
-                }).catch(function (error) {
-                    this.loading = false;
-                    this.handleError(error)
-                });
-            },
-            /**
-             * 成功处理
-             */
-            handeResponse(response, callback) {
-                if (response.body.success) {
-                    //console.log(JSON.stringify(response.body.data));
-                    callback(response.body.data)
-                } else {
-                    this.handleError(response)
-                }
-            },
-            /**
-             * 异常处理
-             */
-            handleError(error) {
-                console.log(error);
-                if (this.list == null || this.list.length <= 0) {
-                    this.message = error.body.message;
-                } else {
-                    this.$message.error(error.body.message);
-                }
             }
-        }
-    })
+        };
+
+        //请求成功的回调
+        vue.onRequestSuccess = function (data) {
+            if (data.results.length > 0) {
+                vue._data.list = data.results;
+            } else {
+                vue._data.message = "什么也没搜到"
+            }
+        };
+    }
 </script>
+<script src="resources/js/index.js"></script>
 </html>
