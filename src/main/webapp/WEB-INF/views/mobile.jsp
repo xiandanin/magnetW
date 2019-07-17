@@ -103,10 +103,10 @@
                                             v-clipboard:success="handleCopy" plain
                                             size="mini">优化链接
                                 </van-button>
-
-                                <a :href="it.detailUrl" target="_blank">
-                                    <van-button plain size="mini">详情</van-button>
-                                </a>
+                                <van-button v-clipboard:copy="it.magnet"
+                                            v-clipboard:success="handleCopy" plain
+                                            size="mini">复制
+                                </van-button>
                             </div>
                         </div>
                     </div>
