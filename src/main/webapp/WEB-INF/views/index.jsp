@@ -146,7 +146,8 @@
                                                 type="success" size="mini">{{scope.row.resolution}}
                                         </el-tag>
                                     </template>
-                                    <a v-if="status.clicks.indexOf(scope.row.magnet)!=-1" class="visited-a"
+                                    <a v-if="status.clicks.indexOf(scope.row.magnet)!=-1"
+                                       class="visited-a"
                                        :href="scope.row.magnet"
                                        v-html="scope.row.nameHtml"></a>
                                     <a v-else :href="scope.row.magnet"
@@ -176,7 +177,7 @@
                                     v-if="config.trackersEnabled"
                                     label="磁力优化"
                                     align="center"
-                                    width="100">
+                                    width="90">
                                 <template slot-scope="scope">
                                     <el-tooltip effect="light" content="速度慢的可以试试这个"
                                                 placement="bottom">
@@ -190,16 +191,18 @@
                             <el-table-column
                                     label="操作"
                                     align="center"
-                                    width="200">
+                                    width="140">
                                 <template slot-scope="scope">
                                     <el-button size="mini"
                                                type="button"
                                                v-clipboard:copy="scope.row.magnet"
                                                v-clipboard:success="handleCopy">复制
                                     </el-button>
-                                    <el-button size="mini"
-                                               @click="clickDetail(scope.row.detailUrl)"
-                                               type="button">详情
+                                    <el-button
+                                            v-if="scope.row.detailUrl!=null&&scope.row.detailUrl.length>0"
+                                            size="mini"
+                                            @click="clickDetail(scope.row.detailUrl)"
+                                            type="button">详情
                                     </el-button>
                                 </template>
                             </el-table-column>
