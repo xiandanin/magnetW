@@ -137,6 +137,9 @@ new Vue({
                 this.onRequestError(error.body.message)
             });
         },
+        clickDetail(url) {
+            window.open(url)
+        },
         /**
          * 请求开始前的回调
          */

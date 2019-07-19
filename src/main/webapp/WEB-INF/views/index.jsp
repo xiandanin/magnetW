@@ -190,18 +190,17 @@
                             <el-table-column
                                     label="操作"
                                     align="center"
-                                    width="160">
+                                    width="200">
                                 <template slot-scope="scope">
                                     <el-button size="mini"
                                                type="button"
                                                v-clipboard:copy="scope.row.magnet"
                                                v-clipboard:success="handleCopy">复制
                                     </el-button>
-                                    <a :href="scope.row.detailUrl" target="_blank">
-                                        <el-button size="mini"
-                                                   type="button">详情
-                                        </el-button>
-                                    </a>
+                                    <el-button size="mini"
+                                               @click="clickDetail(scope.row.detailUrl)"
+                                               type="button">详情
+                                    </el-button>
                                 </template>
                             </el-table-column>
                         </el-table>

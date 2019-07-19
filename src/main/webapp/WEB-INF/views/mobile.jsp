@@ -100,7 +100,7 @@
                             <span class="result-item-label van-ellipsis">{{it.date}}</span>
                         </div>
 
-                        <div style="text-align: right">
+                        <div class="action-container">
                             <div>
                                 <van-button v-clipboard:copy="it.magnet+trackersString"
                                             v-clipboard:success="handleCopy" plain

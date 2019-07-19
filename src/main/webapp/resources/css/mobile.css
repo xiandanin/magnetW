@@ -28,6 +28,14 @@ a {
     color: #0b618d;
 }
 
+.action-container{
+    text-align: right;
+}
+
+.action-container .van-button{
+    font-size: 13px;
+}
+
 form{
     margin: 0px;
 }
@@ -53,6 +61,7 @@ form{
 
 .result-item-date-container {
     display: flex;
+    margin-top: 6px;
     flex-direction: row
 }
 
