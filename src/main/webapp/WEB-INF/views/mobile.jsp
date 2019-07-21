@@ -17,6 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vant@2.0/lib/vant.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
+    <script src="resources/js/dist/base64.min.js"></script>
     <link href="resources/css/mobile.css" rel="stylesheet">
 </head>
 <body>
@@ -38,7 +39,7 @@
                                :options="sortBy">
             </van-dropdown-item>
         </van-dropdown-menu>
-        <form action="/" class="search-header" >
+        <form action="/" class="search-header">
             <van-search :placeholder="config.searchPlaceholder" clearable
                         v-model="current.keyword"
                         @search="clickSearch"
@@ -101,16 +102,13 @@
                         </div>
 
                         <div class="action-container">
-                            <div>
-                                <van-button v-clipboard:copy="it.magnet+trackersString"
-                                            v-clipboard:success="handleCopy" plain
-                                            size="mini">优化链接
-                                </van-button>
-                                <van-button v-clipboard:copy="it.magnet"
-                                            v-clipboard:success="handleCopy" plain
-                                            size="mini">复制
-                                </van-button>
-                            </div>
+                            <van-button v-clipboard:copy="it.magnet"
+                                        v-clipboard:success="handleCopy" plain
+                                        size="mini">复制
+                            </van-button>
+                            <van-button @click="clickMoreAction(it)" plain
+                                        size="mini">更多
+                            </van-button>
                         </div>
                     </div>
                 </van-cell>
@@ -119,6 +117,21 @@
     </div>
     <div class="scroll-top-button" v-show="showTopButton">
         <van-icon @click="scrollTop" class="scroll-top-icon" name="arrow-up"/>
+    </div>
+
+    <van-popup id="action" v-model="status.popup.show" round>
+        <div class="popup-title">更多操作</div>
+        <van-cell-group>
+            <van-cell title="磁力优化" @click="clickCopyAction"></van-cell>
+            <van-cell title="小米路由" @click="clickMiWiFiAction"></van-cell>
+            <van-cell title="源站详情" @click="clickDetailAction"></van-cell>
+        </van-cell-group>
+    </van-popup>
+
+    <div v-if="config.busuanziEnabled">
+        <script async
+                src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+        </script>
     </div>
 </div>
 </body>
@@ -136,9 +149,18 @@
         }
         vue._data.sortBy = sortBy;
 
+        //van-list需要的数据
         Vue.set(vue._data.status, 'vanlist', {
             finished: false,
             errorText: "加载失败",
+        });
+
+        //van-popup需要的数据
+        Vue.set(vue._data.status, 'popup', {
+            show: false,
+            url: null,
+            detail: null,
+            miwifi: null
         });
 
         vue.getCurrentSortName = function () {
@@ -148,6 +170,42 @@
                 }
             }
             return sortBy[0].text;
+        };
+
+        /**
+         * 更多操作
+         */
+        vue.clickMoreAction = function (item) {
+            vue._data.status.popup.url = this.formatTrackersUrl(item.magnet);
+            vue._data.status.popup.detail = item.detailUrl;
+            vue._data.status.popup.miwifi = this.formatMiWifiUrl(item.magnet);
+            vue._data.status.popup.show = true;
+        };
+
+        /**
+         * 复制
+         */
+        vue.clickCopyAction = function () {
+            vue._data.status.popup.show = false;
+            vue.$copyText(vue._data.status.popup.url).then(function (e) {
+                vue.handleCopy()
+            });
+        };
+
+        /**
+         * 详情
+         */
+        vue.clickDetailAction = function () {
+            vue._data.status.popup.show = false;
+            window.open(vue._data.status.popup.detail);
+        };
+
+        /**
+         * miwifi
+         */
+        vue.clickMiWiFiAction = function () {
+            vue._data.status.popup.show = false;
+            window.open(vue._data.status.popup.miwifi);
         };
 
 

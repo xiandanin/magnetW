@@ -141,7 +141,19 @@ a {
 .el-table__row {
     font-size: 15px;
 }
+
 .button-more {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.more-action-title {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.more-action-button {
     text-align: center;
     margin-top: 10px;
     margin-bottom: 10px;

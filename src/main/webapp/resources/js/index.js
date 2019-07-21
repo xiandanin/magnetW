@@ -137,8 +137,11 @@ new Vue({
                 this.onRequestError(error.body.message)
             });
         },
+        formatTrackersUrl(url) {
+            return url + this.trackersString;
+        },
         formatMiWifiUrl(url) {
-            return "http://d.miwifi.com/d2r/?url="+Base64.encodeURI(url);
+            return "http://d.miwifi.com/d2r/?url=" + Base64.encodeURI(url);
         },
         /**
          * 请求开始前的回调

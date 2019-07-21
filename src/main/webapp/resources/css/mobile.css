@@ -129,3 +129,14 @@ form{
     flex: 1;
     display: flex;
 }
+
+#action{
+    min-width: 260px;
+}
+
+.popup-title{
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 18px;
+    color: #777;
+}

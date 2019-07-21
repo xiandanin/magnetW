@@ -172,7 +172,7 @@ public class MagnetRuleService {
     }
 
     private List<String> loadTrackers() {
-        String url = "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt";
+        String url = config.trackersUrl;
         RestTemplate rest = new RestTemplate();
         ResponseEntity<String> response = rest.exchange(url, HttpMethod.GET, null, String.class);
         String body = response.getBody();

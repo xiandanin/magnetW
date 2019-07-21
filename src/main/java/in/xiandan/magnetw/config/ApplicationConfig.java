@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource(value = "classpath:config.properties",encoding = "UTF-8")
+@PropertySource(value = "classpath:config.properties", encoding = "UTF-8")
 public class ApplicationConfig {
     @Value("${rule.json.uri}")
     public String ruleJsonUri;
@@ -45,6 +45,9 @@ public class ApplicationConfig {
 
     @Value("${trackers.enabled}")
     public boolean trackersEnabled;
+
+    @Value("${trackers.update.url}")
+    public String trackersUrl;
 
     @Value("${trackers.update.interval.hour}")
     public int trackersUpdateIntervalHour;
