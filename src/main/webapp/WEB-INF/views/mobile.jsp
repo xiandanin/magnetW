@@ -127,13 +127,14 @@
             <van-cell title="源站详情" @click="clickDetailAction"></van-cell>
         </van-cell-group>
     </van-popup>
-
-    <div v-if="config.busuanziEnabled">
-        <script async
-                src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
-        </script>
-    </div>
 </div>
+
+<div v-if="config.busuanziEnabled">
+    <script async
+            src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
+    </script>
+</div>
+
 </body>
 <script>
     function onVueCreated(vue) {

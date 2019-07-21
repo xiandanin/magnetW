@@ -186,7 +186,7 @@
                                     </el-button>
                                     <el-popover
                                             placement="right-start"
-                                            trigger="click">
+                                            trigger="hover">
                                         <h3 class="more-action-title">更多操作</h3>
                                         <div class="more-action-button">
                                             <el-tooltip v-if="config.trackersEnabled" effect="light"
