@@ -137,8 +137,8 @@ new Vue({
                 this.onRequestError(error.body.message)
             });
         },
-        clickDetail(url) {
-            window.open(url)
+        formatMiWifiUrl(url) {
+            return "http://d.miwifi.com/d2r/?url="+Base64.encodeURI(url);
         },
         /**
          * 请求开始前的回调

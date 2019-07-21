@@ -19,6 +19,7 @@
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
+    <script src="resources/js/dist/base64.min.js"></script>
     <link href="resources/css/index.css" rel="stylesheet">
 </head>
 <body>
@@ -174,21 +175,6 @@
                                     label="发布时间">
                             </el-table-column>
                             <el-table-column
-                                    v-if="config.trackersEnabled"
-                                    label="磁力优化"
-                                    align="center"
-                                    width="90">
-                                <template slot-scope="scope">
-                                    <el-tooltip effect="light" content="速度慢的可以试试这个"
-                                                placement="bottom">
-                                        <el-button type="success" size="mini" plain
-                                                   v-clipboard:copy="scope.row.magnet+trackersString"
-                                                   v-clipboard:success="handleCopy">复制
-                                        </el-button>
-                                    </el-tooltip>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
                                     label="操作"
                                     align="center"
                                     width="140">
@@ -198,12 +184,36 @@
                                                v-clipboard:copy="scope.row.magnet"
                                                v-clipboard:success="handleCopy">复制
                                     </el-button>
-                                    <el-button
-                                            v-if="scope.row.detailUrl!=null&&scope.row.detailUrl.length>0"
-                                            size="mini"
-                                            @click="clickDetail(scope.row.detailUrl)"
-                                            type="button">详情
-                                    </el-button>
+                                    <el-popover
+                                            placement="right-start"
+                                            trigger="hover">
+                                        <div class="button-more">
+                                            <el-tooltip v-if="config.trackersEnabled" effect="light"
+                                                        content="速度慢可以试试这个"
+                                                        placement="top">
+                                                <el-button type="button" size="mini" plain
+                                                           v-clipboard:copy="scope.row.magnet+trackersString"
+                                                           v-clipboard:success="handleCopy">磁力优化
+                                                </el-button>
+                                            </el-tooltip>
+                                        </div>
+                                        <div class="button-more">
+                                            <a class="el-button el-button--button el-button--mini"
+                                               v-if="scope.row.detailUrl!=null&&scope.row.detailUrl.length>0"
+                                               :href="scope.row.detailUrl" target="_blank">源站详情
+                                            </a>
+                                        </div>
+                                        <div class="button-more">
+                                            <a class="el-button el-button--button el-button--mini"
+                                               :href="formatMiWifiUrl(scope.row.magnet)"
+                                               target="_blank">小米路由
+                                            </a>
+                                        </div>
+                                        <el-button slot="reference"
+                                                   size="mini"
+                                                   type="button">更多
+                                        </el-button>
+                                    </el-popover>
                                 </template>
                             </el-table-column>
                         </el-table>

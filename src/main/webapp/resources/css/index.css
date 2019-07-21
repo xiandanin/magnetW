@@ -24,7 +24,7 @@ a {
     color: #0b618d;
 }
 
-.el-table .el-button+.el-button {
+.el-table .el-button + .el-button {
     margin-left: 0px;
 }
 
@@ -140,4 +140,9 @@ a {
 
 .el-table__row {
     font-size: 15px;
+}
+.button-more {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
