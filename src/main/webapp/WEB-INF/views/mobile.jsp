@@ -221,7 +221,8 @@
         vue.onToastMessage = function (message, type) {
             vue.$toast({
                 message: message,
-                type: type
+                type: type,
+                duration: 800
             });
         };
 
