@@ -61,7 +61,6 @@ public class ApplicationConfig {
     @Value("${trackers.update.interval.hour}")
     public int trackersUpdateIntervalHour;
 
-
     /**
      * 规则json是否本地文件
      */
@@ -69,12 +68,18 @@ public class ApplicationConfig {
         return ruleJsonUri != null && !ruleJsonUri.startsWith("http");
     }
 
-    public String getResultFilterPath() {
+    public File getFilterPropertiesDir() {
+        File dir;
+        File root = new File(getClass().getResource("/").getPath()).getParentFile().getParentFile();
         if (StringUtils.isEmpty(resultFilterPath)) {
-            return new File(getClass().getResource("/").getPath()).getParentFile().getParentFile().getParentFile().getParent();
+            dir = root;
         } else {
-            return resultFilterPath;
+            dir = new File(root, resultFilterPath);
         }
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
+        return dir;
     }
 
 }

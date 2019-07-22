@@ -36,19 +36,28 @@ public class FilterService {
 
     @PostConstruct
     public void init() {
+        if (!config.resultFilterEnabled) {
+            return;
+        }
         mFilterList = new ArrayList<String>();
+        File filterFile = getFilterPropertiesFile();
         try {
-            File file = getFilterProperties();
-            properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(file));
+            properties = PropertiesLoaderUtils.loadProperties(new FileSystemResource(filterFile));
             Collection<Object> values = properties.values();
             for (Object value : values) {
                 mFilterList.add((String) value);
             }
-            logger.info(String.format("过滤词文件 %s--->加载%d个过滤词", file.getAbsolutePath(), mFilterList.size()));
         } catch (IOException e) {
             properties = new Properties();
-            logger.error("过滤词文件初始化失败", e);
+            try {
+                String run = "chmod 777 " + filterFile.getAbsolutePath();
+                logger.info(String.format("赋予文件权限--->%s", run));
+                Runtime.getRuntime().exec(run);
+            } catch (IOException e1) {
+                logger.error("赋予文件权限失败", e1);
+            }
         }
+        logger.info(String.format("过滤词文件 %s--->%s--->加载%d个过滤词", filterFile.getAbsolutePath(), String.valueOf(filterFile.exists()), mFilterList.size()));
     }
 
     public boolean add(String input) throws Exception {
@@ -62,9 +71,9 @@ public class FilterService {
         try {
             mFilterList.add(input);
             properties.setProperty(String.valueOf(System.currentTimeMillis()), input);
-            properties.store(new FileOutputStream(getFilterProperties()), null);
+            properties.store(new FileOutputStream(getFilterPropertiesFile()), null);
             completed = true;
-            logger.info("屏蔽词添加成功--->" + input);
+            logger.info(String.format("屏蔽词添加成功--->%s--->当前%d个屏蔽词", input, mFilterList.size()));
             return true;
         } catch (Exception e) {
             completed = true;
@@ -77,8 +86,8 @@ public class FilterService {
         return mFilterList.contains(keyword);
     }
 
-    private File getFilterProperties() {
-        return new File(config.getResultFilterPath(), "filter.properties");
+    private File getFilterPropertiesFile() {
+        return new File(config.getFilterPropertiesDir(), "filter.properties");
     }
 
 }

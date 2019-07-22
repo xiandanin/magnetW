@@ -16,12 +16,12 @@ a {
     color: #333;
 }
 
-.header-row{
+.header-row {
     height: 30px;
 }
 
-.header-row a{
-   cursor: pointer;
+.header-row a {
+    cursor: pointer;
 }
 
 .el-tabs__item {
@@ -71,7 +71,7 @@ a {
     cursor: pointer;
 }
 
-#filter-dialog .el-dialog__body{
+#filter-dialog .el-dialog__body {
     padding-top: 0px;
 }
 
