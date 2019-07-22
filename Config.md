@@ -33,8 +33,8 @@ trackers.update.interval.hour=24
 
 #是否开启搜索结果屏蔽功能
 search.result.filter.enabled=false
-#屏蔽的数据存储我的文件夹路径 只支持绝对路径 如果为空则根目录的父目录
-search.result.filter.path=
+#屏蔽的数据存储的文件夹路径 相对工程根目录
+search.result.filter.path=.data
 
 #不蒜子统计
 #是否开启
