@@ -18,7 +18,7 @@
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
     <script src="resources/js/dist/base64.min.js"></script>
-    <link href="resources/css/mobile.css?v=1111" rel="stylesheet">
+    <link href="resources/css/mobile.css" rel="stylesheet">
 </head>
 <body>
 <div v-cloak id="app">
