@@ -47,6 +47,7 @@ public class FilterService {
             logger.info(String.format("过滤词文件 %s--->加载%d个过滤词", file.getAbsolutePath(), mFilterList.size()));
         } catch (IOException e) {
             properties = new Properties();
+            logger.error("过滤词文件初始化失败", e);
         }
     }
 
@@ -63,9 +64,11 @@ public class FilterService {
             properties.setProperty(String.valueOf(System.currentTimeMillis()), input);
             properties.store(new FileOutputStream(getFilterProperties()), null);
             completed = true;
+            logger.info("屏蔽词添加成功--->" + input);
             return true;
         } catch (Exception e) {
             completed = true;
+            logger.error("屏蔽词添加失败", e);
             throw e;
         }
     }

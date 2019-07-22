@@ -149,7 +149,6 @@ public class MagnetApiController {
                     return BaseResponse.error("服务器繁忙");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
                 return BaseResponse.error("添加失败");
             }
 
