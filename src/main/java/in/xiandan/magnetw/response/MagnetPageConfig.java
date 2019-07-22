@@ -12,6 +12,7 @@ public class MagnetPageConfig {
     private boolean busuanziEnabled;
     private boolean busuanziShow;
     private boolean trackersEnabled;
+    private boolean resultFilterEnabled;
 
     public MagnetPageConfig(ApplicationConfig config) {
         this.versionName = config.versionName;
@@ -20,9 +21,26 @@ public class MagnetPageConfig {
         this.busuanziEnabled = config.busuanziEnabled;
         this.busuanziShow = config.busuanziShow;
         this.trackersEnabled = config.trackersEnabled;
+        this.resultFilterEnabled = config.resultFilterEnabled;
     }
 
     public MagnetPageConfig() {
+    }
+
+    public boolean isTrackersEnabled() {
+        return trackersEnabled;
+    }
+
+    public void setTrackersEnabled(boolean trackersEnabled) {
+        this.trackersEnabled = trackersEnabled;
+    }
+
+    public boolean isResultFilterEnabled() {
+        return resultFilterEnabled;
+    }
+
+    public void setResultFilterEnabled(boolean resultFilterEnabled) {
+        this.resultFilterEnabled = resultFilterEnabled;
     }
 
     public boolean isBusuanziEnabled() {

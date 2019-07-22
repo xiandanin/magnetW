@@ -8,6 +8,10 @@ a {
     display: none;
 }
 
+.header-row {
+    padding: 15px 20px 0px 22px;
+}
+
 .van-cell {
     font-size: 16px;
 }
@@ -28,19 +32,20 @@ a {
     color: #0b618d;
 }
 
-.action-container{
+.action-container {
     text-align: right;
 }
 
-.action-container .van-button{
+.action-container .van-button {
     font-size: 13px;
 }
 
-form{
+form {
     margin: 0px;
 }
 
 .search-action {
+    font-size: 16px;
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -130,13 +135,65 @@ form{
     display: flex;
 }
 
-#action{
+.search-header .van-search {
+    width: 100%;
+}
+
+.van-dialog__header {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+#action {
     min-width: 260px;
 }
 
-.popup-title{
+#action .van-cell {
+    color: #555;
+}
+
+.popup-title {
     text-align: center;
-    padding: 10px 15px;
-    font-size: 18px;
-    color: #777;
+    padding: 15px;
+    font-size: 17px;
+    color: #333;
+}
+
+#filter-dialog .action {
+    text-align: right;
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+#filter-dialog .action .van-button {
+    margin-left: 10px;
+}
+
+#filter-dialog .action .van-button:before {
+    position: relative;
+}
+
+#filter-dialog .action .van-button__loading {
+    vertical-align: middle;
+}
+
+#filter-dialog {
+    width: 80%;
+}
+
+.filter-message {
+    color: #7d7e80;
+    font-size: 14px;
+    padding: 0px 20px 15px 20px;
+}
+
+#filter-dialog .van-field {
+    padding: 5px 10px;
+    width: auto;
+    font-size: 14px;
+    margin: 0px 20px 15px 20px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
 }

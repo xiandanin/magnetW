@@ -18,20 +18,26 @@
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
     <script src="resources/js/dist/base64.min.js"></script>
-    <link href="resources/css/mobile.css" rel="stylesheet">
+    <link href="resources/css/mobile.css?v=1111" rel="stylesheet">
 </head>
 <body>
 <div v-cloak id="app">
-    <div>
-        <van-cell style="padding-bottom: 0px">
+    <!--头-->
+    <van-row class="header-row">
+        <!--左边-->
+        <van-col span="12">
             <template v-if="config.versionLink.length>0">
                 <a :href="config.versionLink" target="_blank">当前版本 v{{config.versionName}}</a>
             </template>
             <template v-else>
                 <a class="empty-a" href="/">当前版本 v{{config.versionName}}</a>
             </template>
-        </van-cell>
-    </div>
+        </van-col>
+        <!--右边-->
+        <van-col span="12" style="text-align: right">
+            <a v-if="config.resultFilterEnabled" @click="showFilterDialog">自助屏蔽</a>
+        </van-col>
+    </van-row>
     <div class="search-header-container">
         <van-dropdown-menu class="search-header-dropdown" z-index="100">
             <van-dropdown-item @change="handleSortChanged" v-model="current.sort"
@@ -126,6 +132,20 @@
             <van-cell title="小米路由" @click="clickMiWiFiAction"></van-cell>
             <van-cell title="源站详情" @click="clickDetailAction"></van-cell>
         </van-cell-group>
+    </van-popup>
+
+    <van-popup id="filter-dialog" v-model="filter.dialogVisible" round
+               @confirm="requestSubmitFilter">
+        <div class="popup-title">自助屏蔽</div>
+        <div class="filter-message">{{filter.message}}</div>
+        <van-field size="small" v-model="filter.keyword" clearable
+                   :placeholder="filter.placeholder"></van-field>
+        <div class="action">
+            <van-button size="small" @click="filter.dialogVisible = false">取消</van-button>
+            <van-button size="small" plain type="info" @click="requestSubmitFilter"
+                        :loading="filter.loading">确定
+            </van-button>
+        </div>
     </van-popup>
 </div>
 
@@ -230,6 +250,7 @@
          * 请求开始前的回调
          */
         vue.onRequestStarted = function () {
+            vue._data.status.vanlist.error = false;
             if (vue._data.current.page <= 1) {
                 vue._data.list = []
             }

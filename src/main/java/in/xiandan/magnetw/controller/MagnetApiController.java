@@ -1,6 +1,7 @@
 package in.xiandan.magnetw.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import in.xiandan.magnetw.response.MagnetItem;
 import in.xiandan.magnetw.response.MagnetPageData;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetRule;
+import in.xiandan.magnetw.service.FilterService;
 import in.xiandan.magnetw.service.MagnetRuleService;
 import in.xiandan.magnetw.service.MagnetService;
 import in.xiandan.magnetw.service.PermissionService;
@@ -39,6 +41,9 @@ public class MagnetApiController {
 
     @Autowired
     MagnetService magnetService;
+
+    @Autowired
+    FilterService filterService;
 
 
     /**
@@ -99,6 +104,11 @@ public class MagnetApiController {
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public BaseResponse<MagnetPageData> search(@RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
                                                @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws MagnetParserException, IOException {
+        //是否需要屏蔽
+        if (config.resultFilterEnabled && filterService.contains(keyword)) {
+            return BaseResponse.error("搜索结果被屏蔽");
+        }
+
         //默认参数
         MagnetPageOption pageOption = magnetService.transformCurrentOption(source, keyword, sort, page);
         MagnetRule rule = ruleService.getRuleBySite(pageOption.getSite());
@@ -118,6 +128,32 @@ public class MagnetApiController {
             magnetService.asyncPreloadNextPage(rule, pageOption);
         }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
+    }
+
+    /**
+     * 过滤
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "filter", method = RequestMethod.POST)
+    public BaseResponse<MagnetPageData> filter(@RequestParam String input) {
+        if (StringUtils.isEmpty(input)) {
+            return BaseResponse.error("请输入关键词或磁力链");
+        } else {
+            try {
+                boolean add = filterService.add(input);
+                if (add) {
+                    return BaseResponse.success(null, "添加成功");
+                } else {
+                    return BaseResponse.error("服务器繁忙");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return BaseResponse.error("添加失败");
+            }
+
+        }
     }
 
 

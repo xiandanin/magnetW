@@ -26,17 +26,24 @@
 <div v-cloak style="min-width: 1080px;padding: 2% 7%;" id="app">
     <el-container>
         <!--头-->
-        <el-header style="height: 30px;">
-            <div style="text-align: right">
-                <span style="float: left">
-                 <template v-if="config.versionLink.length>0">
-                     <a :href="config.versionLink" target="_blank">当前版本 v{{config.versionName}}</a>
-                 </template>
-                 <template v-else>
-                     <a class="empty-a" href="/">当前版本 v{{config.versionName}}</a>
-                 </template>
-                </span>
-            </div>
+        <el-header class="header-row" style="height: 30px">
+            <el-row>
+                <!--左边-->
+                <el-col :span="12">
+                    <template v-if="config.versionLink.length>0">
+                        <a :href="config.versionLink" target="_blank">当前版本
+                            v{{config.versionName}}</a>
+                    </template>
+                    <template v-else>
+                        <a class="empty-a" href="/">当前版本 v{{config.versionName}}</a>
+                    </template>
+                </el-col>
+
+                <!--右边-->
+                <el-col :span="12" style="text-align: right">
+                    <a v-if="config.resultFilterEnabled" @click="showFilterDialog">自助屏蔽</a>
+                </el-col>
+            </el-row>
         </el-header>
 
         <!--内容-->
@@ -45,6 +52,7 @@
                 <div id="search-input-container">
                     <el-input :placeholder="config.searchPlaceholder"
                               autocomplete="on"
+                              clearable
                               @keyup.enter.native="clickSearch"
                               v-model="current.keyword">
                         <template slot="append">
@@ -273,6 +281,22 @@
     </el-container>
     <div id="page-component-up" @click="scrollTop" v-show="showTopButton"><i
             class="el-icon-caret-top"></i></div>
+
+    <el-dialog
+            id="filter-dialog"
+            title="自助屏蔽"
+            :visible.sync="filter.dialogVisible"
+            width="40%">
+        <div class="filter-message">{{filter.message}}</div>
+        <el-input @keyup.enter.native="requestSubmitFilter" v-model="filter.keyword" clearable
+                  :placeholder="filter.placeholder"></el-input>
+        <div class="filter-action-container">
+            <el-button size="small" @click="filter.dialogVisible = false">取 消</el-button>
+            <el-button size="small" type="primary" @click="requestSubmitFilter"
+                       :loading="filter.loading">确 定
+            </el-button>
+        </div>
+    </el-dialog>
 </div>
 </body>
 <script>

@@ -5,7 +5,7 @@
     <groupId>in.xiandan</groupId>
     <artifactId>magnetw</artifactId>
     <packaging>war</packaging>
-    <version>2.0.8</version>
+    <version>2.0.9</version>
     <name>magnetW</name>
     <url>http://maven.apache.org</url>
     <dependencies>

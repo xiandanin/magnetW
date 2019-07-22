@@ -31,6 +31,11 @@ trackers.update.url=https://raw.githubusercontent.com/ngosang/trackerslist/maste
 #自动更新tracker列表的间隔时间（单位:小时）
 trackers.update.interval.hour=24
 
+#是否开启搜索结果屏蔽功能
+search.result.filter.enabled=false
+#屏蔽的数据存储我的文件夹路径 只支持绝对路径 如果为空则根目录的父目录
+search.result.filter.path=
+
 #不蒜子统计
 #是否开启
 busuanzi.enabled=false

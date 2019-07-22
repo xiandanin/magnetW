@@ -16,6 +16,14 @@ a {
     color: #333;
 }
 
+.header-row{
+    height: 30px;
+}
+
+.header-row a{
+   cursor: pointer;
+}
+
 .el-tabs__item {
     font-weight: normal;
 }
@@ -50,6 +58,30 @@ a {
 
 #search-input-container .el-button {
     width: 200px;
+}
+
+.search-input-filter {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.search-input-filter a {
+    margin-top: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#filter-dialog .el-dialog__body{
+    padding-top: 0px;
+}
+
+.filter-message {
+    margin-bottom: 10px;
+}
+
+.filter-action-container {
+    margin-top: 4%;
+    text-align: right;
 }
 
 #page-component-up {

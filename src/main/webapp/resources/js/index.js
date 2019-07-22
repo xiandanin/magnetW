@@ -12,6 +12,14 @@ new Vue({
         current: null,
         sortBy: null,
 
+        filter: {
+            message: "如果你发现有违规的搜索结果，可以在此处提交，提交后将会禁止搜索此关键词",
+            dialogVisible: false,
+            placeholder: "输入关键词",
+            keyword: null,
+            loading: false
+        },
+
         status: {
             clicks: []
         }
@@ -144,6 +152,38 @@ new Vue({
             return "http://d.miwifi.com/d2r/?url=" + Base64.encodeURI(url);
         },
         /**
+         * 屏蔽的dialog
+         */
+        showFilterDialog() {
+            this.filter.dialogVisible = true
+        },
+        /**
+         * 提交屏蔽
+         */
+        requestSubmitFilter() {
+            if (this.filter.keyword != null && this.filter.keyword.length > 0) {
+                this.filter.loading = true;
+                this.$http.post("api/filter", {
+                    input: this.filter.keyword
+                }, {emulateJSON: true})
+                    .then(function (response) {
+                        //请求成功
+                        this.filter.loading = false;
+                        this.filter.dialogVisible = false;
+                        if (response.body.success) {
+                            this.filter.keyword = null;
+                            this.onToastMessage(response.body.message, "success");
+                        } else {
+                            this.onToastMessage(response.body.message, "error");
+                        }
+                    }).catch(function (error) {
+                    //请求失败
+                    this.filter.loading = false;
+                    this.onToastMessage("添加失败", "error")
+                });
+            }
+        },
+        /**
          * 请求开始前的回调
          */
         onRequestStarted() {
@@ -167,7 +207,7 @@ new Vue({
          * 弹出消息提示的回调
          * @param message
          */
-        onToastMessage(message) {
+        onToastMessage(message, type) {
 
         }
 
