@@ -86,6 +86,10 @@ public class FilterService {
         return mFilterList.contains(keyword);
     }
 
+    public List<String> getFilterList() {
+        return mFilterList;
+    }
+
     private File getFilterPropertiesFile() {
         return new File(config.getFilterPropertiesDir(), "filter.properties");
     }

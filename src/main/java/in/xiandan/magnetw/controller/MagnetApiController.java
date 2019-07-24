@@ -1,5 +1,6 @@
 package in.xiandan.magnetw.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +46,7 @@ public class MagnetApiController {
     @Autowired
     FilterService filterService;
 
+    private Logger logger = Logger.getLogger(getClass());
 
     /**
      * 重载配置
@@ -106,6 +108,7 @@ public class MagnetApiController {
                                                @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws MagnetParserException, IOException {
         //是否需要屏蔽
         if (config.resultFilterEnabled && filterService.contains(keyword)) {
+            logger.info("搜索结果被屏蔽--->" + keyword);
             return BaseResponse.error("搜索结果被屏蔽");
         }
 

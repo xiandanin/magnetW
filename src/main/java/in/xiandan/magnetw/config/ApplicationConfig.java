@@ -3,7 +3,6 @@ package in.xiandan.magnetw.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 
@@ -40,9 +39,6 @@ public class ApplicationConfig {
     @Value("${search.result.filter.enabled}")
     public boolean resultFilterEnabled;
 
-    @Value("${search.result.filter.path}")
-    public String resultFilterPath;
-
     @Value("${busuanzi.enabled}")
     public boolean busuanziEnabled;
 
@@ -69,14 +65,9 @@ public class ApplicationConfig {
     }
 
     public File getFilterPropertiesDir() {
-        File dir;
-        File root = new File(getClass().getResource("/").getPath()).getParentFile().getParentFile();
-        if (StringUtils.isEmpty(resultFilterPath)) {
-            dir = root;
-        } else {
-            dir = new File(root, resultFilterPath);
-        }
-        if (!dir.exists()){
+        File rootParent = new File(getClass().getResource("/").getPath()).getParentFile().getParentFile().getParentFile();
+        File dir = new File(rootParent, "magnetw-data");
+        if (!dir.exists()) {
             dir.mkdirs();
         }
         return dir;
