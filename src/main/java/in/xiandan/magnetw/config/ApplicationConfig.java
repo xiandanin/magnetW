@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 import java.io.File;
-import java.io.IOException;
 
 @Configuration
 @PropertySource(value = "classpath:config.properties", encoding = "UTF-8")
@@ -70,21 +69,10 @@ public class ApplicationConfig {
         File dir = new File(rootParent, "magnetw-data");
         //如果没有就创建文件夹
         if (!dir.exists()) {
-            if (isLinux()) {
-                //如果是Linux 先获取权限
-                try {
-                    Runtime.getRuntime().exec("chmod 777 " + rootParent.getAbsolutePath());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                dir.mkdirs();
-            }
+            rootParent.setWritable(true, false);
+            dir.mkdirs();
         }
         return dir;
-    }
-
-    public boolean isLinux() {
-        return System.getProperty("os.name").toLowerCase().contains("linux");
     }
 
 }
