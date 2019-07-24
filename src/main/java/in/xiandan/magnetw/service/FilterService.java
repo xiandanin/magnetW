@@ -49,13 +49,6 @@ public class FilterService {
             }
         } catch (IOException e) {
             properties = new Properties();
-            try {
-                String run = "chmod 777 " + filterFile.getAbsolutePath();
-                logger.info(String.format("赋予文件权限--->%s", run));
-                Runtime.getRuntime().exec(run);
-            } catch (IOException e1) {
-                logger.error("赋予文件权限失败", e1);
-            }
         }
         logger.info(String.format("过滤词文件 %s--->%s--->加载%d个过滤词", filterFile.getAbsolutePath(), String.valueOf(filterFile.exists()), mFilterList.size()));
     }
