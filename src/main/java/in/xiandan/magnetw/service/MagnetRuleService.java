@@ -14,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,6 +145,12 @@ public class MagnetRuleService {
                     log.append("[忽略]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
                     continue;
                 }
+                try {
+                    rule.setHost(new URL(rule.getUrl()).getHost());
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
                 magnetRuleMap.put(rule.getSite(), rule);
                 sites.add(rule);
                 log.append("[加载]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");

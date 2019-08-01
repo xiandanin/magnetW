@@ -27,6 +27,7 @@ import org.w3c.dom.NodeList;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +117,8 @@ public class MagnetService {
         Connection connect = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
-                .timeout(10000);
+                .timeout(10000)
+                .header(HttpHeaders.HOST, rule.getHost());
         //增加userAgent
         if (StringUtils.isEmpty(userAgent)) {
             connect.header(HttpHeaders.USER_AGENT, userAgent);

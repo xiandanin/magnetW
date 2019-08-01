@@ -15,8 +15,17 @@ public class MagnetRule {
     private String date;
     private String hot;
 
+    private String host;//网站域名
     private String url;//网站首页url
     private MagnetRulePath paths;//搜索路径
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
 
     public String getSite() {
         return site;
