@@ -48,6 +48,7 @@
         </van-dropdown-menu>
         <form action="/" class="search-header">
             <van-search :placeholder="config.searchPlaceholder" clearable
+                        @clear="clickClearSearch"
                         v-model="current.keyword"
                         @search="clickSearch"
                         show-action>
@@ -198,6 +199,10 @@
                 }
             }
             return sortBy[0].text;
+        };
+
+        vue.clickClearSearch = function () {
+            vue._data.current.keyword = "";
         };
 
         /**
