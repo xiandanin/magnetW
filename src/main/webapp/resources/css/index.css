@@ -197,19 +197,19 @@ a {
     font-size: 14px;
 }
 
-.setting .el-checkbox__label {
-    vertical-align: middle;
+.setting .el-checkbox__inner{
+    margin-bottom: 2px;
 }
 
 .setting .el-checkbox__input.is-focus .el-checkbox__inner {
-border-color: #666;
+    border-color: #666;
 }
 
 .setting .el-checkbox__input.is-checked + .el-checkbox__label {
-color: #666;
+    color: #666;
 }
 
 .setting .el-checkbox__input.is-checked .el-checkbox__inner, .setting .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-background-color: #666;
-border-color: #666;
+    background-color: #666;
+    border-color: #666;
 }
