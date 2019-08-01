@@ -55,7 +55,11 @@ public class FilterService {
 
     public boolean add(String input) throws Exception {
         if (!completed) {
-            return false;
+            throw new Exception("系统繁忙，请稍候再试");
+        }
+        //如果是占位符
+        if (input.toLowerCase().equals(config.searchPlaceholder.toLowerCase())) {
+            throw new Exception("暂不支持屏蔽占位搜索词");
         }
         if (mFilterList.contains(input)) {
             return true;
