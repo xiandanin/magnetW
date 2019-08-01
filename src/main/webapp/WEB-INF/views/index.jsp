@@ -18,6 +18,7 @@
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
     <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
+    <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
     <script src="resources/js/dist/base64.min.js"></script>
     <link href="resources/css/index.css" rel="stylesheet">
@@ -61,6 +62,9 @@
                     </el-input>
                 </div>
 
+                <div class="setting">
+                    <el-checkbox  v-model="setting.memoryChoice" label="记住上次选择的源站" @change="onChangeMemoryChoice"/>
+                </div>
                 <!--源站列表-->
                 <div class="search_site">
                     <!--少于11个就用正常尺寸-->

@@ -20,13 +20,20 @@ new Vue({
             loading: false
         },
 
+        setting: {
+            memoryChoice: false,
+            source: ''
+        },
+
         status: {
             clicks: []
         }
 
     },
     created: function () {
-        onVueCreated(this)
+        onVueCreated(this);
+
+        this.applySetting();
     },
     mounted: function () {
         this.delayLoadBusuanzi();
@@ -38,6 +45,35 @@ new Vue({
         }
     },
     methods: {
+        getParams(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null;
+        },
+        applySetting() {
+            var cookieSetting = Cookies.get('setting');
+            if (cookieSetting == null) {
+                return
+            }
+            this.setting = JSON.parse(cookieSetting);
+            console.log("setting: " + JSON.stringify(this.setting));
+
+            //如果开启了记住选择
+            if (this.setting.memoryChoice) {
+                var source = this.getParams("source");
+                //如果没有指定源站
+                if (source == null || source.length <= 0) {
+                    for (let i = 0; i < this.sourceSites.length; i++) {
+                        //列表也包含上次选的源站 就自动选择上次的源站
+                        if (this.setting.source === this.sourceSites[i].site) {
+                            this.current.site = this.setting.source;
+                            break
+                        }
+                    }
+                }
+            }
+        },
         getParamsString() {
             var keywordString = "";
             if (this.current.keyword != null && this.current.keyword.length > 0) {
@@ -55,6 +91,9 @@ new Vue({
             history.replaceState(0, document.title, "search" + this.getParamsString());
         },
         handleTabClick(tab) {
+            this.setting.source = this.current.site;
+            this.storeSetting();
+
             this.current.page = 1;
             this.redirectCurrentURL()
         },
@@ -182,6 +221,15 @@ new Vue({
                     this.onToastMessage("添加失败", "error")
                 });
             }
+        },
+        onChangeMemoryChoice(checked) {
+            if (!checked) {
+                this.setting.source = null;
+            }
+            this.storeSetting()
+        },
+        storeSetting() {
+            Cookies.set('setting', this.setting);
         },
         /**
          * 请求开始前的回调

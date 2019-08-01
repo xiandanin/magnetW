@@ -197,3 +197,22 @@ form {
     border-radius: 4px;
     border: 1px solid #dcdfe6;
 }
+
+.setting {
+    text-align: right;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+.setting .van-checkbox{
+    display: inline-flex;
+}
+
+.setting .van-checkbox__label{
+    color: #666;
+}
+
+.setting .van-checkbox__icon--checked .van-icon {
+    background-color: #666;
+    border-color:#666;
+}

@@ -16,6 +16,7 @@
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vant@2.0/lib/vant.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
+    <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
     <script src="resources/js/dist/base64.min.js"></script>
     <link href="resources/css/mobile.css" rel="stylesheet">
@@ -53,6 +54,12 @@
                 <div slot="action" class="search-action" @click="clickSearch">搜索</div>
             </van-search>
         </form>
+    </div>
+    <div class="setting">
+        <van-checkbox icon-size="14px" v-model="setting.memoryChoice"
+                      @change="onChangeMemoryChoice">
+            记住上次选择的源站
+        </van-checkbox>
     </div>
     <div>
         <van-tabs v-model="current.site" color="409EFF" @click="handleTabClick">

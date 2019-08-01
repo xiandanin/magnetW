@@ -49,7 +49,7 @@ a {
 }
 
 .search_site {
-    margin-top: 1.5%;
+    margin-top: 10px;
 }
 
 .container-margin-bottom {
@@ -189,4 +189,27 @@ a {
     text-align: center;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.setting {
+    text-align: right;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.setting .el-checkbox__label {
+    vertical-align: middle;
+}
+
+.setting .el-checkbox__input.is-focus .el-checkbox__inner {
+border-color: #666;
+}
+
+.setting .el-checkbox__input.is-checked + .el-checkbox__label {
+color: #666;
+}
+
+.setting .el-checkbox__input.is-checked .el-checkbox__inner, .setting .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+background-color: #666;
+border-color: #666;
 }
