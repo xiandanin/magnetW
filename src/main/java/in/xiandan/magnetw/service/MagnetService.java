@@ -1,5 +1,6 @@
 package in.xiandan.magnetw.service;
 
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -14,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -77,6 +79,7 @@ public class MagnetService {
     public MagnetPageOption transformCurrentOption(String sourceParam, String keyword,
                                                    String sortParam, Integer pageParam) {
         MagnetPageOption option = new MagnetPageOption();
+
         option.setKeyword(keyword);
         int page = pageParam == null || pageParam <= 0 ? 1 : pageParam;
         option.setPage(page);
@@ -101,7 +104,7 @@ public class MagnetService {
     }
 
     @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%d',#rule.url,#keyword,#sort,#page)")
-    public List<MagnetItem> parser(MagnetRule rule, String keyword, String sort, int page) throws MagnetParserException, IOException {
+    public List<MagnetItem> parser(MagnetRule rule, String keyword, String sort, int page, String userAgent) throws MagnetParserException, IOException {
         if (StringUtils.isEmpty(keyword)) {
             return new ArrayList<MagnetItem>();
         }
@@ -114,10 +117,18 @@ public class MagnetService {
                 .ignoreContentType(true)
                 .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
                 .timeout(10000);
-        /*Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
+        //增加userAgent
+        if (StringUtils.isEmpty(userAgent)) {
+            connect.header(HttpHeaders.USER_AGENT, userAgent);
+        }
+
+        /*
+        Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
         if (cookies != null) {
             connect.cookies(cookies);
-        }*/
+        }
+        */
+
         //代理设置
         if (config.proxyEnabled && rule.isProxy()) {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(config.proxyHost, config.proxyPort));
@@ -142,11 +153,14 @@ public class MagnetService {
         }
         logger.info(log.toString());
 
-        //缓存cookie
         Connection.Response response = connect.execute();
-        /*if (response.cookies() != null) {
+
+        /*
+        if (response.cookies() != null) {
             mCacheCookies.put(rule.getUrl(), response.cookies());
-        }*/
+        }
+        */
+
         String html = response.parse().html();
         try {
             List<MagnetItem> infos = new ArrayList<MagnetItem>();
@@ -181,10 +195,10 @@ public class MagnetService {
                         int keywordIndex = nameValue.toLowerCase().indexOf(keyword.toLowerCase());
                         if (keywordIndex >= 0) {
                             StringBuilder buffer = new StringBuilder(nameValue);
-                            buffer.insert(keywordIndex + keyword.length(),"</span>");
-                            buffer.insert(keywordIndex,"<span style=\"color:#ff7a76\">");
+                            buffer.insert(keywordIndex + keyword.length(), "</span>");
+                            buffer.insert(keywordIndex, "<span style=\"color:#ff7a76\">");
                             info.setNameHtml(buffer.toString());
-                        }else{
+                        } else {
                             info.setNameHtml(nameValue.replace(keyword, String.format("<span style=\"color:#ff7a76\">%s</span>", keyword)));
                         }
 
@@ -233,7 +247,7 @@ public class MagnetService {
      * 异步加载下一页
      */
     @Async
-    public void asyncPreloadNextPage(MagnetRule rule, MagnetPageOption current) {
+    public void asyncPreloadNextPage(MagnetRule rule, MagnetPageOption current, String userAgent) {
         try {
             int page = current.getPage() + 1;
             String cacheName = "magnetList";
@@ -243,7 +257,7 @@ public class MagnetService {
                 Element element = cache.get(key);
                 //如果没有缓存 就缓存下一页
                 if (element == null) {
-                    List<MagnetItem> items = this.parser(rule, current.getKeyword(), current.getSort(), page);
+                    List<MagnetItem> items = this.parser(rule, current.getKeyword(), current.getSort(), page, userAgent);
                     cache.put(new Element(key, items));
 
                     logger.info(String.format("成功预加载 %s-%s-%d，缓存%d条数据", current.getSite(), current.getKeyword(), page, items.size()));

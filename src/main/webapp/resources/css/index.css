@@ -1,3 +1,9 @@
+#app {
+    max-width: 84%;
+    padding: 2%;
+    margin: 0 auto;
+}
+
 a {
     color: #0e90d2;
     text-decoration: none;
@@ -197,7 +203,7 @@ a {
     font-size: 14px;
 }
 
-.setting .el-checkbox__inner{
+.setting .el-checkbox__inner {
     margin-bottom: 2px;
 }
 

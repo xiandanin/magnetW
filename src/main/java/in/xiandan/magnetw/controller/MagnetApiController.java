@@ -2,6 +2,7 @@ package in.xiandan.magnetw.controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
@@ -104,7 +107,7 @@ public class MagnetApiController {
      */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public BaseResponse<MagnetPageData> search(@RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
+    public BaseResponse<MagnetPageData> search(HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
                                                @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws MagnetParserException, IOException {
         //是否需要屏蔽
         if (config.resultFilterEnabled && filterService.contains(keyword)) {
@@ -112,11 +115,13 @@ public class MagnetApiController {
             return BaseResponse.error("搜索结果被屏蔽");
         }
 
+        String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
+
         //默认参数
         MagnetPageOption pageOption = magnetService.transformCurrentOption(source, keyword, sort, page);
         MagnetRule rule = ruleService.getRuleBySite(pageOption.getSite());
 
-        List<MagnetItem> infos = magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage());
+        List<MagnetItem> infos = magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage(), userAgent);
 
         MagnetPageData data = new MagnetPageData();
         data.setTrackersString(ruleService.getTrackersString());
@@ -128,7 +133,7 @@ public class MagnetApiController {
         data.setResults(infos);
 
         if (config.preloadEnabled && infos.size() > 0) {
-            magnetService.asyncPreloadNextPage(rule, pageOption);
+            magnetService.asyncPreloadNextPage(rule, pageOption, userAgent);
         }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
     }

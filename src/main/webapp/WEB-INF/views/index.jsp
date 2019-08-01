@@ -24,7 +24,7 @@
     <link href="resources/css/index.css" rel="stylesheet">
 </head>
 <body>
-<div v-cloak style="min-width: 1080px;padding: 2% 7%;" id="app">
+<div v-cloak id="app">
     <el-container>
         <!--头-->
         <el-header class="header-row" style="height: 30px">

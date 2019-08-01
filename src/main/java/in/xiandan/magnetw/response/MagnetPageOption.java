@@ -10,6 +10,16 @@ public class MagnetPageOption {
     private String site;
     private String sort;
 
+    private String userAgent;
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
     public int getPage() {
         return page;
     }

@@ -32,6 +32,20 @@
     }
   },
   {
+    "site": "磁力王",
+    "proxy": false,
+    "group": "//div[@class=\"single_cont\"]",
+    "magnet": "./ul[1]/li/h3/a/@data-src",
+    "name": "./ul[1]/li/h3/a",
+    "size": "./ul[2]/li[2]/span",
+    "date": "./ul[2]/li[1]/text()",
+    "hot": "./ul[1]/li/h3/span/span[3]",
+    "url": "https://www.ciliwang.club",
+    "paths": {
+      "time": "/list.html?keyword=%s&page=%d"
+    }
+  },
+  {
     "site": "BT4G",
     "proxy": true,
     "group": "//div[@class='search-item detail-width']",
