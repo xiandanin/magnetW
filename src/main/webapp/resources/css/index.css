@@ -1,6 +1,5 @@
 #app {
-    max-width: 84%;
-    padding: 2%;
+    padding: 2% 6%;
     margin: 0 auto;
 }
 
@@ -199,8 +198,13 @@ a {
 
 .setting {
     text-align: right;
-    margin-top: 10px;
+    margin-top: 15px;
+    margin-bottom: 15px;
     font-size: 14px;
+}
+
+.setting .el-checkbox {
+    margin-bottom: 0px;
 }
 
 .setting .el-checkbox__inner {

@@ -191,13 +191,8 @@
                                     align="center"
                                     width="140">
                                 <template slot-scope="scope">
-                                    <el-button size="mini"
-                                               type="button"
-                                               v-clipboard:copy="scope.row.magnet"
-                                               v-clipboard:success="handleCopy">复制
-                                    </el-button>
                                     <el-popover
-                                            placement="right-start"
+                                            placement="left-start"
                                             trigger="hover">
                                         <h3 class="more-action-title">更多操作</h3>
                                         <div class="more-action-button">
@@ -227,6 +222,11 @@
                                                    type="button">更多
                                         </el-button>
                                     </el-popover>
+                                    <el-button size="mini"
+                                               type="button"
+                                               v-clipboard:copy="scope.row.magnet"
+                                               v-clipboard:success="handleCopy">复制
+                                    </el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
