@@ -1,6 +1,7 @@
 package in.xiandan.magnetw.handler;
 
 import org.apache.log4j.Logger;
+import org.jsoup.HttpStatusException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,14 +31,16 @@ public class GlobalExceptionHandler {
         if (e instanceof MagnetParserException) {
             e = e.getCause();
         }
-        if (e instanceof SocketTimeoutException || e instanceof UnknownHostException || e instanceof ConnectException) {
+        if (e instanceof HttpStatusException) {
+            return BaseResponse.error(String.format("%s,%d", e.getMessage(), ((HttpStatusException) e).getStatusCode()));
+        } else if (e instanceof SocketTimeoutException || e instanceof UnknownHostException || e instanceof ConnectException) {
             return BaseResponse.error("请求源站超时");
         } else if (e instanceof MissingServletRequestParameterException) {
             return BaseResponse.error("缺少参数");
         }
-        if (StringUtils.isEmpty(e.getMessage())){
+        if (StringUtils.isEmpty(e.getMessage())) {
             return BaseResponse.error("未知异常");
-        }else{
+        } else {
             return BaseResponse.error(e.getMessage());
         }
     }

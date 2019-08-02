@@ -18,10 +18,6 @@ import javax.annotation.PostConstruct;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
 
-/**
- * author  dengyuhan
- * created 2019/7/22 11:42
- */
 @Service
 public class FilterService {
     private Logger logger = Logger.getLogger(getClass());
