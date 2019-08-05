@@ -63,7 +63,8 @@
                 </div>
 
                 <div class="setting">
-                    <el-checkbox  v-model="setting.memoryChoice" label="记住上次选择的源站" @change="onChangeMemoryChoice"/>
+                    <el-checkbox v-model="setting.memoryChoice" label="记住上次选择的源站"
+                                 @change="onChangeMemoryChoice"/>
                 </div>
                 <!--源站列表-->
                 <div class="search_site">
@@ -110,19 +111,23 @@
                                                     @click="handlePageChanged(current.page-1)"><i
                                                     class="el-icon el-icon-arrow-left"></i></button>
                                             <ul class="el-pager">
-                                                <!--最多只显示4个页码-->
+                                                <!--最多只显示3个页码-->
                                                 <template
-                                                        v-for="n in current.page>4?4:current.page-1">
+                                                        v-for="n in current.page>3?3:current.page-1">
                                                     <li class="number"
                                                         @click="handlePageChanged(n)">{{n}}
                                                     </li>
                                                 </template>
-                                                <template v-if="current.page>4">
+                                                <template v-if="current.page>3">
                                                     <li class="el-icon more btn-quickprev el-icon-more"
                                                         @click="handlePageChanged(current.page-1)"></li>
                                                 </template>
                                                 <li class="number active">{{current.page}}
                                                 </li>
+                                                <template v-if="current.page<=3">
+                                                    <li class="el-icon more btn-quickprev el-icon-more"
+                                                        @click="handlePageChanged(current.page+1)"></li>
+                                                </template>
                                             </ul>
                                             <button type="button" class="btn-next"
                                                     @click="handlePageChanged(current.page+1)">
@@ -244,10 +249,15 @@
                                         </li>
                                     </template>
                                     <template v-if="current.page>3">
-                                        <li class="el-icon more btn-quickprev el-icon-more"></li>
+                                        <li class="el-icon more btn-quickprev el-icon-more"
+                                            @click="handlePageChanged(current.page-1)"></li>
                                     </template>
                                     <li class="number active">{{current.page}}
                                     </li>
+                                    <template v-if="current.page<=3">
+                                        <li class="el-icon more btn-quickprev el-icon-more"
+                                            @click="handlePageChanged(current.page+1)"></li>
+                                    </template>
                                 </ul>
                                 <button type="button" class="btn-next"
                                         @click="handlePageChanged(current.page+1)">
