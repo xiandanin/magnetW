@@ -1,8 +1,13 @@
 ## 示例站点
 [https://bt.biedian.me](https://bt.biedian.me)
 
-示例站点所用图标来自[iconfont](https://www.iconfont.cn)  
-__示例站点较不稳定，建议自行搭建__  
+示例站点较不稳定，建议自行搭建，所用图标来自[iconfont](https://www.iconfont.cn)  
+
+#### 示例站点环境参考
+* [搬瓦工](https://bwh88.net/aff.php?aff=48595)
+* [宝塔面板](https://www.bt.cn/?invite_code=MV9va2p0bmQ=)
+* [Tomcat9](https://tomcat.apache.org/download-90.cgi)
+* [JDK8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 
 ## 快速搭建
 在[Releases](https://github.com/dengyuhan/magnetW/releases)下载编译好的`war`包，发布到`Tomcat`即可。
