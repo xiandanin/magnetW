@@ -1,3 +1,5 @@
+[中文文档](https://github.com/dengyuhan/magnetW/wiki/%E8%87%AA%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE)
+
 ## 示例站点
 [https://bt.biedian.me](https://bt.biedian.me)
 
@@ -25,10 +27,7 @@
 > 小程序：[magnetw-mini](https://github.com/dengyuhan/magnetw-mini)
 
 ## 其它说明
-自定义配置和规则可以看[Config.md](Config.md)
-
-### 注意事项
-涉及到本项目的文章或文档，请务必注明原项目出处
+涉及本项目的文章或文档，请务必注明原项目出处
 
 ## 相关项目
 [jsoup](https://github.com/jhy/jsoup)  
