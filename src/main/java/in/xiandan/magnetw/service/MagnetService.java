@@ -27,7 +27,6 @@ import org.w3c.dom.NodeList;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -111,13 +110,14 @@ public class MagnetService {
         }
 
         //用页码和关键字 拼接源站的url
-        String sortPath = String.format(ruleService.getPathBySort(sort, rule.getPaths()), keyword, page);
+        //部分源站顺序不一致，2.1.1以后使用替换的形式
+        String sortPath = ruleService.getPathBySort(sort, rule.getPaths()).replace("%s", keyword).replace("%d", String.valueOf(page));
         String url = String.format("%s%s", rule.getUrl(), sortPath);
 
         Connection connect = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
-                .timeout(10000)
+                .timeout((int) config.sourceTimeout)
                 .header(HttpHeaders.HOST, rule.getHost());
         //增加userAgent
         if (StringUtils.isEmpty(userAgent)) {

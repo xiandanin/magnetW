@@ -137,31 +137,43 @@ public class MagnetRuleService {
             magnetRuleMap = new LinkedHashMap<String, MagnetRule>();
             sites = new ArrayList<MagnetRule>();
 
-            List<MagnetRule> rules = loadMagnetRule();
+            logger.info("准备解析源站规则...");
 
-            StringBuilder log = new StringBuilder();
-            for (MagnetRule rule : rules) {
-                if (config.proxyIgnore && rule.isProxy()) {
-                    log.append("[忽略]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
-                    continue;
-                }
-                try {
-                    rule.setHost(new URL(rule.getUrl()).getHost());
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                }
+            try {
+                int failCount = 0;
 
-                magnetRuleMap.put(rule.getSite(), rule);
-                sites.add(rule);
-                log.append("[加载]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
+                List<MagnetRule> rules = loadMagnetRule();
+
+                StringBuilder log = new StringBuilder();
+                for (MagnetRule rule : rules) {
+                    if (config.proxyIgnore && rule.isProxy()) {
+                        log.append("[忽略]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
+                        continue;
+                    }
+                    try {
+                        rule.setHost(new URL(rule.getUrl()).getHost());
+
+                        magnetRuleMap.put(rule.getSite(), rule);
+                        sites.add(rule);
+                    } catch (MalformedURLException e) {
+                        failCount++;
+                        log.append("[失败]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("--->").append(e.getMessage()).append("\n");
+                        continue;
+                    }
+                    log.append("[成功]--->").append(rule.getSite()).append(" : ").append(rule.getUrl()).append("\n");
+                }
+                log.append(rules.size());
+                log.append("个网站规则加载完成，其中启用");
+                log.append(magnetRuleMap.size());
+                log.append("个，忽略");
+                log.append(rules.size() - magnetRuleMap.size()-failCount);
+                log.append("个，失败");
+                log.append(failCount);
+                log.append("个");
+                logger.info(log.toString());
+            } catch (Exception e) {
+                logger.error("规则文件解析失败，请检查规则内容", e);
             }
-            log.append(rules.size());
-            log.append("个网站规则加载完成，其中启用");
-            log.append(magnetRuleMap.size());
-            log.append("个，忽略");
-            log.append(rules.size() - magnetRuleMap.size());
-            log.append("个");
-            logger.info(log.toString());
         }
         return magnetRuleMap;
     }

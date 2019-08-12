@@ -18,6 +18,9 @@ public class ApplicationConfig {
     @Value("${project.version}")
     public String versionName;
 
+    @Value("${request.source.timeout}")
+    public long sourceTimeout;
+
     @Value("${proxy.ignore}")
     public boolean proxyIgnore;
 
