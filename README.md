@@ -1,5 +1,8 @@
 [[中文文档]](https://github.com/dengyuhan/magnetW/wiki)
 
+>__磁力搜不收录磁力链接，只是磁力的搬运工__  
+>根据制定的解析规则，一套代码解析多个磁力网站的HTML，将各个网站不同格式的搜索结果统一格式化
+
 ## 示例站点
 [https://bt.biedian.me](https://bt.biedian.me)
 

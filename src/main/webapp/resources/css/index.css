@@ -223,3 +223,17 @@ a {
     background-color: #666;
     border-color: #666;
 }
+
+.detail-popup .el-dialog__title{
+    word-break: break-all; /**两端对齐**/
+}
+
+.detail-file-item {
+    word-break: break-all; /**两端对齐**/
+    white-space: pre-line;
+}
+
+.detail-popup-error {
+    text-align: center;
+    color: #f56c6c;
+}

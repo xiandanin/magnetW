@@ -11,7 +11,8 @@ new Vue({
         trackersString: null,
         current: null,
         sortBy: null,
-
+        rule: null,
+        //屏蔽词
         filter: {
             message: "如果你发现有违规的搜索结果，可以在此处提交，提交后将会禁止搜索此关键词",
             dialogVisible: false,
@@ -19,16 +20,22 @@ new Vue({
             keyword: null,
             loading: false
         },
-
+        //设置
         setting: {
             memoryChoice: false,
             source: ''
         },
-
+        //列表状态
         status: {
             clicks: []
+        },
+        //详情
+        detail: {
+            loading: false,
+            show: false,
+            errorMessage: null,
+            rsp: {}
         }
-
     },
     created: function () {
         onVueCreated(this);
@@ -133,6 +140,37 @@ new Vue({
                     }
                 }, {emulateJSON: true}));
             }
+        },
+        /**
+         * 请求详情
+         * @param url
+         */
+        handleLazyLoadDetail(item) {
+            let url = item.detailUrl;
+
+            this.detail.name = item.name;
+            this.detail.errorMessage = null;
+            this.detail.show = true;
+            this.detail.loading = true;
+            this.detail.rsp = {};
+
+            let that = this;
+
+            this.$http.get("api/detail", {
+                params: {source: this.current.site, url: url}
+            }, {emulateJSON: true}).then(function (response) {
+                that.detail.loading = false;
+                //请求成功
+                if (response.body.success) {
+                    that.detail.rsp = response.body.data;
+                } else {
+                    that.detail.errorMessage = response.body.message;
+                }
+            }).catch(function (error) {
+                //请求失败
+                that.detail.loading = false;
+                that.detail.errorMessage = '加载失败';
+            });
         },
         handleCopy() {
             this.onToastMessage('复制成功', 'success');

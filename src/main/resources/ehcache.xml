@@ -21,6 +21,16 @@
         diskExpiryThreadIntervalSeconds="600"
         timeToIdleSeconds="86400"
         timeToLiveSeconds="259200" />
+
+
+    <!-- 配置名为magnetDetail的缓存区-->
+    <cache name="magnetDetail"
+        maxElementsInMemory="10000"
+        eternal="true"
+        overflowToDisk="true"
+        diskSpoolBufferSizeMB="500"
+        diskPersistent="true"
+        diskExpiryThreadIntervalSeconds="7200"/>
 </ehcache>
 
     <!--

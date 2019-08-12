@@ -13,6 +13,9 @@
       "time": "/list/%s/%d",
       "size": "/list_length/%s/%d",
       "hot": "/list_click/%s/%d"
+    },
+    "detail": {
+      "files": "//*[@id=\"wrapp\"]/div[2]/div/div/div[3]/div[1]/div[2]/div[2]/select/option"
     }
   },
   {
@@ -29,6 +32,9 @@
       "time": "/search/%s-first-asc-%d",
       "size": "/search/%s-size-desc-%d",
       "hot": "/search/%s-hot-desc-%d"
+    },
+    "detail": {
+      "files": "//*[@id=\"wall\"]/ol/li"
     }
   },
   {
@@ -43,6 +49,9 @@
     "url": "https://www.ciliwang.club",
     "paths": {
       "time": "/list.html?keyword=%s&page=%d"
+    },
+    "detail": {
+      "files": "//div[@class=\"file_list\"]/ol/li"
     }
   },
   {
@@ -59,6 +68,9 @@
       "time": "/search/%s/%d",
       "size": "/search/%s/bysize/%d",
       "hot": "/search/%s/byrequests/%d"
+    },
+    "detail": {
+      "files": "//*[@id=\"wall\"]/div[6]/div[2]/ol/li"
     }
   },
   {
@@ -75,6 +87,9 @@
       "time": "?q=%s&p=%d",
       "size": "?q=%s&s=size&o=desc",
       "hot": "?q=%s&s=downloads&o=desc"
+    },
+    "detail": {
+      "files": "//div[@class=\"torrent-file-list panel-body\"]/ul/li"
     }
   },
   {
@@ -89,6 +104,9 @@
     "url": "https://dmhy.anoneko.com",
     "paths": {
       "time": "/topics/list/page/%d?keyword=%s"
+    },
+    "detail": {
+      "files": "//div[@class=\"file_list\"]/ul/li"
     }
   },
   {
@@ -105,6 +123,9 @@
       "time": "?q=%s&p=%d",
       "size": "?q=%s&s=size&o=desc",
       "hot": "?q=%s&s=downloads&o=desc"
+    },
+    "detail": {
+      "files": "//div[@class=\"torrent-file-list panel-body\"]/ul/li"
     }
   },
   {
@@ -115,9 +136,12 @@
     "name": "./a/div[1]",
     "size": "./div[1]",
     "date": "./div[2]",
-    "url": "https://btsow.pw",
+    "url": "https://btspread.com",
     "paths": {
       "preset": "/search/%s/page/%d"
+    },
+    "detail": {
+      "files": "//div[@class=\"detail data-list\"]/div/text()"
     }
   },
   {
@@ -134,6 +158,9 @@
       "preset": "/search?f=%s&p=%d",
       "time": "/searchA?f=%s&p=%d",
       "size": "/searchS?f=%s&p=%d"
+    },
+    "detail": {
+      "files": "//div[@class=\"files\"]/ul/li"
     }
   },
   {
@@ -141,29 +168,16 @@
     "proxy": true,
     "group": "//div[@class=\"resultdiv\"]",
     "magnet": "./div[1]/a/@href",
-    "name": "./div[1]/a/div",
+    "name": "./div[1]/a",
     "size": "./div[2]/div[3]/div[2]",
     "date": "./div[2]/div[2]/div[2]",
     "url": "https://idope.se",
     "paths": {
       "preset": "/torrent-list/%s/?p=%d",
       "size": "/torrent-list/%s/?p=%d&o=-2"
-    }
-  },
-  {
-    "site": "BTbook",
-    "proxy": false,
-    "group": "//div[@class='cili-item']",
-    "magnet": "./div[1]/h3/a/@href",
-    "name": "./div[1]/h3/a",
-    "size": "./div[3]/span[3]/b",
-    "date": "./div[3]/span[2]/b/b",
-    "hot": "./div[3]/span[4]/b",
-    "url": "https://btbookk.net",
-    "paths": {
-      "time": "/sou/%s/time-%d.html",
-      "size": "/sou/%s/size-%d.html",
-      "hot": "/sou/%s/default-%d.html"
+    },
+    "detail": {
+      "files": "//div[@class=\"filetag\"]"
     }
   },
   {
@@ -203,11 +217,14 @@
     "size": "./span[4]/b",
     "date": "./span[2]/b",
     "hot": "./span[3]/b",
-    "url": "http://www.wcs444.com",
+    "url": "http://www.wcs777.com",
     "paths": {
       "time": "/s/%s-first-asc-%d",
       "size": "/s/%s-size-desc-%d",
       "hot": "/s/%s-hot-desc-%d"
+    },
+    "detail": {
+      "files": "//div[@class=\"dd filelist\"]"
     }
   },
   {
@@ -221,6 +238,22 @@
     "url": "http://oabt005.com",
     "paths": {
       "preset": "/index/index/k/%s/p/%d"
+    }
+  },
+  {
+    "site": "BTbook",
+    "proxy": false,
+    "group": "//div[@class='cili-item']",
+    "magnet": "./div[1]/h3/a/@href",
+    "name": "./div[1]/h3/a",
+    "size": "./div[3]/span[3]/b",
+    "date": "./div[3]/span[2]/b/b",
+    "hot": "./div[3]/span[4]/b",
+    "url": "https://btbookk.net",
+    "paths": {
+      "time": "/sou/%s/time-%d.html",
+      "size": "/sou/%s/size-%d.html",
+      "hot": "/sou/%s/default-%d.html"
     }
   }
 ]

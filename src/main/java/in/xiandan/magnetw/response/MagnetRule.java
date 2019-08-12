@@ -19,6 +19,16 @@ public class MagnetRule {
     private String url;//网站首页url
     private MagnetRulePath paths;//搜索路径
 
+    private MagnetRuleDetail detail;
+
+    public MagnetRuleDetail getDetail() {
+        return detail;
+    }
+
+    public void setDetail(MagnetRuleDetail detail) {
+        this.detail = detail;
+    }
+
     public String getHost() {
         return host;
     }

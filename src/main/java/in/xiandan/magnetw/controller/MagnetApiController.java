@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
-import in.xiandan.magnetw.exception.MagnetParserException;
 import in.xiandan.magnetw.handler.PermissionHandler;
 import in.xiandan.magnetw.response.BaseResponse;
 import in.xiandan.magnetw.response.MagnetItem;
+import in.xiandan.magnetw.response.MagnetItemDetail;
 import in.xiandan.magnetw.response.MagnetPageData;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetRule;
@@ -108,7 +107,7 @@ public class MagnetApiController {
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public BaseResponse<MagnetPageData> search(HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
-                                               @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws MagnetParserException, IOException {
+                                               @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws Exception {
         //是否需要屏蔽
         if (config.resultFilterEnabled && filterService.contains(keyword)) {
             logger.info("搜索结果被屏蔽--->" + keyword);
@@ -124,6 +123,7 @@ public class MagnetApiController {
         List<MagnetItem> infos = magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage(), userAgent);
 
         MagnetPageData data = new MagnetPageData();
+        data.setRule(rule);
         data.setTrackersString(ruleService.getTrackersString());
         //如果过期了就重新异步缓存Tracker服务器列表
         if (ruleService.isTrackersExpired()) {
@@ -136,6 +136,22 @@ public class MagnetApiController {
             magnetService.asyncPreloadNextPage(rule, pageOption, userAgent);
         }
         return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
+    }
+
+
+    /**
+     * 详情
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "detail", method = RequestMethod.GET)
+    public BaseResponse<MagnetItemDetail> search(HttpServletRequest request, @RequestParam String source, @RequestParam("url") String detailUrl) throws Exception {
+        String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
+
+        MagnetRule rule = ruleService.getRuleBySite(source);
+        MagnetItemDetail detail = magnetService.parserDetail(detailUrl, rule, userAgent);
+        return BaseResponse.success(detail, null);
     }
 
     /**

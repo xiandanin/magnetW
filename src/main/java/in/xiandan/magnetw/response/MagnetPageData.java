@@ -6,9 +6,18 @@ import java.util.List;
 public class MagnetPageData {
 
     private List<String> sites;
+    private MagnetRule rule;
     private MagnetPageOption current;
     private List<MagnetItem> results;
     private String trackersString;
+
+    public MagnetRule getRule() {
+        return rule;
+    }
+
+    public void setRule(MagnetRule rule) {
+        this.rule = rule;
+    }
 
     public List<String> getSites() {
         return sites;

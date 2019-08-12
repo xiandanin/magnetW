@@ -138,6 +138,8 @@
         <van-cell-group>
             <van-cell title="磁力优化" @click="clickCopyAction"></van-cell>
             <van-cell title="小米路由" @click="clickMiWiFiAction"></van-cell>
+            <van-cell title="文件列表" @click="clickFilesAction"
+                      v-show="rule&&rule.detail"></van-cell>
             <van-cell title="源站详情" @click="clickDetailAction"></van-cell>
         </van-cell-group>
     </van-popup>
@@ -153,6 +155,24 @@
             <van-button size="small" plain type="info" @click="requestSubmitFilter"
                         :loading="filter.loading">确定
             </van-button>
+        </div>
+    </van-popup>
+
+    <van-popup
+            v-model="detail.show"
+            round
+            style="width:80%;max-height: 80% ">
+        <div class="popup-title">文件列表</div>
+        <van-loading class="detail-popup-loading" color="#1989fa"
+                     v-show="detail.loading"></van-loading>
+        <van-cell
+                class="detail-file-item"
+                v-for="it in detail.rsp.files"
+                :key="it"
+                :title="it"
+        ></van-cell>
+        <div class="detail-popup-error" v-show="!detail.rsp.files&&detail.errorMessage">
+            {{detail.errorMessage}}
         </div>
     </van-popup>
 </div>
@@ -187,9 +207,7 @@
         //van-popup需要的数据
         Vue.set(vue._data.status, 'popup', {
             show: false,
-            url: null,
-            detail: null,
-            miwifi: null
+            item: {}
         });
 
         vue.getCurrentSortName = function () {
@@ -209,10 +227,8 @@
          * 更多操作
          */
         vue.clickMoreAction = function (item) {
-            vue._data.status.popup.url = this.formatTrackersUrl(item.magnet);
-            vue._data.status.popup.detail = item.detailUrl;
-            vue._data.status.popup.miwifi = this.formatMiWifiUrl(item.magnet);
             vue._data.status.popup.show = true;
+            vue._data.status.popup.item = item;
         };
 
         /**
@@ -220,7 +236,8 @@
          */
         vue.clickCopyAction = function () {
             vue._data.status.popup.show = false;
-            vue.$copyText(vue._data.status.popup.url).then(function (e) {
+            let url = this.formatTrackersUrl(vue._data.status.popup.item.magnet);
+            vue.$copyText(url).then(function (e) {
                 vue.handleCopy()
             });
         };
@@ -230,7 +247,7 @@
          */
         vue.clickDetailAction = function () {
             vue._data.status.popup.show = false;
-            window.open(vue._data.status.popup.detail);
+            window.open(vue._data.status.popup.item.detailUrl);
         };
 
         /**
@@ -238,7 +255,15 @@
          */
         vue.clickMiWiFiAction = function () {
             vue._data.status.popup.show = false;
-            window.open(vue._data.status.popup.miwifi);
+            window.open(this.formatMiWifiUrl(vue._data.status.popup.item.magnet));
+        };
+
+        /**
+         * 文件列表
+         */
+        vue.clickFilesAction = function () {
+            vue._data.status.popup.show = false;
+            vue.handleLazyLoadDetail(vue._data.status.popup.item);
         };
 
 
@@ -282,6 +307,7 @@
          * @param data
          */
         vue.onRequestSuccess = function (data) {
+            vue._data.rule = data.rule;
             if (data.results.length > 0) {
                 if (data.current.page > 1) {
                     vue._data.list.push.apply(vue._data.list, data.results);
@@ -292,7 +318,7 @@
             } else {
                 vue._data.status.vanlist.finished = true
             }
-        };
+        }
     }
 
 </script>

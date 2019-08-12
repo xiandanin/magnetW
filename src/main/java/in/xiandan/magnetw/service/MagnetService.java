@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -41,9 +42,11 @@ import in.xiandan.magnetw.config.ApplicationConfig;
 import in.xiandan.magnetw.exception.MagnetParserException;
 import in.xiandan.magnetw.request.DefaultSslSocketFactory;
 import in.xiandan.magnetw.response.MagnetItem;
+import in.xiandan.magnetw.response.MagnetItemDetail;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetPageSiteSort;
 import in.xiandan.magnetw.response.MagnetRule;
+import in.xiandan.magnetw.response.MagnetRuleDetail;
 
 /**
  * created 2018/3/6 16:04
@@ -59,9 +62,7 @@ public class MagnetService {
     @Autowired
     private ApplicationConfig config;
 
-    //private Map<String, Map<String, String>> mCacheCookies = new HashMap<String, Map<String, String>>();
-
-    @CacheEvict(value = "magnetList", allEntries = true)
+    @CacheEvict(value = {"magnetList", "magnetDetail"}, allEntries = true)
     public void clearCache() {
         logger.info("列表缓存清空");
     }
@@ -103,43 +104,38 @@ public class MagnetService {
         return option;
     }
 
-    @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%d',#rule.url,#keyword,#sort,#page)")
-    public List<MagnetItem> parser(MagnetRule rule, String keyword, String sort, int page, String userAgent) throws MagnetParserException, IOException {
-        if (StringUtils.isEmpty(keyword)) {
-            return new ArrayList<MagnetItem>();
-        }
 
-        //用页码和关键字 拼接源站的url
-        //部分源站顺序不一致，2.1.1以后使用替换的形式
-        String sortPath = ruleService.getPathBySort(sort, rule.getPaths()).replace("%s", keyword).replace("%d", String.valueOf(page));
-        String url = String.format("%s%s", rule.getUrl(), sortPath);
-
+    /**
+     * 请求源站
+     *
+     * @param url
+     * @param site      源站名称
+     * @param host      源站的域名
+     * @param isProxy   是否使用代理
+     * @param userAgent
+     * @return
+     * @throws IOException
+     */
+    protected Document requestSourceSite(String url, String site, String host, boolean isProxy, String userAgent) throws IOException, ParserConfigurationException {
         Connection connect = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .sslSocketFactory(DefaultSslSocketFactory.getDefaultSslSocketFactory())
                 .timeout((int) config.sourceTimeout)
-                .header(HttpHeaders.HOST, rule.getHost());
+                .header(HttpHeaders.HOST, host);
         //增加userAgent
         if (StringUtils.isEmpty(userAgent)) {
             connect.header(HttpHeaders.USER_AGENT, userAgent);
         }
 
-        /*
-        Map<String, String> cookies = mCacheCookies.get(rule.getUrl());
-        if (cookies != null) {
-            connect.cookies(cookies);
-        }
-        */
-
         //代理设置
-        if (config.proxyEnabled && rule.isProxy()) {
+        if (config.proxyEnabled && isProxy) {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(config.proxyHost, config.proxyPort));
             connect.proxy(proxy);
         }
 
         StringBuffer log = new StringBuffer();
         log.append("正在请求--->");
-        log.append(rule.getSite());
+        log.append(site);
         log.append("--->");
         log.append(Thread.currentThread().getName());
         log.append("\n");
@@ -157,18 +153,29 @@ public class MagnetService {
 
         Connection.Response response = connect.execute();
 
-        /*
-        if (response.cookies() != null) {
-            mCacheCookies.put(rule.getUrl(), response.cookies());
-        }
-        */
-
         String html = response.parse().html();
+
+        TagNode node = new HtmlCleaner().clean(html);
+        return new DomSerializer(new CleanerProperties()).createDOM(node);
+    }
+
+    @Cacheable(value = "magnetList", key = "T(String).format('%s-%s-%s-%d',#rule.url,#keyword,#sort,#page)")
+    public List<MagnetItem> parser(MagnetRule rule, String keyword, String sort, int page, String userAgent) throws MagnetParserException, IOException {
+        if (StringUtils.isEmpty(keyword)) {
+            return new ArrayList<MagnetItem>();
+        }
+
+        //用页码和关键字 拼接源站的url
+        //部分源站顺序不一致，2.1.1以后使用替换的形式
+        String sortPath = ruleService.getPathBySort(sort, rule.getPaths()).replace("%s", keyword).replace("%d", String.valueOf(page));
+        String url = String.format("%s%s", rule.getUrl(), sortPath);
+
+        //请求源站
         try {
+            Document dom = requestSourceSite(url, rule.getSite(), rule.getHost(), rule.isProxy(), userAgent);
+
             List<MagnetItem> infos = new ArrayList<MagnetItem>();
             XPath xPath = XPathFactory.newInstance().newXPath();
-            TagNode tagNode = new HtmlCleaner().clean(html);
-            Document dom = new DomSerializer(new CleanerProperties()).createDOM(tagNode);
 
             //列表
             NodeList result = (NodeList) xPath.evaluate(rule.getGroup(), dom, XPathConstants.NODESET);
@@ -269,6 +276,43 @@ public class MagnetService {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 解析源站详情
+     *
+     * @param detailUrl 源站详情url
+     * @param rule
+     * @param userAgent
+     * @return
+     * @throws MagnetParserException
+     */
+    @Cacheable(value = "magnetDetail", key = "#detailUrl")
+    public MagnetItemDetail parserDetail(String detailUrl, MagnetRule rule, String userAgent) throws MagnetParserException {
+        try {
+            MagnetRuleDetail detail = rule.getDetail();
+            if (detail == null) {
+                throw new NullPointerException("此源站没有配置详情规则");
+            }
+            Document dom = requestSourceSite(detailUrl, rule.getSite(), rule.getHost(), rule.isProxy(), userAgent);
+            XPath xPath = XPathFactory.newInstance().newXPath();
+
+            MagnetItemDetail result = new MagnetItemDetail();
+            //文件列表
+            List<String> files = new ArrayList<String>();
+            NodeList fileNodeList = (NodeList) xPath.evaluate(detail.getFiles(), dom, XPathConstants.NODESET);
+            for (int i = 0; i < fileNodeList.getLength(); i++) {
+                Node item = fileNodeList.item(i);
+                if (item != null) {
+                    files.add(item.getTextContent().trim());
+                }
+            }
+            result.setFiles(files);
+            return result;
+        } catch (Exception e) {
+            throw new MagnetParserException(e);
         }
     }
 

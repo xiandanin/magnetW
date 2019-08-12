@@ -12,12 +12,12 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 
-    <link href="https://cdn.bootcss.com/element-ui/2.3.7/theme-chalk/index.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.11.1/theme-chalk/index.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
 
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
-    <script src="https://cdn.bootcss.com/element-ui/2.3.7/index.js"></script>
+    <script src="https://cdn.bootcss.com/element-ui/2.11.1/index.js"></script>
     <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
     <script src="resources/js/dist/base64.min.js"></script>
@@ -216,6 +216,13 @@
                                                target="_blank">小米路由
                                             </a>
                                         </div>
+                                        <div class="more-action-button"
+                                             v-show="rule&&rule.detail">
+                                            <el-button type="button"
+                                                       size="mini" plain
+                                                       @click="handleLazyLoadDetail(scope.row)">文件列表
+                                            </el-button>
+                                        </div>
                                         <div class="more-action-button">
                                             <a class="el-button el-button--button el-button--mini"
                                                v-if="scope.row.detailUrl!=null&&scope.row.detailUrl.length>0"
@@ -311,6 +318,19 @@
             </el-button>
         </div>
     </el-dialog>
+
+
+    <el-dialog
+            class="detail-popup"
+            :title="'文件列表 - '+detail.name"
+            :visible.sync="detail.show">
+        <div v-loading="detail.loading">
+            <div v-for="it in detail.rsp.files">{{it}}</div>
+            <div class="detail-popup-error" v-show="!detail.rsp.files&&detail.errorMessage">
+                {{detail.errorMessage}}
+            </div>
+        </div>
+    </el-dialog>
 </div>
 </body>
 <script>
@@ -357,6 +377,7 @@
 
         //请求成功的回调
         vue.onRequestSuccess = function (data) {
+            vue._data.rule = data.rule;
             if (data.results.length > 0) {
                 vue._data.list = data.results;
             } else {

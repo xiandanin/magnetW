@@ -137,7 +137,7 @@ public class MagnetRuleService {
             magnetRuleMap = new LinkedHashMap<String, MagnetRule>();
             sites = new ArrayList<MagnetRule>();
 
-            logger.info("准备解析源站规则...");
+            logger.info("准备加载源站规则...");
 
             try {
                 int failCount = 0;

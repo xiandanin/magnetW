@@ -204,15 +204,34 @@ form {
     margin-bottom: 10px;
     font-size: 14px;
 }
-.setting .van-checkbox{
+
+.setting .van-checkbox {
     display: inline-flex;
 }
 
-.setting .van-checkbox__label{
+.setting .van-checkbox__label {
     color: #666;
 }
 
 .setting .van-checkbox__icon--checked .van-icon {
     background-color: #666;
-    border-color:#666;
+    border-color: #666;
+}
+
+.detail-file-item {
+    word-break: break-all; /**两端对齐**/
+    white-space: pre-line;
+    color: #606266;
+    text-align: left;
+}
+
+.detail-popup-loading {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.detail-popup-error {
+    text-align: center;
+    color: #f56c6c;
+    margin-bottom: 15px;
 }
