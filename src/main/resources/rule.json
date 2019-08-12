@@ -78,6 +78,20 @@
     }
   },
   {
+    "site": "动漫花园",
+    "proxy": false,
+    "group": "//*[@id=\"topic_list\"]/tbody/tr",
+    "magnet": "./td[4]/a/@href",
+    "name": "./td[3]/a",
+    "size": "./td[5]",
+    "date": "./td[1]/text()",
+    "hot": "./td[8]",
+    "url": "https://dmhy.anoneko.com",
+    "paths": {
+      "time": "/topics/list/page/%d?keyword=%s"
+    }
+  },
+  {
     "site": "Sukebei Nyaa",
     "proxy": true,
     "group": "//div[@class='table-responsive']/table/tbody/tr",
