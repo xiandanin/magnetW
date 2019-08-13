@@ -39,14 +39,8 @@ public class ApplicationConfig {
     @Value("${version.link}")
     public String versionLink;
 
-    @Value("${search.result.filter.enabled}")
-    public boolean resultFilterEnabled;
-
-    @Value("${busuanzi.enabled}")
-    public boolean busuanziEnabled;
-
-    @Value("${busuanzi.show}")
-    public boolean busuanziShow;
+    @Value("${search.report.enabled}")
+    public boolean reportEnabled;
 
     @Value("${preload.enabled}")
     public boolean preloadEnabled;

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,10 +23,12 @@ import in.xiandan.magnetw.response.MagnetItemDetail;
 import in.xiandan.magnetw.response.MagnetPageData;
 import in.xiandan.magnetw.response.MagnetPageOption;
 import in.xiandan.magnetw.response.MagnetRule;
-import in.xiandan.magnetw.service.FilterService;
+import in.xiandan.magnetw.response.ReportData;
+import in.xiandan.magnetw.response.ReportItem;
 import in.xiandan.magnetw.service.MagnetRuleService;
 import in.xiandan.magnetw.service.MagnetService;
 import in.xiandan.magnetw.service.PermissionService;
+import in.xiandan.magnetw.service.ReportService;
 
 /**
  * created 2019/05/05 12:04
@@ -46,7 +49,7 @@ public class MagnetApiController {
     MagnetService magnetService;
 
     @Autowired
-    FilterService filterService;
+    ReportService reportService;
 
     private Logger logger = Logger.getLogger(getClass());
 
@@ -86,6 +89,22 @@ public class MagnetApiController {
         });
     }
 
+    /**
+     * 重载举报列表
+     *
+     * @return
+     * @throws Exception
+     */
+    @ResponseBody
+    @RequestMapping(value = "report-reload", method = RequestMethod.GET)
+    public BaseResponse reportReload(@RequestParam(value = "p") String password) throws Exception {
+        BaseResponse permission = permissionService.runAsPermission(password, "举报列表重载成功", null);
+        if (permission.isSuccess()) {
+            reportService.reload();
+        }
+        return permission;
+    }
+
 
     /**
      * 获取源站列表
@@ -102,14 +121,20 @@ public class MagnetApiController {
     /**
      * 搜索
      *
+     * @param request
+     * @param source  源站名称
+     * @param keyword 关键词
+     * @param sort    排序
+     * @param page    页码
      * @return
+     * @throws Exception
      */
     @ResponseBody
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public BaseResponse<MagnetPageData> search(HttpServletRequest request, @RequestParam(required = false) String source, @RequestParam(required = false) String keyword,
                                                @RequestParam(required = false) String sort, @RequestParam(required = false) Integer page) throws Exception {
-        //是否需要屏蔽
-        if (config.resultFilterEnabled && filterService.contains(keyword)) {
+        //是否需要屏蔽关键词
+        if (config.reportEnabled && reportService.containsKeyword(keyword)) {
             logger.info("搜索结果被屏蔽--->" + keyword);
             return BaseResponse.error("搜索结果被屏蔽");
         }
@@ -120,7 +145,24 @@ public class MagnetApiController {
         MagnetPageOption pageOption = magnetService.transformCurrentOption(source, keyword, sort, page);
         MagnetRule rule = ruleService.getRuleBySite(pageOption.getSite());
 
-        List<MagnetItem> infos = magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage(), userAgent);
+        List<MagnetItem> infos = new ArrayList<MagnetItem>();
+        infos.addAll(magnetService.parser(rule, pageOption.getKeyword(), pageOption.getSort(), pageOption.getPage(), userAgent));
+        int dataCount = infos.size();
+
+        //是否需要屏蔽结果
+        String supplement = "";
+        if (config.reportEnabled) {
+            List<MagnetItem> filterItems = new ArrayList<MagnetItem>();
+            for (MagnetItem item : infos) {
+                if (reportService.containsUrl(item.getMagnet())) {
+                    filterItems.add(item);
+                }
+            }
+            infos.removeAll(filterItems);
+            if (filterItems.size() > 0) {
+                supplement = String.format("，其中%d个被屏蔽", filterItems.size());
+            }
+        }
 
         MagnetPageData data = new MagnetPageData();
         data.setRule(rule);
@@ -132,17 +174,21 @@ public class MagnetApiController {
         data.setCurrent(pageOption);
         data.setResults(infos);
 
-        if (config.preloadEnabled && infos.size() > 0) {
+        if (config.preloadEnabled && dataCount > 0) {
             magnetService.asyncPreloadNextPage(rule, pageOption, userAgent);
         }
-        return BaseResponse.success(data, String.format("搜索到%d条结果", infos.size()));
+        return BaseResponse.success(data, String.format("搜索到%d条结果%s", dataCount, supplement));
     }
 
 
     /**
      * 详情
      *
+     * @param request
+     * @param source    源站名称
+     * @param detailUrl 源站详情url
      * @return
+     * @throws Exception
      */
     @ResponseBody
     @RequestMapping(value = "detail", method = RequestMethod.GET)
@@ -155,28 +201,37 @@ public class MagnetApiController {
     }
 
     /**
-     * 过滤
+     * 举报
      *
+     * @param name  名称
+     * @param value 搜索关键词或磁力链
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "filter", method = RequestMethod.POST)
-    public BaseResponse<MagnetPageData> filter(@RequestParam String input) {
-        if (StringUtils.isEmpty(input)) {
+    @RequestMapping(value = "report", method = RequestMethod.POST)
+    public BaseResponse<MagnetPageData> report(@RequestParam(required = false) String name, @RequestParam String value) {
+        if (StringUtils.isEmpty(value)) {
             return BaseResponse.error("请输入关键词或磁力链");
         } else {
             try {
-                boolean add = filterService.add(input);
-                if (add) {
-                    return BaseResponse.success(null, "添加成功");
-                } else {
-                    return BaseResponse.error("服务器繁忙");
-                }
+                reportService.put(name, value);
+                return BaseResponse.success(null, "举报成功");
             } catch (Exception e) {
                 return BaseResponse.error(e.getMessage());
             }
 
         }
+    }
+
+    @RequestMapping(value = "report-list")
+    public BaseResponse<ReportData> reportList() throws Exception {
+        List<ReportItem> keywords = reportService.getKeywordList();
+        List<ReportItem> urls = reportService.getUrlList();
+        ReportData data = new ReportData();
+        data.setKeywords(keywords);
+        data.setUrls(urls);
+        int count = keywords.size() + urls.size();
+        return BaseResponse.success(data, String.format("共%d条记录", count));
     }
 
 

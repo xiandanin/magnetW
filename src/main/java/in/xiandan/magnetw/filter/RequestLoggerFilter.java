@@ -1,12 +1,13 @@
 package in.xiandan.magnetw.filter;
 
 import org.apache.log4j.Logger;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,15 +22,27 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        logger.info(buildRequestString(request));
+
+        chain.doFilter(request, response);
+    }
+
+    public String buildRequestString(HttpServletRequest request) {
         StringBuffer sb = new StringBuffer();
         sb.append(request.getRequestURL());
 
-        String queryString = request.getQueryString();
-        if (!StringUtils.isEmpty(queryString)){
-            sb.append("?");
-            sb.append(URLDecoder.decode(queryString));
+        sb.append("\n[Request Params]\n");
+        Set<Map.Entry<String, String[]>> entrySet = request.getParameterMap().entrySet();
+        for (Map.Entry<String, String[]> entry : entrySet) {
+            String[] values = entry.getValue();
+            for (String value : values) {
+                sb.append(entry.getKey());
+                sb.append(":");
+                sb.append(URLDecoder.decode(value));
+                sb.append("\n");
+            }
         }
-        sb.append("\n[Request Headers]\n");
+        sb.append("[Request Headers]\n");
         Enumeration<String> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String header = names.nextElement();
@@ -38,8 +51,6 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
             sb.append(request.getHeader(header));
             sb.append("\n");
         }
-        logger.info(sb.toString());
-
-        chain.doFilter(request, response);
+        return sb.toString();
     }
 }

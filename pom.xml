@@ -5,7 +5,7 @@
     <groupId>in.xiandan</groupId>
     <artifactId>magnetw</artifactId>
     <packaging>war</packaging>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     <name>magnetW</name>
     <url>http://maven.apache.org</url>
     <dependencies>
@@ -20,8 +20,6 @@
             <artifactId>htmlcleaner</artifactId>
             <version>2.21</version>
         </dependency>
-
-
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -70,12 +68,17 @@
             <version>4.3.1.RELEASE</version>
         </dependency>
 
-
         <!--缓存-->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>2.10.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.28.0</version>
         </dependency>
     </dependencies>
     <build>

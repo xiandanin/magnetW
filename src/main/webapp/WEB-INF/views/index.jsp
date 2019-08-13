@@ -42,7 +42,7 @@
 
                 <!--右边-->
                 <el-col :span="12" style="text-align: right">
-                    <a v-if="config.resultFilterEnabled" @click="showFilterDialog">自助屏蔽</a>
+
                 </el-col>
             </el-row>
         </el-header>
@@ -62,22 +62,26 @@
                     </el-input>
                 </div>
 
-                <div class="setting">
-                    <el-checkbox v-model="setting.memoryChoice" label="记住上次选择的源站"
-                                 @change="onChangeMemoryChoice"/>
-                </div>
+                <!--选项-->
+                <el-row class="option-row">
+                    <!--左边-->
+                    <el-col :span="12">
+                        <a v-if="config.reportEnabled" @click="showReportDialog"
+                           class="report-link">自助举报</a>
+                    </el-col>
+                    <!--右边-->
+                    <el-col :span="config.reportEnabled?12:24" class="option-right">
+                        <el-checkbox class="remember-source" v-model="setting.memoryChoice"
+                                     label="记住上次选择的源站"
+                                     @change="onChangeMemoryChoice"/>
+                    </el-col>
+                </el-row>
+
                 <!--源站列表-->
                 <div class="search_site">
                     <!--少于11个就用正常尺寸-->
-                    <el-tabs v-if="sourceSites.length<=11" type="card" v-model="current.site"
-                             @tab-click="handleTabClick">
-                        <el-tab-pane v-for="it in sourceSites"
-                                     :label="it.site"
-                                     :key="it.site"
-                                     :name="it.site">
-                        </el-tab-pane>
-                    </el-tabs>
-                    <el-tabs v-else type="card" v-model="current.site" class="el-tab-small"
+                    <el-tabs type="card" v-model="current.site"
+                             class="{{sourceSites.length<=11?'':el-tab-small}}"
                              @tab-click="handleTabClick">
                         <el-tab-pane v-for="it in sourceSites"
                                      :label="it.site"
@@ -137,6 +141,9 @@
                                     </div>
                                 </el-col>
                             </el-row>
+                        </div>
+                        <div v-show="successMessage" class="result-success-message">
+                            {{successMessage}}
                         </div>
                         <el-table
                                 :empty-text="message"
@@ -229,6 +236,12 @@
                                                :href="scope.row.detailUrl" target="_blank">源站详情
                                             </a>
                                         </div>
+                                        <div class="more-action-button" v-if="config.reportEnabled">
+                                            <el-button type="button"
+                                                       size="mini" plain
+                                                       @click="showReportDialog(scope.row)">举报资源
+                                            </el-button>
+                                        </div>
                                         <el-button slot="reference"
                                                    size="mini"
                                                    type="button">更多
@@ -278,26 +291,7 @@
                         <h2 style="font-weight: lighter">{{message}}</h2>
                     </div>
                 </div>
-
-
-                <!--不蒜子统计-->
-                <div id="busuanzi" style="display: none;margin-top: 30px">
-                    <div v-if="config.busuanziEnabled">
-                        <script async
-                                src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
-                        </script>
-                        <div class="busuanzi">
-                            <span id="busuanzi_title">流量统计</span> |
-                            <span id="busuanzi_container_site_pv">
-    总访问量[<span id="busuanzi_value_site_pv"></span>]
-</span> | <span id="busuanzi_container_site_uv">
-  总访客数[<span id="busuanzi_value_site_uv"></span>]
-</span>
-                        </div>
-                    </div>
-                </div>
             </div>
-
         </el-main>
     </el-container>
     <div id="page-component-up" @click="scrollTop" v-show="showTopButton"><i
@@ -305,20 +299,19 @@
 
     <el-dialog
             id="filter-dialog"
-            title="自助屏蔽"
+            title="自助举报"
             :visible.sync="filter.dialogVisible"
             width="40%">
         <div class="filter-message">{{filter.message}}</div>
-        <el-input @keyup.enter.native="requestSubmitFilter" v-model="filter.keyword" clearable
+        <el-input @keyup.enter.native="requestReport" v-model="filter.value" clearable
                   :placeholder="filter.placeholder"></el-input>
         <div class="filter-action-container">
             <el-button size="small" @click="filter.dialogVisible = false">取 消</el-button>
-            <el-button size="small" type="primary" @click="requestSubmitFilter"
+            <el-button size="small" type="primary" @click="requestReport"
                        :loading="filter.loading">确 定
             </el-button>
         </div>
     </el-dialog>
-
 
     <el-dialog
             class="detail-popup"
@@ -376,14 +369,19 @@
         };
 
         //请求成功的回调
-        vue.onRequestSuccess = function (data) {
-            vue._data.rule = data.rule;
+        vue.onRequestSuccess = function (rsp) {
+            let data = rsp.data;
             if (data.results.length > 0) {
                 vue._data.list = data.results;
             } else {
                 vue._data.message = "什么也没搜到"
             }
+            vue.$message({
+                message: rsp.message,
+                duration: 2000
+            });
         };
+
     }
 </script>
 <script src="resources/js/index.js"></script>

@@ -196,30 +196,37 @@ a {
     margin-bottom: 10px;
 }
 
-.setting {
-    text-align: right;
+.option-row {
     margin-top: 15px;
     margin-bottom: 15px;
     font-size: 14px;
 }
 
-.setting .el-checkbox {
+.report-link {
+    cursor: pointer;
+}
+
+.option-right {
+    text-align: right;
+}
+
+.remember-source .el-checkbox {
     margin-bottom: 0px;
 }
 
-.setting .el-checkbox__inner {
+.remember-source .el-checkbox__inner {
     margin-bottom: 2px;
 }
 
-.setting .el-checkbox__input.is-focus .el-checkbox__inner {
+.remember-source .el-checkbox__input.is-focus .el-checkbox__inner {
     border-color: #666;
 }
 
-.setting .el-checkbox__input.is-checked + .el-checkbox__label {
+.remember-source .el-checkbox__input.is-checked + .el-checkbox__label {
     color: #666;
 }
 
-.setting .el-checkbox__input.is-checked .el-checkbox__inner, .setting .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+.remember-source .el-checkbox__input.is-checked .el-checkbox__inner, .setting .el-checkbox__input.is-indeterminate .el-checkbox__inner {
     background-color: #666;
     border-color: #666;
 }

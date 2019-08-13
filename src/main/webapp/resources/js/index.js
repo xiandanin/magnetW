@@ -12,13 +12,15 @@ new Vue({
         current: null,
         sortBy: null,
         rule: null,
-        //屏蔽词
+        successMessage: null,
+        //举报
         filter: {
-            message: "如果你发现有违规的搜索结果，可以在此处提交，提交后将会禁止搜索此关键词",
+            message: "如果你发现有违规的搜索结果，可以在此处提交，提交后将会禁止搜索此关键词，也可以在更多按钮中举报资源",
             dialogVisible: false,
-            placeholder: "输入关键词",
-            keyword: null,
-            loading: false
+            loading: false,
+            placeholder: "输入关键词或磁力链",
+            value: null,
+            name: null
         },
         //设置
         setting: {
@@ -43,8 +45,6 @@ new Vue({
         this.applySetting();
     },
     mounted: function () {
-        this.delayLoadBusuanzi();
-
         window.addEventListener('scroll', this.onScrollTopButtonState);
 
         if (this.current.keyword != null && this.current.keyword.length > 0) {
@@ -175,19 +175,6 @@ new Vue({
         handleCopy() {
             this.onToastMessage('复制成功', 'success');
         },
-        /**
-         * 延迟显示不蒜子信息
-         */
-        delayLoadBusuanzi() {
-            if (this.config.busuanziEnabled && this.config.busuanziShow) {
-                var busuanzi = document.getElementById("busuanzi");
-                if (busuanzi != null && busuanzi !== undefined) {
-                    setTimeout(function () {
-                        busuanzi.style.display = "block"
-                    }, 400);
-                }
-            }
-        },
         onScrollTopButtonState() {
             var viewHeight = document.body.clientHeight;
             var curHeight = document.body.scrollTop;
@@ -209,8 +196,9 @@ new Vue({
                 if (response.body.success) {
                     const data = response.body.data;
                     this.trackersString = data.trackersString;
+                    this.rule = data.rule;
                     console.log("callback - onRequestSuccess");
-                    this.onRequestSuccess(data)
+                    this.onRequestSuccess(response.body)
                 } else {
                     console.log("callback - onRequestError - " + response.body.message);
                     this.onRequestError(response.body.message)
@@ -231,24 +219,30 @@ new Vue({
         /**
          * 屏蔽的dialog
          */
-        showFilterDialog() {
-            this.filter.dialogVisible = true
+        showReportDialog(item) {
+            this.filter.dialogVisible = true;
+            if (item) {
+                this.filter.name = item.name;
+                this.filter.value = item.magnet;
+            }
         },
         /**
-         * 提交屏蔽
+         * 提交举报
          */
-        requestSubmitFilter() {
-            if (this.filter.keyword != null && this.filter.keyword.length > 0) {
+        requestReport() {
+            if (this.filter.value) {
                 this.filter.loading = true;
-                this.$http.post("api/filter", {
-                    input: this.filter.keyword
-                }, {emulateJSON: true})
+                let params = {value: this.filter.value};
+                if (this.filter.name) {
+                    params.name = this.filter.name
+                }
+                this.$http.post("api/report", params, {emulateJSON: true})
                     .then(function (response) {
                         //请求成功
                         this.filter.loading = false;
                         this.filter.dialogVisible = false;
                         if (response.body.success) {
-                            this.filter.keyword = null;
+                            this.filter.value = null;
                             this.onToastMessage(response.body.message, "success");
                         } else {
                             this.onToastMessage(response.body.message, "error");
@@ -256,7 +250,7 @@ new Vue({
                     }).catch(function (error) {
                     //请求失败
                     this.filter.loading = false;
-                    this.onToastMessage("添加失败", "error")
+                    this.onToastMessage("举报失败", "error")
                 });
             }
         },

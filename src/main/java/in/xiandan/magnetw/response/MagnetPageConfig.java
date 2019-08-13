@@ -9,19 +9,15 @@ public class MagnetPageConfig {
     private String versionName;
     private String searchPlaceholder;
     private String versionLink;
-    private boolean busuanziEnabled;
-    private boolean busuanziShow;
     private boolean trackersEnabled;
-    private boolean resultFilterEnabled;
+    private boolean reportEnabled;
 
     public MagnetPageConfig(ApplicationConfig config) {
         this.versionName = config.versionName;
         this.searchPlaceholder = config.searchPlaceholder;
         this.versionLink = config.versionLink;
-        this.busuanziEnabled = config.busuanziEnabled;
-        this.busuanziShow = config.busuanziShow;
         this.trackersEnabled = config.trackersEnabled;
-        this.resultFilterEnabled = config.resultFilterEnabled;
+        this.reportEnabled = config.reportEnabled;
     }
 
     public MagnetPageConfig() {
@@ -33,30 +29,6 @@ public class MagnetPageConfig {
 
     public void setTrackersEnabled(boolean trackersEnabled) {
         this.trackersEnabled = trackersEnabled;
-    }
-
-    public boolean isResultFilterEnabled() {
-        return resultFilterEnabled;
-    }
-
-    public void setResultFilterEnabled(boolean resultFilterEnabled) {
-        this.resultFilterEnabled = resultFilterEnabled;
-    }
-
-    public boolean isBusuanziEnabled() {
-        return busuanziEnabled;
-    }
-
-    public void setBusuanziEnabled(boolean busuanziEnabled) {
-        this.busuanziEnabled = busuanziEnabled;
-    }
-
-    public boolean isBusuanziShow() {
-        return busuanziShow;
-    }
-
-    public void setBusuanziShow(boolean busuanziShow) {
-        this.busuanziShow = busuanziShow;
     }
 
     public String getVersionName() {
@@ -81,5 +53,13 @@ public class MagnetPageConfig {
 
     public void setVersionLink(String versionLink) {
         this.versionLink = versionLink;
+    }
+
+    public boolean isReportEnabled() {
+        return reportEnabled;
+    }
+
+    public void setReportEnabled(boolean reportEnabled) {
+        this.reportEnabled = reportEnabled;
     }
 }

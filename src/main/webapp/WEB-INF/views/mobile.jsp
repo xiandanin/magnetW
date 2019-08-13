@@ -36,7 +36,7 @@
         </van-col>
         <!--右边-->
         <van-col span="12" style="text-align: right">
-            <a v-if="config.resultFilterEnabled" @click="showFilterDialog">自助屏蔽</a>
+
         </van-col>
     </van-row>
     <div class="search-header-container">
@@ -56,14 +56,25 @@
             </van-search>
         </form>
     </div>
-    <div class="setting">
-        <van-checkbox icon-size="14px" v-model="setting.memoryChoice"
-                      @change="onChangeMemoryChoice">
-            记住上次选择的源站
-        </van-checkbox>
-    </div>
+    <!--选项-->
+    <van-row class="option-row">
+        <!--左边-->
+        <van-col span="12" class="option-left">
+            <a v-if="config.reportEnabled" @click="showReportDialog">自助举报</a>
+        </van-col>
+        <!--右边-->
+        <van-col span="12" class="option-right">
+            <div class="remember-source">
+                <van-checkbox icon-size="14px" v-model="setting.memoryChoice"
+                              @change="onChangeMemoryChoice">
+                    记住上次选择的源站
+                </van-checkbox>
+            </div>
+        </van-col>
+    </van-row>
+    <div v-show="successMessage" class="result-success-message">{{successMessage}}</div>
     <div>
-        <van-tabs v-model="current.site" color="409EFF" @click="handleTabClick">
+        <van-tabs v-model="current.site" color="#409EFF" @click="handleTabClick">
             <van-tab v-for="it in sourceSites" :title="it.site" :name="it.site"/>
         </van-tabs>
         <div>
@@ -141,18 +152,20 @@
             <van-cell title="文件列表" @click="clickFilesAction"
                       v-show="rule&&rule.detail"></van-cell>
             <van-cell title="源站详情" @click="clickDetailAction"></van-cell>
+            <van-cell title="举报资源" v-if="config.reportEnabled"
+                      @click="clickReportAction"></van-cell>
         </van-cell-group>
     </van-popup>
 
     <van-popup id="filter-dialog" v-model="filter.dialogVisible" round
-               @confirm="requestSubmitFilter">
-        <div class="popup-title">自助屏蔽</div>
+               @confirm="requestReport">
+        <div class="popup-title">自助举报</div>
         <div class="filter-message">{{filter.message}}</div>
-        <van-field size="small" v-model="filter.keyword" clearable
+        <van-field size="small" v-model="filter.value" clearable
                    :placeholder="filter.placeholder"></van-field>
         <div class="action">
             <van-button size="small" @click="filter.dialogVisible = false">取消</van-button>
-            <van-button size="small" plain type="info" @click="requestSubmitFilter"
+            <van-button size="small" plain type="info" @click="requestReport"
                         :loading="filter.loading">确定
             </van-button>
         </div>
@@ -176,13 +189,6 @@
         </div>
     </van-popup>
 </div>
-
-<div v-if="config.busuanziEnabled">
-    <script async
-            src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
-    </script>
-</div>
-
 </body>
 <script>
     function onVueCreated(vue) {
@@ -266,6 +272,14 @@
             vue.handleLazyLoadDetail(vue._data.status.popup.item);
         };
 
+        /**
+         * 举报资源
+         */
+        vue.clickReportAction = function () {
+            vue._data.status.popup.show = false;
+            vue.showReportDialog(vue._data.status.popup.item);
+        };
+
 
         /************重写的回调************/
 
@@ -279,7 +293,7 @@
             vue.$toast({
                 message: message,
                 type: type,
-                duration: 800
+                duration: 1000
             });
         };
 
@@ -306,8 +320,8 @@
          * 成功的回调
          * @param data
          */
-        vue.onRequestSuccess = function (data) {
-            vue._data.rule = data.rule;
+        vue.onRequestSuccess = function (rsp) {
+            let data = rsp.data;
             if (data.results.length > 0) {
                 if (data.current.page > 1) {
                     vue._data.list.push.apply(vue._data.list, data.results);
@@ -318,6 +332,11 @@
             } else {
                 vue._data.status.vanlist.finished = true
             }
+            vue.$toast({
+                position: 'top',
+                message: rsp.message,
+                duration: 1000
+            });
         }
     }
 
