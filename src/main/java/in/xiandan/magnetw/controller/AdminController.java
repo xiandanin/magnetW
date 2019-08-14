@@ -26,7 +26,6 @@ import in.xiandan.magnetw.service.PermissionService;
 import in.xiandan.magnetw.service.ReportService;
 
 /**
- * author  dengyuhan
  * created 2019/5/24 17:13
  */
 @Controller

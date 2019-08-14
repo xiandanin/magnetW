@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import in.xiandan.magnetw.service.MacService;
 
 /**
- * author  dengyuhan
  * created 2019/5/24 17:13
  */
 @RestController

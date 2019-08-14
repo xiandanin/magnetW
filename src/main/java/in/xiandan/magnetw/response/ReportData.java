@@ -3,7 +3,6 @@ package in.xiandan.magnetw.response;
 import java.util.List;
 
 /**
- * author  dengyuhan
  * created 2019/8/13 15:41
  */
 public class ReportData {

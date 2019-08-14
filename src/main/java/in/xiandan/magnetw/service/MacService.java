@@ -12,7 +12,6 @@ import in.xiandan.magnetw.response.MagnetPageSiteSort;
 import in.xiandan.magnetw.response.MagnetRule;
 
 /**
- * author  dengyuhan
  * created 2019/5/24 16:55
  */
 @Service

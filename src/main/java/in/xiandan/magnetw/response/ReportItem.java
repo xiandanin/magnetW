@@ -1,7 +1,6 @@
 package in.xiandan.magnetw.response;
 
 /**
- * author  dengyuhan
  * created 2019/8/13 15:41
  */
 public class ReportItem {
