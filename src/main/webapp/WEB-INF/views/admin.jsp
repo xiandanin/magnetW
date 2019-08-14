@@ -40,6 +40,14 @@
 <body>
 <div id="app">
     <div>
+        <h5>配置相关</h5>
+        <div class="actions">
+            <button type="button" class="btn btn-outline-dark"
+                    @click="requestAdminApi('admin/config')">查看当前配置
+            </button>
+        </div>
+    </div>
+    <div class="title">
         <h5>解析规则</h5>
         <div class="actions">
             <button type="button" class="btn btn-outline-dark"
@@ -47,9 +55,6 @@
             </button>
             <button type="button" class="btn btn-outline-dark"
                     @click="requestAdminApi('api/source')">查看规则
-            </button>
-            <button type="button" class="btn btn-outline-dark"
-                    @click="requestAdminApi('admin/rule-uri')">规则来源
             </button>
         </div>
     </div>
@@ -84,14 +89,17 @@
             </div>
         </div>
     </div>
-    <div class="message" v-show="message" v-html="message">
+    <div class="message" v-show="req.message" v-html="req.message">
     </div>
 </div>
 <script>
     new Vue({
         el: '#app',
         data: {
-            message: null,
+            req: {
+                completed: true,
+                message: null
+            },
             config: ${config},
             report: {
                 deleteValue: null
@@ -99,7 +107,10 @@
         },
         methods: {
             requestAdminApi(options, params = {}) {
-                this.message = "正在请求...";
+                if (!this.req.completed){
+                    return
+                }
+                this.req.message = "正在请求...";
                 let http;
                 if (typeof options === 'string') {
                     http = {path: options, method: 'GET'};
@@ -107,15 +118,18 @@
                     http = options
                 }
                 params.p = this.getQueryVariable('p');
+                this.req.completed = false;
                 this.$http({
                     url: http.path,
                     method: http.method,
                     params: params
                 }, {emulateJSON: true}).then(function (response) {
+                    this.req.completed = true;
                     console.log(response);
-                    this.message = JSON.stringify(response.body, null, "\t");
+                    this.req.message = JSON.stringify(response.body, null, "\t");
                 }).catch(function (error) {
-                    this.message = "请求失败";
+                    this.req.completed = true;
+                    this.req.message = "请求失败";
                 });
             }, getQueryVariable(variable) {
                 var query = window.location.search.substring(1);

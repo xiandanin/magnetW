@@ -49,7 +49,7 @@ public class ReportService {
         }
         try {
             Class.forName("org.sqlite.JDBC");
-            File dbFile = new File(config.getFilterPropertiesDir(), "report.db");
+            File dbFile = new File(config.getExternalDataDir(), "report.db");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
             statement = connection.createStatement();
             statement.setQueryTimeout(10);  // set timeout to 10 sec.

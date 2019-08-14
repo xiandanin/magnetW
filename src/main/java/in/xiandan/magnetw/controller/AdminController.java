@@ -1,6 +1,7 @@
 package in.xiandan.magnetw.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.lang.reflect.Field;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,16 +64,21 @@ public class AdminController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "rule-uri")
-    public BaseResponse ruleUri(@RequestParam(value = "p") String password) throws Exception {
+    @RequestMapping(value = "config")
+    public BaseResponse config(@RequestParam(value = "p") String password) throws Exception {
         return permissionService.runAsPermission(password, null, new PermissionHandler() {
             @Override
-            public String onPermissionGranted() {
-                return config.ruleJsonUri;
+            public Object onPermissionGranted() throws Exception {
+                JsonObject newConfig = new JsonObject();
+                Field[] fields = ApplicationConfig.class.getFields();
+                for (Field field : fields) {
+                    Object value = ApplicationConfig.class.getField(field.getName()).get(config);
+                    newConfig.addProperty(field.getName(), value.toString());
+                }
+                return newConfig;
             }
         });
     }
-
 
     /**
      * 重载配置

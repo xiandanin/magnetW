@@ -14,7 +14,7 @@ public class PermissionService {
     @Autowired
     ApplicationConfig config;
 
-    public BaseResponse runAsPermission(String password, String message, PermissionHandler handler) {
+    public BaseResponse runAsPermission(String password, String message, PermissionHandler handler) throws Exception {
         if (StringUtils.isEmpty(config.adminPasswordMD5)) {
             return BaseResponse.error("没有设置管理密码");
         } else {

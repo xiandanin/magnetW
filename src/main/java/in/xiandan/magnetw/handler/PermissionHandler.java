@@ -6,5 +6,5 @@ package in.xiandan.magnetw.handler;
  */
 public interface PermissionHandler<T> {
 
-    T onPermissionGranted();
+    T onPermissionGranted() throws Exception;
 }
