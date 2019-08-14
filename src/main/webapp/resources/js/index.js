@@ -207,7 +207,7 @@ new Vue({
                 //请求失败
                 this.loading = false;
                 console.log("callback - onRequestError");
-                this.onRequestError(error.body.message)
+                this.onRequestError("请求失败")
             });
         },
         formatTrackersUrl(url) {

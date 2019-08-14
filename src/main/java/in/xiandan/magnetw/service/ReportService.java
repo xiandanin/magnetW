@@ -126,7 +126,7 @@ public class ReportService {
         return mUrls.contains(url);
     }
 
-    protected boolean isMagnet(String value) {
+    public boolean isMagnet(String value) {
         return value.startsWith("magnet");
     }
 

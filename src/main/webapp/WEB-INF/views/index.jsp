@@ -351,14 +351,8 @@
 
         //请求失败的回调
         vue.onRequestError = function (message) {
-            if (vue._data.list == null || vue._data.list.length <= 0) {
-                vue._data.message = message;
-            } else {
-                vue.$message({
-                    message: message,
-                    type: "error"
-                });
-            }
+            vue._data.list = [];
+            vue._data.message = message;
         };
 
         //请求成功的回调
