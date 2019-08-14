@@ -239,21 +239,5 @@
     "paths": {
       "preset": "/index/index/k/%s/p/%d"
     }
-  },
-  {
-    "site": "BTbook",
-    "proxy": false,
-    "group": "//div[@class='cili-item']",
-    "magnet": "./div[1]/h3/a/@href",
-    "name": "./div[1]/h3/a",
-    "size": "./div[3]/span[3]/b",
-    "date": "./div[3]/span[2]/b/b",
-    "hot": "./div[3]/span[4]/b",
-    "url": "https://btbookk.net",
-    "paths": {
-      "time": "/sou/%s/time-%d.html",
-      "size": "/sou/%s/size-%d.html",
-      "hot": "/sou/%s/default-%d.html"
-    }
   }
 ]

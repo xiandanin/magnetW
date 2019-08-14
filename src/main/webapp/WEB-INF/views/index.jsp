@@ -83,7 +83,7 @@
                 <div class="search_site">
                     <!--少于11个就用正常尺寸-->
                     <el-tabs type="card" v-model="current.site"
-                             class="{{sourceSites.length<=11?'':el-tab-small}}"
+                             :class="sourceSites.length<=11?'':'el-tab-small'"
                              @tab-click="handleTabClick">
                         <el-tab-pane v-for="it in sourceSites"
                                      :label="it.site"
