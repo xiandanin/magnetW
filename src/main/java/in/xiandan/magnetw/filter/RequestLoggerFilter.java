@@ -1,6 +1,8 @@
 package in.xiandan.magnetw.filter;
 
 import org.apache.log4j.Logger;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -30,19 +32,24 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     public String buildRequestString(HttpServletRequest request) {
         StringBuffer sb = new StringBuffer();
         sb.append(request.getRequestURL());
-
-        sb.append("\n[Request Params]\n");
-        Set<Map.Entry<String, String[]>> entrySet = request.getParameterMap().entrySet();
-        for (Map.Entry<String, String[]> entry : entrySet) {
-            String[] values = entry.getValue();
-            for (String value : values) {
-                sb.append(entry.getKey());
-                sb.append(":");
-                sb.append(URLDecoder.decode(value));
-                sb.append("\n");
+        if (HttpMethod.GET.name().equals(request.getMethod())) {
+            if (!StringUtils.isEmpty(request.getQueryString())) {
+                sb.append("?" + request.getQueryString());
+            }
+        } else {
+            sb.append("\n[Request Params]");
+            Set<Map.Entry<String, String[]>> entrySet = request.getParameterMap().entrySet();
+            for (Map.Entry<String, String[]> entry : entrySet) {
+                String[] values = entry.getValue();
+                for (String value : values) {
+                    sb.append(entry.getKey());
+                    sb.append(":");
+                    sb.append(URLDecoder.decode(value));
+                    sb.append("\n");
+                }
             }
         }
-        sb.append("[Request Headers]\n");
+        sb.append("\n[Request Headers]\n");
         Enumeration<String> names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String header = names.nextElement();
