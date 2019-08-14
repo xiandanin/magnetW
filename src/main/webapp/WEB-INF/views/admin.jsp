@@ -17,51 +17,124 @@
     }
 
     .message {
-        margin-top: 1%;
         color: #777;
         background-color: #f5f7fa;
         border: 1px solid #e4e7ed;
         border-radius: 5px;
         white-space: pre-wrap;
+        word-break: break-all;
         font-size: 14px;
+        margin-top: 15px;
+        padding: 5px 10px;
+    }
+
+    .title {
+        margin-top: 15px;
+    }
+
+    .actions button {
+        margin-right: 15px;
+        margin-bottom: 10px;
     }
 </style>
 <body>
 <div id="app">
-    <div><h5>解析规则</h5>
-        <div>
+    <div>
+        <h5>解析规则</h5>
+        <div class="actions">
             <button type="button" class="btn btn-outline-dark"
-                    @click="requestAdminApi('api/reload')">重载规则
+                    @click="requestAdminApi('admin/reload')">重载规则
             </button>
             <button type="button" class="btn btn-outline-dark"
                     @click="requestAdminApi('api/source')">查看规则
             </button>
-            <button type="button" class="btn btn-outline-dark">清除缓存</button>
+            <button type="button" class="btn btn-outline-dark"
+                    @click="requestAdminApi('admin/rule-uri')">规则来源
+            </button>
         </div>
     </div>
-    <div class="message" v-show="message">
-        {{message}}
+    <div class="title">
+        <h5>数据相关</h5>
+        <div class="actions">
+            <button type="button" class="btn btn-outline-dark"
+                    @click="requestAdminApi('admin/clear-cache')">清除缓存
+            </button>
+        </div>
+    </div>
+
+    <div class="title" v-if="config.reportEnabled">
+        <h5>举报相关</h5>
+        <div class="actions">
+            <button type="button" class="btn btn-outline-dark"
+                    @click="requestAdminApi('api/report-list')">举报列表
+            </button>
+            <button type="button" class="btn btn-outline-dark"
+                    @click="requestAdminApi('admin/report-reload')">重载举报
+            </button>
+        </div>
+
+        <div class="input-group">
+            <input v-model="report.deleteValue" type="text" class="form-control"
+                   placeholder="输入已记录的关键词或磁力链"/>
+            <div class="input-group-append">
+                <button class="btn btn-outline-dark" type="button"
+                        @click="requestDeleteReport">
+                    删除记录
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="message" v-show="message" v-html="message">
     </div>
 </div>
 <script>
     new Vue({
         el: '#app',
         data: {
-            message: null
+            message: null,
+            config: ${config},
+            report: {
+                deleteValue: null
+            }
         },
         methods: {
-            requestAdminApi(path) {
+            requestAdminApi(options, params = {}) {
                 this.message = "正在请求...";
-                let params = {p: "d"};
-                this.$http.get(path, {params: params}, {emulateJSON: true}).then(function (response) {
-                    if (response.body.success) {
-                        this.message = JSON.stringify(response.body, null, "\t");
-                    } else {
-                        this.message = response.body.message;
-                    }
+                let http;
+                if (typeof options === 'string') {
+                    http = {path: options, method: 'GET'};
+                } else {
+                    http = options
+                }
+                params.p = this.getQueryVariable('p');
+                this.$http({
+                    url: http.path,
+                    method: http.method,
+                    params: params
+                }, {emulateJSON: true}).then(function (response) {
+                    console.log(response);
+                    this.message = JSON.stringify(response.body, null, "\t");
                 }).catch(function (error) {
                     this.message = "请求失败";
                 });
+            }, getQueryVariable(variable) {
+                var query = window.location.search.substring(1);
+                var vars = query.split("&");
+                for (var i = 0; i < vars.length; i++) {
+                    var pair = vars[i].split("=");
+                    if (pair[0] == variable) {
+                        return pair[1];
+                    }
+                }
+                return (false);
+            },
+            requestDeleteReport() {
+                if (this.report.deleteValue) {
+                    this.requestAdminApi({
+                        path: 'admin/report-delete',
+                        method: 'delete'
+                    }, {value: this.report.deleteValue})
+                }
             }
         }
     })

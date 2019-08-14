@@ -16,7 +16,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import in.xiandan.magnetw.config.ApplicationConfig;
-import in.xiandan.magnetw.handler.PermissionHandler;
 import in.xiandan.magnetw.response.BaseResponse;
 import in.xiandan.magnetw.response.MagnetItem;
 import in.xiandan.magnetw.response.MagnetItemDetail;
@@ -52,58 +51,6 @@ public class MagnetApiController {
     ReportService reportService;
 
     private Logger logger = Logger.getLogger(getClass());
-
-    /**
-     * 重载配置
-     *
-     * @return
-     * @throws Exception
-     */
-    @ResponseBody
-    @RequestMapping(value = "reload", method = RequestMethod.GET)
-    public BaseResponse reload(@RequestParam(value = "p") String password) throws Exception {
-        return permissionService.runAsPermission(password, "规则重载成功", new PermissionHandler<Void>() {
-            @Override
-            public Void onPermissionGranted() {
-                ruleService.reload();
-                return null;
-            }
-        });
-    }
-
-    /**
-     * 清除缓存
-     *
-     * @return
-     * @throws Exception
-     */
-    @ResponseBody
-    @RequestMapping(value = "clear-cache", method = RequestMethod.GET)
-    public BaseResponse clearCache(@RequestParam(value = "p") String password) throws Exception {
-        return permissionService.runAsPermission(password, "缓存清除成功", new PermissionHandler<Void>() {
-            @Override
-            public Void onPermissionGranted() {
-                magnetService.clearCache();
-                return null;
-            }
-        });
-    }
-
-    /**
-     * 重载举报列表
-     *
-     * @return
-     * @throws Exception
-     */
-    @ResponseBody
-    @RequestMapping(value = "report-reload", method = RequestMethod.GET)
-    public BaseResponse reportReload(@RequestParam(value = "p") String password) throws Exception {
-        BaseResponse permission = permissionService.runAsPermission(password, "举报列表重载成功", null);
-        if (permission.isSuccess()) {
-            reportService.reload();
-        }
-        return permission;
-    }
 
 
     /**

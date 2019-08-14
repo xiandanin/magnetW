@@ -172,15 +172,16 @@ public class ReportService {
         return list;
     }
 
-    public List<String> queryReportTable(String sql) throws SQLException {
-        logger.info(sql);
-        ResultSet rs = statement.executeQuery(sql);
-        List<String> list = new ArrayList<String>();
-        while (rs.next()) {
-            list.add(rs.getString("value"));
+    public void deleteReport(String value) throws SQLException {
+        ResultSet rs = statement.executeQuery(String.format("select * from report where value = '%s'", value));
+        if (rs.next()) {
+            int id = rs.getInt("id");
+            String sql = String.format("delete from report where id = %d", id);
+            logger.info(sql);
+            statement.execute(sql);
+        } else {
+            throw new SQLException("不存在: " + value);
         }
-        rs.close();
-        return list;
     }
 
     @PreDestroy
