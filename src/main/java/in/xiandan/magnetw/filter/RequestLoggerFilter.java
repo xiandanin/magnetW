@@ -34,7 +34,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
         sb.append(request.getRequestURL());
         if (HttpMethod.GET.name().equals(request.getMethod())) {
             if (!StringUtils.isEmpty(request.getQueryString())) {
-                sb.append("?" + request.getQueryString());
+                sb.append("?" + URLDecoder.decode(request.getQueryString()));
             }
         } else {
             sb.append("\n[Request Params]");
