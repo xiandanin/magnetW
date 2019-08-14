@@ -11,6 +11,8 @@
     <title>磁力搜 - 开源的磁力聚合搜索</title>
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="robots" content="noarchive">
+    <meta name="robots" conrent="noindex,follow">
 
     <link href="https://cdn.bootcss.com/element-ui/2.11.0/theme-chalk/index.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
