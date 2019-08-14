@@ -376,10 +376,12 @@
             } else {
                 vue._data.message = "什么也没搜到"
             }
-            vue.$message({
-                message: rsp.message,
-                duration: 2000
-            });
+            if (vue._data.config.resultToast) {
+                vue.$message({
+                    message: rsp.message,
+                    duration: 2000
+                });
+            }
         };
 
     }

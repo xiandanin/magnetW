@@ -242,7 +242,7 @@
          */
         vue.clickCopyAction = function () {
             vue._data.status.popup.show = false;
-            let url = this.formatTrackersUrl(vue._data.status.popup.item.magnet);
+            let url = vue.formatTrackersUrl(vue._data.status.popup.item.magnet);
             vue.$copyText(url).then(function (e) {
                 vue.handleCopy()
             });
@@ -261,7 +261,7 @@
          */
         vue.clickMiWiFiAction = function () {
             vue._data.status.popup.show = false;
-            window.open(this.formatMiWifiUrl(vue._data.status.popup.item.magnet));
+            window.open(vue.formatMiWifiUrl(vue._data.status.popup.item.magnet));
         };
 
         /**
@@ -332,11 +332,13 @@
             } else {
                 vue._data.status.vanlist.finished = true
             }
-            vue.$toast({
-                position: 'top',
-                message: rsp.message,
-                duration: 1000
-            });
+            if (vue._data.config.resultToast) {
+                vue.$toast({
+                    position: 'top',
+                    message: rsp.message,
+                    duration: 1000
+                });
+            }
         }
     }
 

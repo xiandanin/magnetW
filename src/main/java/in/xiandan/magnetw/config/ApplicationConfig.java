@@ -44,6 +44,9 @@ public class ApplicationConfig {
     @Value("${proxy.port}")
     public int proxyPort;
 
+    @Value("${result.toast}")
+    public boolean resultToast;
+
     @Value("${search.placeholder}")
     public String searchPlaceholder;
 

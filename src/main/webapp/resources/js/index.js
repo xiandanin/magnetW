@@ -64,7 +64,7 @@ new Vue({
                 return
             }
             this.setting = JSON.parse(cookieSetting);
-            console.log("setting: " + JSON.stringify(this.setting));
+            console.log("setting: " + JSON.stringify(this.setting, null, "\t"));
 
             //如果开启了记住选择
             if (this.setting.memoryChoice) {
@@ -188,7 +188,7 @@ new Vue({
          */
         request(http) {
             this.loading = true;
-            console.log("callback - onRequestStarted - " + JSON.stringify(this.current));
+            console.log("callback - onRequestStarted - " + JSON.stringify(this.current, null, "\t"));
             this.onRequestStarted();
             http.then(function (response) {
                 //请求成功
@@ -261,7 +261,8 @@ new Vue({
             this.storeSetting()
         },
         storeSetting() {
-            Cookies.set('setting', this.setting);
+            //过期时间10年
+            Cookies.set('setting', this.setting, {expires: 365 * 10});
         },
         /**
          * 请求开始前的回调
