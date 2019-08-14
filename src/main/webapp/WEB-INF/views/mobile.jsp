@@ -331,15 +331,16 @@
                     vue._data.list = data.results
                 }
                 vue._data.current.page++;
+
+                if (vue._data.config.resultToast) {
+                    vue.$toast({
+                        position: 'top',
+                        message: rsp.message,
+                        duration: 1000
+                    });
+                }
             } else {
                 vue._data.status.vanlist.finished = true
-            }
-            if (vue._data.config.resultToast) {
-                vue.$toast({
-                    position: 'top',
-                    message: rsp.message,
-                    duration: 1000
-                });
             }
         }
     }

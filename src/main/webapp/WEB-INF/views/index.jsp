@@ -94,203 +94,194 @@
                 </div>
 
                 <!--列表-->
-                <div v-loading="loading" id="table-container">
-                    <div v-show="list != null&&list.length>0">
-                        <div style="margin-bottom: 2%">
-                            <el-row>
-                                <el-col :span="6">
-                                    <el-select v-model="current.sort" placeholder="排序"
-                                               size="small"
-                                               @change="handleSortChanged">
-                                        <el-option v-for="it in sortBy"
-                                                   :label="it.sortName"
-                                                   :key="it.sort"
-                                                   :value="it.sort">
-                                        </el-option>
-                                    </el-select>
-                                </el-col>
+                <div v-loading="loading" id="table-container" v-show="loading||list.length>0||message">
+                    <div style="margin-bottom: 2%">
+                        <el-row>
+                            <el-col :span="6">
+                                <el-select v-model="current.sort" placeholder="排序"
+                                           size="small"
+                                           @change="handleSortChanged">
+                                    <el-option v-for="it in sortBy"
+                                               :label="it.sortName"
+                                               :key="it.sort"
+                                               :value="it.sort">
+                                    </el-option>
+                                </el-select>
+                            </el-col>
 
-                                <el-col :span="18">
-                                    <div style="text-align: right;">
-                                        <div class="el-pagination is-background">
-                                            <button type="button" class="btn-prev"
-                                                    @click="handlePageChanged(current.page-1)"><i
-                                                    class="el-icon el-icon-arrow-left"></i></button>
-                                            <ul class="el-pager">
-                                                <!--最多只显示3个页码-->
-                                                <template
-                                                        v-for="n in current.page>3?3:current.page-1">
-                                                    <li class="number"
-                                                        @click="handlePageChanged(n)">{{n}}
-                                                    </li>
-                                                </template>
-                                                <template v-if="current.page>3">
-                                                    <li class="el-icon more btn-quickprev el-icon-more"
-                                                        @click="handlePageChanged(current.page-1)"></li>
-                                                </template>
-                                                <li class="number active">{{current.page}}
+                            <el-col :span="18">
+                                <div style="text-align: right;">
+                                    <div class="el-pagination is-background">
+                                        <button type="button" class="btn-prev"
+                                                @click="handlePageChanged(current.page-1)"><i
+                                                class="el-icon el-icon-arrow-left"></i></button>
+                                        <ul class="el-pager">
+                                            <!--最多只显示3个页码-->
+                                            <template
+                                                    v-for="n in current.page>3?3:current.page-1">
+                                                <li class="number"
+                                                    @click="handlePageChanged(n)">{{n}}
                                                 </li>
-                                                <template v-if="current.page<=3">
-                                                    <li class="el-icon more btn-quickprev el-icon-more"
-                                                        @click="handlePageChanged(current.page+1)"></li>
-                                                </template>
-                                            </ul>
-                                            <button type="button" class="btn-next"
-                                                    @click="handlePageChanged(current.page+1)">
-                                                <i class="el-icon el-icon-arrow-right"></i>
-                                            </button>
-                                        </div>
+                                            </template>
+                                            <template v-if="current.page>3">
+                                                <li class="el-icon more btn-quickprev el-icon-more"
+                                                    @click="handlePageChanged(current.page-1)"></li>
+                                            </template>
+                                            <li class="number active">{{current.page}}
+                                            </li>
+                                            <template v-if="current.page<=3">
+                                                <li class="el-icon more btn-quickprev el-icon-more"
+                                                    @click="handlePageChanged(current.page+1)"></li>
+                                            </template>
+                                        </ul>
+                                        <button type="button" class="btn-next"
+                                                @click="handlePageChanged(current.page+1)">
+                                            <i class="el-icon el-icon-arrow-right"></i>
+                                        </button>
                                     </div>
-                                </el-col>
-                            </el-row>
-                        </div>
-                        <div v-show="successMessage" class="result-success-message">
-                            {{successMessage}}
-                        </div>
-                        <el-table
-                                :empty-text="message"
-                                ref="tableWrapper"
-                                size="mini"
-                                :data="list"
-                                border
-                                style="width: 100%">
-                            <el-table-column
-                                    width="50"
-                                    type="index">
-                            </el-table-column>
-                            <el-table-column
-                                    min-width="150"
-                                    label="名称">
-                                <template slot-scope="scope">
-                                    <template
-                                            v-if="scope.row.resolution!=null&&scope.row.resolution.length>0">
-                                        <el-tag v-if="scope.row.resolution.indexOf('720')>=0||scope.row.resolution.indexOf('1080')>=0"
-                                                disable-transitions
-                                                size="mini">{{scope.row.resolution}}
-                                        </el-tag>
-                                        <el-tag v-else-if="scope.row.resolution.indexOf('2')==0||scope.row.resolution.indexOf('4')==0"
-                                                disable-transitions
-                                                type="success" size="mini">{{scope.row.resolution}}
-                                        </el-tag>
-                                    </template>
-                                    <a v-if="status.clicks.indexOf(scope.row.magnet)!=-1"
-                                       class="visited-a"
-                                       :href="scope.row.magnet"
-                                       v-html="scope.row.nameHtml"></a>
-                                    <a v-else :href="scope.row.magnet"
-                                       @click="handleClickMagnet(scope.row.magnet)"
-                                       v-html="scope.row.nameHtml"></a>
-                                </template>
-                            </el-table-column>
-                            <el-table-column
-                                    header-align="center"
-                                    width="120"
-                                    label="大小"
-                                    prop="formatSize">
-                            </el-table-column>
-                            <el-table-column
-                                    header-align="center"
-                                    width="70"
-                                    label="人气"
-                                    prop="hot">
-                            </el-table-column>
-                            <el-table-column
-                                    width="120"
-                                    prop="date"
-                                    align="center"
-                                    label="发布时间">
-                            </el-table-column>
-                            <el-table-column
-                                    label="操作"
-                                    align="center"
-                                    width="140">
-                                <template slot-scope="scope">
-                                    <el-popover
-                                            placement="left-start"
-                                            trigger="hover">
-                                        <h3 class="more-action-title">更多操作</h3>
-                                        <div class="more-action-button">
-                                            <el-tooltip v-if="config.trackersEnabled" effect="light"
-                                                        content="速度慢可以试试这个"
-                                                        placement="top">
-                                                <el-button type="button" size="mini" plain
-                                                           v-clipboard:copy="formatTrackersUrl(scope.row.magnet)"
-                                                           v-clipboard:success="handleCopy">磁力优化
-                                                </el-button>
-                                            </el-tooltip>
-                                        </div>
-                                        <div class="more-action-button">
-                                            <a class="el-button el-button--button el-button--mini"
-                                               :href="formatMiWifiUrl(scope.row.magnet)"
-                                               target="_blank">小米路由
-                                            </a>
-                                        </div>
-                                        <div class="more-action-button"
-                                             v-show="rule&&rule.detail">
-                                            <el-button type="button"
-                                                       size="mini" plain
-                                                       @click="handleLazyLoadDetail(scope.row)">文件列表
-                                            </el-button>
-                                        </div>
-                                        <div class="more-action-button">
-                                            <a class="el-button el-button--button el-button--mini"
-                                               v-if="scope.row.detailUrl!=null&&scope.row.detailUrl.length>0"
-                                               :href="scope.row.detailUrl" target="_blank">源站详情
-                                            </a>
-                                        </div>
-                                        <div class="more-action-button" v-if="config.reportEnabled">
-                                            <el-button type="button"
-                                                       size="mini" plain
-                                                       @click="showReportDialog(scope.row)">举报资源
-                                            </el-button>
-                                        </div>
-                                        <el-button slot="reference"
-                                                   size="mini"
-                                                   type="button">更多
-                                        </el-button>
-                                    </el-popover>
-                                    <el-button size="mini"
-                                               type="button"
-                                               v-clipboard:copy="scope.row.magnet"
-                                               v-clipboard:success="handleCopy">复制
-                                    </el-button>
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                        <div style="text-align: right;margin-top: 2%">
-                            <div class="el-pagination is-background">
-                                <button type="button" class="btn-prev"
-                                        @click="handlePageChanged(current.page-1)"><i
-                                        class="el-icon el-icon-arrow-left"></i></button>
-                                <ul class="el-pager">
-                                    <!--最多只显示3个页码-->
-                                    <template
-                                            v-for="n in current.page>3?3:current.page-1">
-                                        <li class="number"
-                                            @click="handlePageChanged(n)">{{n}}
-                                        </li>
-                                    </template>
-                                    <template v-if="current.page>3">
-                                        <li class="el-icon more btn-quickprev el-icon-more"
-                                            @click="handlePageChanged(current.page-1)"></li>
-                                    </template>
-                                    <li class="number active">{{current.page}}
-                                    </li>
-                                    <template v-if="current.page<=3">
-                                        <li class="el-icon more btn-quickprev el-icon-more"
-                                            @click="handlePageChanged(current.page+1)"></li>
-                                    </template>
-                                </ul>
-                                <button type="button" class="btn-next"
-                                        @click="handlePageChanged(current.page+1)">
-                                    <i class="el-icon el-icon-arrow-right"></i>
-                                </button>
-                            </div>
-                        </div>
+                                </div>
+                            </el-col>
+                        </el-row>
                     </div>
-                    <div id="message"
-                         v-show="(list == null||list.length<=0)&&message!=null&&message.length>0">
-                        <h2 style="font-weight: lighter">{{message}}</h2>
+                    <el-table
+                            ref="tableWrapper"
+                            size="mini"
+                            :data="list"
+                            border
+                            style="width: 100%">
+                        <div slot="empty" class="empty-message">{{message}}</div>
+                        <el-table-column
+                                width="50"
+                                type="index">
+                        </el-table-column>
+                        <el-table-column
+                                min-width="150"
+                                label="名称">
+                            <template slot-scope="scope">
+                                <template
+                                        v-if="scope.row.resolution!=null&&scope.row.resolution.length>0">
+                                    <el-tag v-if="scope.row.resolution.indexOf('720')>=0||scope.row.resolution.indexOf('1080')>=0"
+                                            disable-transitions
+                                            size="mini">{{scope.row.resolution}}
+                                    </el-tag>
+                                    <el-tag v-else-if="scope.row.resolution.indexOf('2')==0||scope.row.resolution.indexOf('4')==0"
+                                            disable-transitions
+                                            type="success" size="mini">{{scope.row.resolution}}
+                                    </el-tag>
+                                </template>
+                                <a v-if="status.clicks.indexOf(scope.row.magnet)!=-1"
+                                   class="visited-a"
+                                   :href="scope.row.magnet"
+                                   v-html="scope.row.nameHtml"></a>
+                                <a v-else :href="scope.row.magnet"
+                                   @click="handleClickMagnet(scope.row.magnet)"
+                                   v-html="scope.row.nameHtml"></a>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                header-align="center"
+                                width="120"
+                                label="大小"
+                                prop="formatSize">
+                        </el-table-column>
+                        <el-table-column
+                                header-align="center"
+                                width="70"
+                                label="人气"
+                                prop="hot">
+                        </el-table-column>
+                        <el-table-column
+                                width="120"
+                                prop="date"
+                                align="center"
+                                label="发布时间">
+                        </el-table-column>
+                        <el-table-column
+                                label="操作"
+                                align="center"
+                                width="140">
+                            <template slot-scope="scope">
+                                <el-popover
+                                        placement="left-start"
+                                        trigger="hover">
+                                    <h3 class="more-action-title">更多操作</h3>
+                                    <div class="more-action-button">
+                                        <el-tooltip v-if="config.trackersEnabled" effect="light"
+                                                    content="速度慢可以试试这个"
+                                                    placement="top">
+                                            <el-button type="button" size="mini" plain
+                                                       v-clipboard:copy="formatTrackersUrl(scope.row.magnet)"
+                                                       v-clipboard:success="handleCopy">磁力优化
+                                            </el-button>
+                                        </el-tooltip>
+                                    </div>
+                                    <div class="more-action-button">
+                                        <a class="el-button el-button--button el-button--mini"
+                                           :href="formatMiWifiUrl(scope.row.magnet)"
+                                           target="_blank">小米路由
+                                        </a>
+                                    </div>
+                                    <div class="more-action-button"
+                                         v-show="rule&&rule.detail">
+                                        <el-button type="button"
+                                                   size="mini" plain
+                                                   @click="handleLazyLoadDetail(scope.row)">文件列表
+                                        </el-button>
+                                    </div>
+                                    <div class="more-action-button">
+                                        <a class="el-button el-button--button el-button--mini"
+                                           v-if="scope.row.detailUrl!=null&&scope.row.detailUrl.length>0"
+                                           :href="scope.row.detailUrl" target="_blank">源站详情
+                                        </a>
+                                    </div>
+                                    <div class="more-action-button" v-if="config.reportEnabled">
+                                        <el-button type="button"
+                                                   size="mini" plain
+                                                   @click="showReportDialog(scope.row)">举报资源
+                                        </el-button>
+                                    </div>
+                                    <el-button slot="reference"
+                                               size="mini"
+                                               type="button">更多
+                                    </el-button>
+                                </el-popover>
+                                <el-button size="mini"
+                                           type="button"
+                                           v-clipboard:copy="scope.row.magnet"
+                                           v-clipboard:success="handleCopy">复制
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div style="text-align: right;margin-top: 2%">
+                        <div class="el-pagination is-background">
+                            <button type="button" class="btn-prev"
+                                    @click="handlePageChanged(current.page-1)"><i
+                                    class="el-icon el-icon-arrow-left"></i></button>
+                            <ul class="el-pager">
+                                <!--最多只显示3个页码-->
+                                <template
+                                        v-for="n in current.page>3?3:current.page-1">
+                                    <li class="number"
+                                        @click="handlePageChanged(n)">{{n}}
+                                    </li>
+                                </template>
+                                <template v-if="current.page>3">
+                                    <li class="el-icon more btn-quickprev el-icon-more"
+                                        @click="handlePageChanged(current.page-1)"></li>
+                                </template>
+                                <li class="number active">{{current.page}}
+                                </li>
+                                <template v-if="current.page<=3">
+                                    <li class="el-icon more btn-quickprev el-icon-more"
+                                        @click="handlePageChanged(current.page+1)"></li>
+                                </template>
+                            </ul>
+                            <button type="button" class="btn-next"
+                                    @click="handlePageChanged(current.page+1)">
+                                <i class="el-icon el-icon-arrow-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -373,16 +364,16 @@
         //请求成功的回调
         vue.onRequestSuccess = function (rsp) {
             let data = rsp.data;
-            if (data.results.length > 0) {
-                vue._data.list = data.results;
-            } else {
+            vue._data.list = data.results;
+            if (data.results.length <= 0) {
                 vue._data.message = "什么也没搜到"
-            }
-            if (vue._data.config.resultToast) {
-                vue.$message({
-                    message: rsp.message,
-                    duration: 2000
-                });
+            } else {
+                if (vue._data.config.resultToast) {
+                    vue.$message({
+                        message: rsp.message,
+                        duration: 2000
+                    });
+                }
             }
         };
 

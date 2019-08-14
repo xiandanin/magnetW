@@ -89,6 +89,16 @@ a {
     text-align: right;
 }
 
+.empty-message{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    text-align: center;
+    font-size: 18px;
+    min-height: 400px;
+}
+
 #page-component-up {
     background-color: #fff;
     position: fixed;
