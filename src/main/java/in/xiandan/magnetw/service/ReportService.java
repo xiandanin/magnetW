@@ -109,7 +109,7 @@ public class ReportService {
                 //忽略
             } else {
                 logger.error("举报失败", e);
-                throw new Exception("举报失败");
+                throw e;
             }
         }
     }
