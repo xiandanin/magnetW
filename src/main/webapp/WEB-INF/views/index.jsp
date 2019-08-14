@@ -12,14 +12,14 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="robots" content="noarchive">
-    <meta name="robots" conrent="noindex,follow">
+    <meta name="robots" content="noindex,follow">
 
-    <link href="https://cdn.bootcss.com/element-ui/2.11.0/theme-chalk/index.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/element-ui/2.11.1/theme-chalk/index.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/amazeui/2.7.2/css/amazeui.min.css" rel="stylesheet">
 
     <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
-    <script src="https://cdn.bootcss.com/element-ui/2.11.0/index.js"></script>
+    <script src="https://cdn.bootcss.com/element-ui/2.11.1/index.js"></script>
     <script src="https://cdn.bootcss.com/js-cookie/latest/js.cookie.min.js"></script>
     <script src="resources/js/dist/vue-clipboard.min.js"></script>
     <script src="resources/js/dist/base64.min.js"></script>
@@ -94,7 +94,8 @@
                 </div>
 
                 <!--列表-->
-                <div v-loading="loading" id="table-container" v-show="loading||list.length>0||message">
+                <div v-loading="loading" id="table-container"
+                     v-show="loading||list.length>0||message">
                     <div style="margin-bottom: 2%">
                         <el-row>
                             <el-col :span="6">

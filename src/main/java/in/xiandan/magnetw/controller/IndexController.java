@@ -1,6 +1,7 @@
 package in.xiandan.magnetw.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,9 @@ public class IndexController {
     @Autowired
     MagnetService magnetService;
 
+    //防止keyword null时导致js没有字段 使el-input不能输入
+    private Gson gson = new GsonBuilder().serializeNulls().create();
+
     @RequestMapping(value = {"", "search"}, method = RequestMethod.GET)
     public String search(HttpServletRequest request, Model model, @RequestParam(required = false) String source, @RequestParam(value = "k", required = false) String keyword,
                          @RequestParam(value = "s", required = false) String sort, @RequestParam(value = "p", required = false) Integer page) throws Exception {
@@ -53,7 +57,6 @@ public class IndexController {
 
         MagnetRule rule = ruleService.getRuleBySite(source);
 
-        Gson gson = new Gson();
         model.addAttribute("is_mobile", isMobile);
         model.addAttribute("current", gson.toJson(pageOption));
         model.addAttribute("config", gson.toJson(new MagnetPageConfig(config)));
