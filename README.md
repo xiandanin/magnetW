@@ -4,13 +4,19 @@
 Docker版一键部署：
 
 ```
-docker run -d -p 3003:8080 baiyuetribe/magnetw
+docker run -d -p 3003:8080 --name=magnetw baiyuetribe/magnetw
 ```
 然后访问：http://ip:3003即可进入
 
 ## 其它说明
 
 > 该项目为java程序，docker镜像获取的是原作程序，无任何修改，需要自定义的请参考作者的config.md
+
+卸载： `docker rm -f magnetw`
+
+停止： `docker stop magnetw`
+
+重启： `docker restart magnetw`
 
 
 <hr>
