@@ -1,5 +1,19 @@
 [[中文文档]](https://github.com/dengyuhan/magnetW/wiki)
+# 项目来源 dengyuhan/magnetW
 
+Docker版一键部署：
+
+```
+docker run -d -p 3003:8080 baiyuetribe/magnetw
+```
+然后访问：http://ip:3003即可进入
+
+## 其它说明
+
+> 该项目为java程序，docker镜像获取的是原作程序，无任何修改，需要自定义的请参考作者的config.md
+
+
+<hr>
 ## 简介
 __磁力搜不收录磁力链接，只是磁力的搬运工__  
 >
