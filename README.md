@@ -18,7 +18,7 @@ docker run -d -p 3003:8080 --name=magnetw baiyuetribe/magnetw
 
 重启： `docker restart magnetw`
 
-
+**文章参考：**[magnetW一款优雅无广告的磁力链综合搜索](https://baiyue.one/archives/1187.html)
 <hr>
 ## 简介
 __磁力搜不收录磁力链接，只是磁力的搬运工__  
