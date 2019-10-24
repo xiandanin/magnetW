@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "rule": {
+    "url": "https://github.com/dengyuhan/magnetW/blob/master/src/main/resources/rule.json",
+    "hideProxy": false
+  },
+  "optimization": {
+    "preload": true,
+    "trackers": {
+      "enabled": true,
+      "url": "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
+    }
+  },
+  "proxy": {
+    "enable": false,
+    "host": "127.0.0.1",
+    "port": "1087"
+  }
+}
