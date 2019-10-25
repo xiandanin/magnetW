@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <el-button type="primary">primary</el-button>
+        <p class="title">设置</p>
+        <p class="sub-title">规则</p>
     </div>
 </template>
 
@@ -27,6 +28,13 @@
 </script>
 
 <style lang="scss">
+    @import '../plugins/element-variables.scss';
 
+
+    .sub-title{
+        padding-bottom: 16px;
+        color: $color-sub-title;
+        border-bottom: 1px solid $color-border;
+    }
 
 </style>

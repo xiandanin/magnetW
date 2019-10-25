@@ -56,11 +56,15 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "got": "^9.6.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "vuex-electron": "^1.0.0"
+    "vuex-electron": "^1.0.0",
+    "xmldom": "^0.1.27",
+    "xmlserializer": "^0.6.1",
+    "xpath": "0.0.27"
   },
   "devDependencies": {
     "lru-cache": "^5.1.1",

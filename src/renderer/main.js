@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 
+import './plugins/global'
+import './plugins/filter'
 import App from './App'
 import router from './router'
 import store from './store'

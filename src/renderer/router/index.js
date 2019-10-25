@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import Index from '@/pages/Index'
-import Config from '@/pages/Config'
+import Index from '@/pages/Index'
+// import Setting from '@/pages/Setting'
 
 Vue.use(Router)
 
@@ -9,8 +9,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'config',
-      component: Config
+      name: 'index',
+      component: Index
     },
     {
       path: '*',
