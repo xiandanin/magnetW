@@ -1,4 +1,5 @@
 import repo from './repository'
+
 const {ipcMain} = require('electron')
 
 export default function () {
@@ -12,9 +13,11 @@ export default function () {
   })
 
   ipcMain.on('search', (event, option) => {
-    console.log('搜索', option)
     repo.requestSearch(option, function (rsp) {
-      event.sender.send('on-search-response', rsp)
+      event.sender.send('on-search-response', {
+        success: true,
+        data: rsp
+      })
     })
   })
 }

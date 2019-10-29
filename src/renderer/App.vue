@@ -35,5 +35,9 @@
         font-size: 18px;
         color: $color-title;
     }
+
+    .highlight-name{
+        color: $--color-primary;
+    }
 </style>
 

@@ -57,6 +57,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "got": "^9.6.0",
+    "htmlparser2": "^4.0.0",
+    "moment": "^2.24.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",

@@ -3,13 +3,15 @@ import format from './format-parser'
 const got = require('got')
 const xpath = require('xpath')
 const DOMParser = require('xmldom').DOMParser
+const htmlparser2 = require('htmlparser2')
 const domParser = new DOMParser({
   errorHandler: {
     warning: w => {
     }
   }
 })
-// const LRU = require('lru-cache')
+const LRU = require('lru-cache')
+const cache = new LRU()
 
 let ruleMap = {}
 
@@ -85,7 +87,8 @@ function parseDocument (document, expression) {
       })
     }
   })
-  console.log(items)
+  // console.log(items)
+  return items
 }
 
 export default {
@@ -101,12 +104,27 @@ export default {
     const rule = ruleMap[option.id]
 
     const {current, url, headers} = buildRequest(rule, option)
-    console.log('请求搜索', current, headers)
-    const rsp = await got.get(url, {headers: headers})
+
+    let items = cache.get(url)
+    if (items) {
+      console.log('请求搜索，命中缓存', current)
+      return items
+    } else {
+      console.log('请求搜索', current, headers)
+    }
+
+    const rsp = await got.get(url, {headers: headers, timeout: 12000})
     /* require('fs').writeFile('/Users/dengyuhan/Downloads/test.html', rsp.body, (err) => {
       console.error(err)
     }) */
-    const document = domParser.parseFromString(rsp.body)
-    parseDocument(document, rule.xpath)
+    // 用htmlparser2转换一次再解析
+    let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp.body))
+    const document = domParser.parseFromString(outerHTML)
+    items = parseDocument(document, rule.xpath)
+    if (items && items.length > 0) {
+      cache.set(url, items, 3600)
+    }
+    const data = {current, items}
+    callback(data)
   }
 }
