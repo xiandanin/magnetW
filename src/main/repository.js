@@ -100,31 +100,40 @@ export default {
     return rule
   },
   requestSearch: async function (option, callback) {
+    let startTime = Date.now()
+
     // 根据id找出具体规则
     const rule = ruleMap[option.id]
 
     const {current, url, headers} = buildRequest(rule, option)
 
     let items = cache.get(url)
+    let useCache = false
     if (items) {
-      console.log('请求搜索，命中缓存', current)
-      return items
-    } else {
-      console.log('请求搜索', current, headers)
+      // 有数据 使用缓存
+      useCache = true
     }
 
-    const rsp = await got.get(url, {headers: headers, timeout: 12000})
-    /* require('fs').writeFile('/Users/dengyuhan/Downloads/test.html', rsp.body, (err) => {
-      console.error(err)
-    }) */
-    // 用htmlparser2转换一次再解析
-    let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp.body))
-    const document = domParser.parseFromString(outerHTML)
-    items = parseDocument(document, rule.xpath)
-    if (items && items.length > 0) {
-      cache.set(url, items, 3600)
+    console.log(useCache ? '搜索命中缓存' : '请求搜索', current, headers)
+
+    if (!useCache) {
+      // 不使用缓存 去请求
+      const rsp = await got.get(url, {headers: headers, timeout: 12000})
+      /* require('fs').writeFile('/Users/dengyuhan/Downloads/test.html', rsp.body, (err) => {
+        console.error(err)
+      }) */
+      // 用htmlparser2转换一次再解析
+      let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp.body))
+      const document = domParser.parseFromString(outerHTML)
+      items = parseDocument(document, rule.xpath)
+      if (items && items.length > 0) {
+        cache.set(url, items, 2 * 60 * 60 * 60)
+      }
     }
-    const data = {current, items}
+
+    const time = Date.now() - startTime
+    const res = {useCache, time}
+    const data = {current, res, items}
     callback(data)
   }
 }

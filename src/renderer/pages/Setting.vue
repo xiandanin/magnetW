@@ -28,7 +28,7 @@
 </script>
 
 <style lang="scss">
-    @import '../plugins/element-variables.scss';
+    @import '../styles/app';
 
 
     .sub-title{

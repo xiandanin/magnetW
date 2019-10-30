@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import {app, BrowserWindow} from 'electron'
 import registerIPC from './ipc'
 
 /**
@@ -23,7 +23,9 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    // 隐藏标题栏, 内容充满整个窗口, 但它依然在左上角, 仍然受标准窗口控制
+    titleBarStyle: 'hidden'
   })
 
   mainWindow.loadURL(winURL)

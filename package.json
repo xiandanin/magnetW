@@ -58,10 +58,12 @@
     "axios": "^0.18.0",
     "got": "^9.6.0",
     "htmlparser2": "^4.0.0",
+    "js-base64": "^2.5.1",
     "moment": "^2.24.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
+    "vuebar": "0.0.20",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0",
     "xmldom": "^0.1.27",
@@ -69,6 +71,7 @@
     "xpath": "0.0.27"
   },
   "devDependencies": {
+    "sass-resources-loader": "^2.0.1",
     "lru-cache": "^5.1.1",
     "element-ui": "^2.12.0",
     "ajv": "^6.5.0",

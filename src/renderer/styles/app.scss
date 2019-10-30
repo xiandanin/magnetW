@@ -1,17 +1,11 @@
-/* 改变主题色变量 */
-$--color-primary: #3F8BF9;
-
-/* 改变 icon 字体路径变量，必需 */
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
-
-@import "~element-ui/packages/theme-chalk/src/index";
+@import "~element-ui/packages/theme-chalk/src/common/var";
+@import "./element-variables";
 
 $color-border: #f5f5f5;
 $color-title: #555555;
 $color-sub-title: #5b5b5b;
 $color-text-gray: #b3b3b3;
 
-$padding-container: 40px;
 
 html, body, #app, .el-container {
   height: 100%;

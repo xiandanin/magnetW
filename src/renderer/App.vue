@@ -1,8 +1,8 @@
 <template>
     <div id="app">
         <el-container>
-            <el-aside width="200px">
-                <aside-menu></aside-menu>
+            <el-aside width="78px">
+                <aside-bar></aside-bar>
             </el-aside>
 
             <el-main>
@@ -13,21 +13,21 @@
 </template>
 
 <script>
-  import AsideMenu from './components/AsideMenu'
+  import AsideBar from './components/AsideBar'
 
   export default {
+    name: 'magnetw',
     components: {
-      AsideMenu
-    },
-    name: 'magnetw'
+      AsideBar
+    }
   }
 </script>
 
 <style lang="scss">
-    @import 'plugins/element-variables.scss';
 
     /* CSS */
     .container {
+        // height: 100%;
         // padding: 0 $padding-container;
     }
 
@@ -36,8 +36,25 @@
         color: $color-title;
     }
 
-    .highlight-name{
+    .highlight-name {
         color: $--color-primary;
     }
+
+    .el-aside {
+        .el-scrollbar {
+            height: 100%;
+        }
+
+        .el-scrollbar__wrap {
+            overflow-x: hidden !important;
+        }
+    }
+
+    .el-link {
+        font-weight: normal;
+        text-decoration: underline;
+    }
+
+
 </style>
 

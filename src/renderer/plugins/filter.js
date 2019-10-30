@@ -71,6 +71,10 @@ Vue.filter('date', function (time) {
   }
 })
 
+Vue.filter('hash', function (magnet) {
+  return magnet.replace('magnet:?xt=urn:btih:', '')
+})
+
 Vue.filter('isNotEmpty', function (obj) {
   if (Array.isArray(obj)) {
     return obj.length > 0
