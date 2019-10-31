@@ -57,8 +57,8 @@
                 </el-input>
             </div>
         </setting-content>
-        <setting-content label="代理" class="setting-content-append setting-proxy">
-            <el-row>
+        <setting-content label="代理" class="setting-content-append setting-proxy align-items-center">
+            <el-row class="align-items-center">
                 <el-col :span="3">
                     <el-checkbox v-model="localSetting.proxy.enabled" label="启用">
                     </el-checkbox>
@@ -76,10 +76,21 @@
                 </el-col>
             </el-row>
         </setting-content>
+
+        <div v-if="appInfo">
+            <setting-title title="日志"></setting-title>
+            <setting-content label="保存路径" class="align-items-center">
+                <el-input v-model="appInfo.logDir" disabled size="mini">
+                    <el-button slot="append" icon="el-icon-folder-opened"
+                               @click="handleOpenDir(appInfo.logDir)"></el-button>
+                </el-input>
+            </setting-content>
+        </div>
     </div>
 </template>
 
 <script>
+  import {ipcRenderer, shell} from 'electron'
   import SettingTitle from '../components/SettingTitle'
   import SettingContent from '../components/SettingContent'
   import NumberInput from '../components/NumberInput'
@@ -90,18 +101,29 @@
     },
     data () {
       return {
-        localSetting: null
+        localSetting: null,
+        appInfo: null
       }
     },
     methods: {
+      registerRendererListener () {
+        ipcRenderer.on('on-get-app-info', (event, info) => {
+          this.appInfo = info
+        })
+      },
       handleSaveSetting () {
         this.global.settings.saveSetting(this.localSetting)
       },
       handleResetSetting () {
         this.localSetting = this.copyObject(this.global.settings.defaultSetting)
+      },
+      handleOpenDir (path) {
+        shell.showItemInFolder(path)
       }
     },
     created () {
+      this.registerRendererListener()
+      ipcRenderer.send('get-app-info')
       this.localSetting = this.global.settings.localSetting
     }
   }
@@ -152,9 +174,12 @@
         margin-top: 15px;
     }
 
-    .setting-proxy, .setting-proxy .el-row {
+    .align-items-center {
         display: flex;
         align-items: center;
+    }
+
+    .setting-proxy {
 
         .el-input {
             input {

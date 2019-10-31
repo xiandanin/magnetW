@@ -1,4 +1,6 @@
 import repo from './repository'
+import path from 'path'
+import logger from './logger'
 
 const {ipcMain} = require('electron')
 
@@ -26,5 +28,12 @@ export default function () {
           data: rsp
         })
       })
+  })
+
+  ipcMain.on('get-app-info', async (event) => {
+    let dir = path.resolve(logger.transports.file.file, '..')
+    event.sender.send('on-get-app-info', {
+      logDir: dir
+    })
   })
 }

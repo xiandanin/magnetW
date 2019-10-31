@@ -88,48 +88,61 @@ function parseDocument (document, expression) {
       })
     }
   })
-  // console.log(items)
+  console.silly(items)
   return items
 }
 
+/**
+ * 从网络或者本地更新并缓存规则
+ * @param url
+ * @returns {Promise<void>}
+ */
 async function handleUpdateRuleFile (url) {
   let rule
   try {
     if (url.startsWith('http')) {
       // 如果是网络文件
-      console.error('准备从网络获取规则', url)
+      console.info('获取网络规则文件', url)
       const rsp = await got.get(url, {timeout: 5000, json: true})
       if (rsp.list) {
         rule = rsp
       }
     } else {
-      console.error('读取本地规则文件', url)
+      console.info('读取本地规则文件', url)
       let rsp = JSON.parse(fs.readFileSync(url))
       if (rsp && rsp.list) {
         rule = rsp
       }
     }
   } catch (e) {
-    console.error('缓存规则失败，使用本地规则', e)
     rule = require('./rule.json')
+    console.error('缓存规则失败，将使用本地规则', e.message)
   }
+  let log = ''
+  let proxy = 0
   rule.list.forEach(function (it) {
     ruleMap[it.id] = it
+    log += `\n[加载][${it.name}][${it.url}]`
+    if (it.proxy) {
+      proxy++
+    }
   })
+  log += `\n${rule.list.length}个规则加载完成，其中${rule.list.length - proxy}个可直接使用，${proxy}个需要代理`
+  console.info(log)
   cache.set('rule_json', JSON.stringify(rule))
 }
 
 async function getRuleData (url) {
-  const rule = cache.get('rule_json')
+  let rule = cache.get('rule_json')
   if (rule) {
     // 如果有缓存 直接使用缓存 然后异步更新
     handleUpdateRuleFile(url)
-    return JSON.parse(rule)
   } else {
     // 如果没有缓存 等待更新到规则
     await handleUpdateRuleFile(url)
-    return JSON.parse(cache.get('rule_json'))
+    rule = cache.get('rule_json')
   }
+  return JSON.parse(rule)
 }
 
 /**

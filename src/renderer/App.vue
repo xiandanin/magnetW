@@ -6,7 +6,9 @@
             </el-header>
 
             <el-main class="main">
-                <router-view></router-view>
+                <keep-alive>
+                    <router-view></router-view>
+                </keep-alive>
             </el-main>
         </el-container>
     </div>
