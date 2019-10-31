@@ -1,11 +1,11 @@
 <template>
     <div id="app">
         <el-container>
-            <el-aside width="78px">
-                <aside-bar></aside-bar>
-            </el-aside>
+            <el-header class="drag">
+                <pager-header></pager-header>
+            </el-header>
 
-            <el-main>
+            <el-main class="main">
                 <router-view></router-view>
             </el-main>
         </el-container>
@@ -13,12 +13,12 @@
 </template>
 
 <script>
-  import AsideBar from './components/AsideBar'
+  import PagerHeader from './components/PagerHeader'
 
   export default {
     name: 'magnetw',
     components: {
-      AsideBar
+      PagerHeader
     }
   }
 </script>
@@ -29,6 +29,11 @@
     .container {
         // height: 100%;
         // padding: 0 $padding-container;
+    }
+
+    .main {
+        height: 100%;
+        padding: 0 !important;
     }
 
     .title {
@@ -54,7 +59,6 @@
         font-weight: normal;
         text-decoration: underline;
     }
-
 
 </style>
 

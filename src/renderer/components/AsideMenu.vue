@@ -1,43 +1,40 @@
 <template>
-    <div v-if="rule">
-        <el-menu :default-active="global.active?global.active.id:''">
-            <el-menu-item v-for="it in rule.list" :key="it.id" :index="it.id">
-                <template slot="title">
-                    <i class="el-icon-link" title="去源站看看"></i>
-                    <el-image :src="it.url+'/favicon.ico'" class="favicon">
-                        <i slot="placeholder"></i>
-                        <i slot="error"></i>
-                    </el-image>
-                    <span class="source-name">{{it.name}}</span>
-                </template>
+    <el-menu v-if="ruleArray" :default-active="active" @select="handleSourceChanged">
+        <el-menu-item v-for="it in ruleArray" :key="it.id" :index="it.id">
+            <template slot="title">
+                <el-image :src="it.url+'/favicon.ico'" class="favicon">
+                    <i slot="placeholder"></i>
+                    <i slot="error"></i>
+                </el-image>
+                <span class="source-name">{{it.name}}</span>
+            </template>
 
-            </el-menu-item>
-        </el-menu>
-    </div>
+        </el-menu-item>
+    </el-menu>
 </template>
 
 <script>
-  import {ipcRenderer} from 'electron'
-
   export default {
-    name: 'aside-menu',
+    props: {ruleArray: Array, active: String},
     data () {
       return {
-        rule: null
+        loading: false
       }
     },
     methods: {
-      registerIPCEvent () {
-        ipcRenderer.on('on-get-all-source', (event, rule) => {
-          this.rule = rule
-          this.global.active = rule.list[0]
-        })
+      handleSourceChanged (index) {
+        const list = this.ruleArray
+        for (let i = 0; i < list.length; i++) {
+          const item = list[i]
+          if (item === index) {
+            this.global.active = item
+            this.$emit('change', item)
+            break
+          }
+        }
       }
     },
     mounted () {
-      this.registerIPCEvent()
-
-      ipcRenderer.send('get-all-source')
     }
   }
 </script>

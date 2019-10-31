@@ -1,6 +1,7 @@
 import format from './format-parser'
 
 const got = require('got')
+const fs = require('fs')
 const xpath = require('xpath')
 const DOMParser = require('xmldom').DOMParser
 const htmlparser2 = require('htmlparser2')
@@ -91,15 +92,100 @@ function parseDocument (document, expression) {
   return items
 }
 
+async function handleUpdateRuleFile (url) {
+  let rule
+  try {
+    if (url.startsWith('http')) {
+      // 如果是网络文件
+      console.error('准备从网络获取规则', url)
+      const rsp = await got.get(url, {timeout: 5000, json: true})
+      if (rsp.list) {
+        rule = rsp
+      }
+    } else {
+      console.error('读取本地规则文件', url)
+      let rsp = JSON.parse(fs.readFileSync(url))
+      if (rsp && rsp.list) {
+        rule = rsp
+      }
+    }
+  } catch (e) {
+    console.error('缓存规则失败，使用本地规则', e)
+    rule = require('./rule.json')
+  }
+  rule.list.forEach(function (it) {
+    ruleMap[it.id] = it
+  })
+  cache.set('rule_json', JSON.stringify(rule))
+}
+
+async function getRuleData (url) {
+  const rule = cache.get('rule_json')
+  if (rule) {
+    // 如果有缓存 直接使用缓存 然后异步更新
+    handleUpdateRuleFile(url)
+    return JSON.parse(rule)
+  } else {
+    // 如果没有缓存 等待更新到规则
+    await handleUpdateRuleFile(url)
+    return JSON.parse(cache.get('rule_json'))
+  }
+}
+
+/**
+ * 请求源站搜索结果并解析搜索结果
+ */
+async function requestParseSearchItems ({url, headers, xpath, customUserAgent}) {
+  // 自定义ua
+  if (customUserAgent) {
+    headers['User-Agent'] = customUserAgent
+  }
+  const rsp = await got.get(url, {headers: headers, timeout: 12000})
+
+  // 用htmlparser2转换一次再解析
+  let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp.body))
+  const document = domParser.parseFromString(outerHTML)
+  return parseDocument(document, xpath)
+}
+
+async function asyncCacheSearchResult ({option, userAgent, cache}) {
+// 根据id找出具体规则
+  const rule = ruleMap[option.id]
+
+  const {current, url, headers} = buildRequest(rule, option)
+
+  let items = cache.get(url)
+  let useCache = false
+  if (items) {
+    // 有数据 使用缓存
+    useCache = true
+  }
+
+  console.log(useCache ? '搜索命中缓存' : '请求搜索', current, headers)
+
+  if (!useCache) {
+    // 不使用缓存 去请求
+    items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent})
+    if (items && items.length > 0) {
+      // 缓存过期时间 秒转毫秒
+      const expired = cache.expired * 1000
+      cache.set(url, items, expired)
+    }
+  }
+}
+
 export default {
-  getSourceSiteList: function () {
-    let rule = require('./rule.json')
-    rule.list.forEach(function (it) {
-      ruleMap[it.id] = it
-    })
-    return rule
-  },
-  requestSearch: async function (option, callback) {
+  getRuleData,
+  /**
+   * 获取搜索结果
+   * @param option 搜索的参数
+   * @param userAgent 自定义UserAgent
+   * @param cache 缓存设置
+   * @param preload 预加载设置
+   * @param callback 成功回调
+   * @returns {Promise<void>}
+   */
+  requestSearch: async function ({option, userAgent, cache, preload}, callback) {
     let startTime = Date.now()
 
     // 根据id找出具体规则
@@ -118,16 +204,11 @@ export default {
 
     if (!useCache) {
       // 不使用缓存 去请求
-      const rsp = await got.get(url, {headers: headers, timeout: 12000})
-      /* require('fs').writeFile('/Users/dengyuhan/Downloads/test.html', rsp.body, (err) => {
-        console.error(err)
-      }) */
-      // 用htmlparser2转换一次再解析
-      let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp.body))
-      const document = domParser.parseFromString(outerHTML)
-      items = parseDocument(document, rule.xpath)
+      items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent})
       if (items && items.length > 0) {
-        cache.set(url, items, 2 * 60 * 60 * 60)
+        // 缓存过期时间 秒转毫秒
+        const expired = cache.expired * 1000
+        cache.set(url, items, expired)
       }
     }
 

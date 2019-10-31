@@ -24,10 +24,12 @@ function createWindow () {
     height: 563,
     useContentSize: true,
     width: 1000,
+    // 边框隐藏
+    frame: true,
     // 隐藏标题栏, 内容充满整个窗口, 但它依然在左上角, 仍然受标准窗口控制
-    titleBarStyle: 'hidden'
+    // titleBarStyle: 'hiddenInset'
+    titleBarStyle: 'default'
   })
-
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {

@@ -1,13 +1,14 @@
 <template>
-    <el-container>
-        <el-aside width="200px">
+    <el-container v-loading="loading.page">
+        <el-aside width="200px" v-if="rule">
             <el-scrollbar>
-                <aside-menu></aside-menu>
+                <aside-menu @change="handleSourceChanged" :ruleArray="rule.list"
+                            :active="global.active?global.active.id:''"></aside-menu>
             </el-scrollbar>
         </el-aside>
 
-        <el-main>
-            <div class="page-header-fixed">
+        <el-main class="drag">
+            <div class="page-header-fixed no-drag">
                 <el-input placeholder="请输入关键词" v-model="page.current.keyword" size="medium">
                     <el-select slot="prepend" @change="handleSortChanged" v-model="page.current.sort" placeholder="排序方式"
                                v-if="global.active">
@@ -20,86 +21,89 @@
                     </el-select>
                     <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 </el-input>
-                <el-row class="page-header-option">
-                    <el-col :span="8">
-                        <div v-if="page.res" class="page-res-message">
-                            <span v-show="page.res.useCache"><i class="el-icon-lightning"></i>命中预加载结果，</span><span>耗时{{page.res.time}}ms</span>
-                        </div>
-                    </el-col>
-                    <el-col :span="16">
-                        <el-pagination
-                                @current-change="handlePageChanged"
-                                :current-page="page.current.page"
-                                class="page-items-pagination"
-                                background
-                                layout="prev, pager, next"
-                                :pager-count="5"
-                                :page-count="50">
-                        </el-pagination>
-                    </el-col>
-                </el-row>
             </div>
-            <el-table
-                    v-loading="loading.table"
-                    class="page-items-table"
-                    border
-                    default-expand-all
-                    :data="page.items"
-                    style="width: 100%;">
-                <el-table-column
-                        label="名称">
-                    <template slot-scope="scope">
-                        <el-tag size="mini" v-if="scope.row.resolution"
-                                :type="getResolutionTagType(scope.row.resolution)">
-                            {{scope.row.resolution}}
-                        </el-tag>
-                        <span class="page-items-magnet" @click="handleOpenMagnet(scope.row.magnet)"
-                              v-html="highlight(page.current.keyword, scope.row.name, 'highlight-name')"></span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        label="大小"
-                        align="right"
-                        :sort-by="['size','hot','date']"
-                        sortable
-                        width="100">
-                    <template slot-scope="scope">
-                        <span>{{scope.row.size| size}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        align="right"
-                        sort-by="hot"
-                        label="人气"
-                        :sort-by="['hot','date','size']"
-                        sortable
-                        width="80">
-                    <template slot-scope="scope">
-                        <span>{{scope.row.hot}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        align="center"
-                        sort-by="date"
-                        sortable
-                        :sort-by="['date','hot','size']"
-                        label="时间"
-                        width="100">
-                    <template slot-scope="scope">
-                        <span>{{scope.row.date| date}}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                        label="操作"
-                        align="center"
-                        width="100">
-                    <template slot-scope="scope">
-                        <el-button-group>
-                            <el-button size="small" @click="handleCopyMagnet(scope.row.magnet)">复制链接</el-button>
-                        </el-button-group>
-                    </template>
-                </el-table-column>
-            </el-table>
+            <div v-loading="loading.table" class="page-search-content">
+                <div v-if="page.items">
+                    <el-row class="page-header-option">
+                        <el-col :span="8">
+                            <div v-if="page.res" class="page-res-message">
+                                <span v-show="page.res.useCache"><i class="el-icon-lightning"></i>命中预加载结果，</span><span>耗时{{page.res.time}}ms</span>
+                            </div>
+                        </el-col>
+                        <el-col :span="16">
+                            <el-pagination
+                                    @current-change="handlePageChanged"
+                                    :current-page="page.current.page"
+                                    class="page-items-pagination"
+                                    background
+                                    layout="prev, pager, next"
+                                    :pager-count="5"
+                                    :page-count="50">
+                            </el-pagination>
+                        </el-col>
+                    </el-row>
+                    <el-table
+                            class="page-items-table"
+                            border
+                            default-expand-all
+                            :data="page.items"
+                            style="width: 100%;">
+                        <el-table-column
+                                label="名称">
+                            <template slot-scope="scope">
+                                <el-tag size="mini" v-if="scope.row.resolution"
+                                        :type="getResolutionTagType(scope.row.resolution)">
+                                    {{scope.row.resolution}}
+                                </el-tag>
+                                <span class="page-items-magnet" @click="handleOpenMagnet(scope.row.magnet)"
+                                      v-html="highlight(page.current.keyword, scope.row.name, 'highlight-name')"></span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="大小"
+                                align="right"
+                                :sort-by="['size','hot','date']"
+                                sortable
+                                width="100">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.size| size}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="right"
+                                sort-by="hot"
+                                label="人气"
+                                :sort-by="['hot','date','size']"
+                                sortable
+                                width="80">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.hot}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                align="center"
+                                sort-by="date"
+                                sortable
+                                :sort-by="['date','hot','size']"
+                                label="时间"
+                                width="100">
+                            <template slot-scope="scope">
+                                <span>{{scope.row.date| date}}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column
+                                label="操作"
+                                align="center"
+                                width="100">
+                            <template slot-scope="scope">
+                                <el-button-group>
+                                    <el-button size="small" @click="handleCopyMagnet(scope.row.magnet)">复制链接</el-button>
+                                </el-button-group>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+            </div>
             <el-backtop target=".el-main">
             </el-backtop>
         </el-main>
@@ -122,13 +126,26 @@
             keyword: null
           }
         },
-        sourceList: [],
-        loading: {table: false}
+        rule: null,
+        loading: {
+          table: false,
+          page: false
+        }
 
       }
     },
     methods: {
       registerRendererListener () {
+        /**
+         * 加载规则
+         *
+         */
+        ipcRenderer.on('on-load-rule-data', (event, rule) => {
+          this.loading.page = false
+          this.rule = rule
+          this.global.active = rule.list[0]
+        })
+
         /**
          * 搜索结果
          */
@@ -191,24 +208,50 @@
       },
       handleFiles (detailUrl) {
       },
+      /**
+       * 排序切换
+       * @param sort
+       */
       handleSortChanged (sort) {
         this.page.current.sort = sort
         this.handleSearch()
       },
+      /**
+       *页码切换
+       * @param page
+       */
       handlePageChanged (page) {
         this.page.current.page = page
         this.handleSearch()
+      },
+      /**
+       * 源站切换
+       * @param ruleItem
+       */
+      handleSourceChanged (ruleItem) {
+        this.page.current.id = ruleItem.id
+        if (this.page.current.keyword) {
+          this.handleSearch()
+        }
       },
       handleSearch () {
         console.log('搜索', this.page.current)
         this.loading.table = true
         this.page.current.id = this.global.active.id
-        ipcRenderer.send('search', this.page.current)
+        ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
+      },
+      handleLoadRuleData () {
+        this.loading.page = true
+        ipcRenderer.send('load-rule-data', this.global.settings.localSetting.rule.url)
       }
     },
-    mounted () {
+    created () {
       console.log(this.global)
       this.registerRendererListener()
+
+      this.handleLoadRuleData()
+    },
+    mounted () {
     }
   }
 </script>
@@ -239,13 +282,17 @@
         text-align: right;
     }
 
+    .page-search-content {
+
+        .el-loading-spinner {
+            top: 100px !important;
+        }
+    }
+
     .page-items-table {
         margin-top: 15px;
     }
 
-    .el-loading-mask {
-        bottom: auto;
-    }
 
     .el-pagination {
         padding-right: 0 !important;

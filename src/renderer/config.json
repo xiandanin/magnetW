@@ -5,10 +5,22 @@
     "hideProxy": false
   },
   "optimization": {
-    "preload": true,
+    "preload": {
+      "source": true,
+      "page": true
+    },
     "trackers": {
-      "enabled": true,
+      "enabled": false,
       "url": "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
+    }
+  },
+  "cache": {
+    "expired": 3600
+  },
+  "request": {
+    "customUserAgent": {
+      "enabled": false,
+      "userAgent": null
     }
   },
   "proxy": {
