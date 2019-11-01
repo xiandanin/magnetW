@@ -229,15 +229,15 @@
        * @param ruleItem
        */
       handleSourceChanged (ruleItem) {
-        this.page.current.id = ruleItem.id
+        this.global.active.id = ruleItem.id
         if (this.page.current.keyword) {
           this.handleSearch()
         }
       },
       handleSearch () {
-        console.log('搜索', this.page.current)
         this.loading.table = true
         this.page.current.id = this.global.active.id
+        console.log('搜索', this.page.current)
         ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
       },
       handleLoadRuleData () {

@@ -2,16 +2,15 @@ import logger from 'electron-log'
 import moment from 'moment'
 import util from 'util'
 
-const level = process.env.NODE_ENV === 'development' ? 'debug' : 'silly'
 logger.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'
-logger.transports.console.level = level
+logger.transports.console.level = 'debug'
 logger.transports.file.fileName = `${moment().format('YYYY-MM-DD')}.log`
-logger.transports.file.level = level
+logger.transports.file.level = 'silly'
 
 logger.transports.console = (msg) => {
   const time = moment().format('YYYY-MM-DD HH:mm:ss.SSS')
   const colour = levelStyles[msg.level]
-  const header = colorize(util.format('[%s][%s]', time, msg.level), colour)
+  const header = colorize(util.format('[%s][%s]', time, msg.level.toUpperCase()), colour)
   const text = colorize(util.format(...msg.data), colour)
   const message = util.format('%s %s', header, text)
   console.log(message)

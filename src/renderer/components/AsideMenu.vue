@@ -26,7 +26,7 @@
         const list = this.ruleArray
         for (let i = 0; i < list.length; i++) {
           const item = list[i]
-          if (item === index) {
+          if (item.id === index) {
             this.global.active = item
             this.$emit('change', item)
             break

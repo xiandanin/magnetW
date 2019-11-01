@@ -5,22 +5,18 @@ import logger from './logger'
 const {ipcMain} = require('electron')
 
 export default function () {
-  ipcMain.on('get-config', (event) => {
-    const config = require('../renderer/config.json')
-    event.sender.send('on-get-config', config)
-  })
-
   ipcMain.on('load-rule-data', async (event, url) => {
     event.sender.send('on-load-rule-data', await repo.getRuleData(url))
   })
 
   ipcMain.on('search', (event, option, localSetting) => {
-    const customUserAgent = localSetting.customUserAgent.enabled ? localSetting.customUserAgent : null
-    repo.requestSearch(
+    const customUserAgent = localSetting.request.customUserAgent.enabled ? localSetting.request.customUserAgent : null
+    repo.obtainSearchResult(
       {
         option,
         userAgent: customUserAgent,
         cache: localSetting.cache,
+        proxy: localSetting.proxy,
         preload: localSetting.optimization.preload
       }, function (rsp) {
         event.sender.send('on-search-response', {

@@ -25,10 +25,20 @@ const userAgentPool = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362'
 ]
 
+/**
+ * 随机获取ua
+ * @returns {string}
+ */
 function getUserAgent () {
   return userAgentPool[Math.floor((Math.random() * userAgentPool.length))]
 }
 
+/**
+ * 根据规则和参数构建请求
+ * @param rule
+ * @param option
+ * @returns {{headers: {Origin: *, Referer: *, 'User-Agent': string, Host: string | *}, current: {page: *, sort: *, keyword: (*|string), url: *}, url: *}}
+ */
 function buildRequest (rule, option) {
   const keyword = option.keyword || '钢铁侠'
   const page = !option.page || option.page < 1 ? 1 : option.page
@@ -58,7 +68,7 @@ function buildRequest (rule, option) {
 }
 
 /**
- *
+ * 解析Document
  * @param document
  * @param expression xpath表达式对象
  */
@@ -88,7 +98,7 @@ function parseDocument (document, expression) {
       })
     }
   })
-  console.silly(items)
+  console.silly(`\n${JSON.stringify(items, '\t', 2)}`)
   return items
 }
 
@@ -147,8 +157,12 @@ async function getRuleData (url) {
 
 /**
  * 请求源站搜索结果并解析搜索结果
+ * @param url 已拼接好的url
+ * @param headers 请求的header
+ * @param xpath 规则xpath
+ * @param 自定义的ua
  */
-async function requestParseSearchItems ({url, headers, xpath, customUserAgent}) {
+async function requestParseSearchItems ({url, headers, xpath, customUserAgent, proxy}) {
   // 自定义ua
   if (customUserAgent) {
     headers['User-Agent'] = customUserAgent
@@ -161,8 +175,44 @@ async function requestParseSearchItems ({url, headers, xpath, customUserAgent}) 
   return parseDocument(document, xpath)
 }
 
-async function asyncCacheSearchResult ({option, userAgent, cache}) {
+/**
+ * 异步缓存搜索结果
+ * @param option 搜索参数
+ * @param userAgent 自定义ua
+ * @param cache 缓存配置
+ * @returns {Promise<void>}
+ */
+async function asyncCacheSearchResult ({option, userAgent, cacheConfig, proxy}) {
 // 根据id找出具体规则
+  const rule = ruleMap[option.id]
+
+  const {current, url, headers} = buildRequest(rule, option)
+
+  console.log('异步缓存搜索结果', current, headers)
+
+  // 不使用缓存 去请求
+  const items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent, proxy})
+  if (items && items.length > 0) {
+    // 缓存过期时间 秒转毫秒
+    const expired = cacheConfig.expired * 1000
+    cache.set(url, items, expired)
+  }
+}
+
+/**
+ * 获取搜索结果
+ * @param option 搜索的参数
+ * @param userAgent 自定义UserAgent
+ * @param cache 缓存设置
+ * @param proxy 代理配置
+ * @param preload 预加载设置
+ * @param callback 成功回调
+ * @returns {Promise<void>}
+ */
+async function obtainSearchResult ({option, userAgent, cacheConfig, proxy, preload}, callback) {
+  let startTime = Date.now()
+
+  // 根据id找出具体规则
   const rule = ruleMap[option.id]
 
   const {current, url, headers} = buildRequest(rule, option)
@@ -178,56 +228,45 @@ async function asyncCacheSearchResult ({option, userAgent, cache}) {
 
   if (!useCache) {
     // 不使用缓存 去请求
-    items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent})
+    items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent, proxy})
     if (items && items.length > 0) {
       // 缓存过期时间 秒转毫秒
-      const expired = cache.expired * 1000
+      const expired = cacheConfig.expired * 1000
       cache.set(url, items, expired)
+    }
+  }
+
+  const time = Date.now() - startTime
+  const res = {useCache, time}
+  const data = {current, res, items}
+  callback(data)
+
+  if (items && items.length > 0) {
+    // 预加载下一个源站
+    if (preload.source) {
+      const keys = Object.keys(ruleMap)
+      let nextIndex
+      for (let i = 0; i < keys.length; i++) {
+        if (keys[i] === option.id) {
+          nextIndex = i + 1
+          break
+        }
+      }
+      if (nextIndex && nextIndex < keys.length) {
+        option.id = ruleMap[keys[nextIndex]].id
+      }
+      asyncCacheSearchResult({option, userAgent, cacheConfig, proxy})
+    }
+
+    // 预加载下一页
+    if (preload.page) {
+      option.page++
+      asyncCacheSearchResult({option, userAgent, cacheConfig, proxy})
     }
   }
 }
 
 export default {
   getRuleData,
-  /**
-   * 获取搜索结果
-   * @param option 搜索的参数
-   * @param userAgent 自定义UserAgent
-   * @param cache 缓存设置
-   * @param preload 预加载设置
-   * @param callback 成功回调
-   * @returns {Promise<void>}
-   */
-  requestSearch: async function ({option, userAgent, cache, preload}, callback) {
-    let startTime = Date.now()
-
-    // 根据id找出具体规则
-    const rule = ruleMap[option.id]
-
-    const {current, url, headers} = buildRequest(rule, option)
-
-    let items = cache.get(url)
-    let useCache = false
-    if (items) {
-      // 有数据 使用缓存
-      useCache = true
-    }
-
-    console.log(useCache ? '搜索命中缓存' : '请求搜索', current, headers)
-
-    if (!useCache) {
-      // 不使用缓存 去请求
-      items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent})
-      if (items && items.length > 0) {
-        // 缓存过期时间 秒转毫秒
-        const expired = cache.expired * 1000
-        cache.set(url, items, expired)
-      }
-    }
-
-    const time = Date.now() - startTime
-    const res = {useCache, time}
-    const data = {current, res, items}
-    callback(data)
-  }
+  obtainSearchResult
 }
