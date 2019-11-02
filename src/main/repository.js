@@ -1,7 +1,8 @@
 import format from './format-parser'
 
-const got = require('got')
+const request = require('request-promise-native')
 const fs = require('fs')
+const cacheManager = require('./cache')
 const xpath = require('xpath')
 const DOMParser = require('xmldom').DOMParser
 const htmlparser2 = require('htmlparser2')
@@ -11,8 +12,6 @@ const domParser = new DOMParser({
     }
   }
 })
-const LRU = require('lru-cache')
-const cache = new LRU()
 
 let ruleMap = {}
 
@@ -25,46 +24,70 @@ const userAgentPool = [
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362'
 ]
 
+function clearCache () {
+  cacheManager.clear()
+}
+
 /**
  * 随机获取ua
  * @returns {string}
  */
-function getUserAgent () {
+function randomUserAgent () {
   return userAgentPool[Math.floor((Math.random() * userAgentPool.length))]
+}
+
+/**
+ * 变换搜索参数
+ * @param option
+ * @param id
+ * @param paths
+ * @returns
+ */
+function transformSearchOption ({option, id, paths}) {
+  const keyword = option.keyword
+  const page = !option.page || option.page < 1 ? 1 : option.page
+  // 如果没有指定的排序 就取第一个排序
+  let sort = option.sort
+  if (!(option.sort in paths)) {
+    for (let property in paths) {
+      sort = property
+      break
+    }
+  }
+  const path = paths[sort].replace(/{keyword}/g, encodeURIComponent(keyword)).replace(/{page}/g, page)
+  return {id, keyword, page, sort, path}
 }
 
 /**
  * 根据规则和参数构建请求
  * @param rule
- * @param option
+ * @param searchOption
  * @returns {{headers: {Origin: *, Referer: *, 'User-Agent': string, Host: string | *}, current: {page: *, sort: *, keyword: (*|string), url: *}, url: *}}
  */
-function buildRequest (rule, option) {
-  const keyword = option.keyword || '钢铁侠'
-  const page = !option.page || option.page < 1 ? 1 : option.page
-  // 如果没有指定的排序 就取第一个排序
-  let sort = option.sort
-  if (!(option.sort in rule.paths)) {
-    for (let property in rule.paths) {
-      sort = property
-      break
-    }
-  }
+function buildRequest ({rule, option, setting}) {
+  const current = transformSearchOption({option, id: rule.id, paths: rule.paths})
 
   const root = rule.url
-  const path = rule.paths[sort]
-  const url = root + path.replace(/{keyword}/g, encodeURIComponent(keyword)).replace(/{page}/g, page)
+  const url = root + current.path
+  current['url'] = url
+
   const host = root.substr(root.indexOf('://') + 3)
+  const userAgent = setting.customUserAgent ? setting.customUserAgentValue : randomUserAgent()
   const headers = {
     'Host': host,
     'Origin': root,
     'Referer': root,
-    'User-Agent': getUserAgent()
+    'User-Agent': userAgent
   }
-  const current = {
-    url, keyword, page, sort
+  const proxy = rule.proxy && setting.proxy ? `http://${setting.proxyHost}:${setting.proxyPort}` : null
+  const requestOptions = {
+    url: url,
+    headers: headers,
+    timeout: 12000,
+    proxy: proxy
   }
-  return {current, url, headers}
+
+  return {current, requestOptions}
 }
 
 /**
@@ -113,7 +136,7 @@ async function handleUpdateRuleFile (url) {
     if (url.startsWith('http')) {
       // 如果是网络文件
       console.info('获取网络规则文件', url)
-      const rsp = await got.get(url, {timeout: 5000, json: true})
+      const rsp = await request(url, {timeout: 5000, json: true})
       if (rsp.list) {
         rule = rsp
       }
@@ -131,7 +154,6 @@ async function handleUpdateRuleFile (url) {
   let log = ''
   let proxy = 0
   rule.list.forEach(function (it) {
-    ruleMap[it.id] = it
     log += `\n[加载][${it.name}][${it.url}]`
     if (it.proxy) {
       proxy++
@@ -139,20 +161,24 @@ async function handleUpdateRuleFile (url) {
   })
   log += `\n${rule.list.length}个规则加载完成，其中${rule.list.length - proxy}个可直接使用，${proxy}个需要代理`
   console.info(log)
-  cache.set('rule_json', JSON.stringify(rule))
+  cacheManager.set('rule_json', JSON.stringify(rule))
 }
 
 async function getRuleData (url) {
-  let rule = cache.get('rule_json')
-  if (rule) {
+  let ruleJson = cacheManager.get('rule_json')
+  if (ruleJson) {
     // 如果有缓存 直接使用缓存 然后异步更新
     handleUpdateRuleFile(url)
   } else {
     // 如果没有缓存 等待更新到规则
     await handleUpdateRuleFile(url)
-    rule = cache.get('rule_json')
+    ruleJson = cacheManager.get('rule_json')
   }
-  return JSON.parse(rule)
+  let rule = JSON.parse(ruleJson)
+  rule.list.forEach(function (it) {
+    ruleMap[it.id] = it
+  })
+  return rule
 }
 
 /**
@@ -162,17 +188,17 @@ async function getRuleData (url) {
  * @param xpath 规则xpath
  * @param 自定义的ua
  */
-async function requestParseSearchItems ({url, headers, xpath, customUserAgent, proxy}) {
-  // 自定义ua
-  if (customUserAgent) {
-    headers['User-Agent'] = customUserAgent
-  }
-  const rsp = await got.get(url, {headers: headers, timeout: 12000})
+async function requestParseSearchItems ({requestOptions, xpath}) {
+  try {
+    const rsp = await request(requestOptions)
 
-  // 用htmlparser2转换一次再解析
-  let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp.body))
-  const document = domParser.parseFromString(outerHTML)
-  return parseDocument(document, xpath)
+    // 用htmlparser2转换一次再解析
+    let outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(rsp))
+    const document = domParser.parseFromString(outerHTML)
+    return {items: parseDocument(document, xpath)}
+  } catch (e) {
+    return {err: e}
+  }
 }
 
 /**
@@ -182,21 +208,40 @@ async function requestParseSearchItems ({url, headers, xpath, customUserAgent, p
  * @param cache 缓存配置
  * @returns {Promise<void>}
  */
-async function asyncCacheSearchResult ({option, userAgent, cacheConfig, proxy}) {
-// 根据id找出具体规则
-  const rule = ruleMap[option.id]
-
-  const {current, url, headers} = buildRequest(rule, option)
-
-  console.log('异步缓存搜索结果', current, headers)
-
-  // 不使用缓存 去请求
-  const items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent, proxy})
-  if (items && items.length > 0) {
-    // 缓存过期时间 秒转毫秒
-    const expired = cacheConfig.expired * 1000
-    cache.set(url, items, expired)
+async function asyncCacheSearchResult ({current, setting}) {
+  async function asyncRequest (option) {
+    const rule = ruleMap[option.id]
+    const {current, requestOptions} = buildRequest({rule, option, setting})
+    console.info('构建预加载请求', requestOptions)
+    const key = requestOptions.url
+    const {err, items} = await requestParseSearchItems({requestOptions, xpath: rule.xpath})
+    if (items && items.length > 0) {
+      // 存入缓存
+      cacheManager.set(key, items, setting.cacheExpired)
+    }
   }
+
+  if (current.page === 1) {
+    // 是第一页才缓存源站
+    const option = JSON.parse(JSON.stringify(current))
+    const keys = Object.keys(ruleMap)
+    let nextIndex
+    for (let i = 0; i < keys.length; i++) {
+      if (keys[i] === option.id) {
+        nextIndex = i + 1
+        break
+      }
+    }
+    if (nextIndex && nextIndex < keys.length) {
+      option.id = ruleMap[keys[nextIndex]].id
+    }
+    asyncRequest(option)
+  }
+
+  // 缓存下一页
+  const pageOption = JSON.parse(JSON.stringify(current))
+  pageOption.page++
+  asyncRequest(pageOption)
 }
 
 /**
@@ -209,64 +254,50 @@ async function asyncCacheSearchResult ({option, userAgent, cacheConfig, proxy}) 
  * @param callback 成功回调
  * @returns {Promise<void>}
  */
-async function obtainSearchResult ({option, userAgent, cacheConfig, proxy, preload}, callback) {
+async function obtainSearchResult (option, setting, callback) {
+  if (!option.keyword) {
+    const err = {message: '请输入要搜索的关键词'}
+    callback(err)
+    return
+  }
   let startTime = Date.now()
 
   // 根据id找出具体规则
   const rule = ruleMap[option.id]
 
-  const {current, url, headers} = buildRequest(rule, option)
+  const {current, requestOptions} = buildRequest({rule, option, setting})
+  console.info('发起搜索', requestOptions)
 
-  let items = cache.get(url)
-  let useCache = false
-  if (items) {
-    // 有数据 使用缓存
-    useCache = true
-  }
+  // 缓存
+  const key = requestOptions.url
+  let items = cacheManager.get(key)
+  let useCache = !!items
 
-  console.log(useCache ? '搜索命中缓存' : '请求搜索', current, headers)
-
+  let err = null
   if (!useCache) {
     // 不使用缓存 去请求
-    items = await requestParseSearchItems({url, headers, xpath: rule.xpath, userAgent, proxy})
+    const result = await requestParseSearchItems({requestOptions, xpath: rule.xpath})
+    err = result.err
+    items = result.items
     if (items && items.length > 0) {
-      // 缓存过期时间 秒转毫秒
-      const expired = cacheConfig.expired * 1000
-      cache.set(url, items, expired)
+      // 存入缓存
+      cacheManager.set(key, items, setting.cacheExpired)
     }
   }
 
   const time = Date.now() - startTime
   const res = {useCache, time}
   const data = {current, res, items}
-  callback(data)
+  callback(err, data)
 
-  if (items && items.length > 0) {
-    // 预加载下一个源站
-    if (preload.source) {
-      const keys = Object.keys(ruleMap)
-      let nextIndex
-      for (let i = 0; i < keys.length; i++) {
-        if (keys[i] === option.id) {
-          nextIndex = i + 1
-          break
-        }
-      }
-      if (nextIndex && nextIndex < keys.length) {
-        option.id = ruleMap[keys[nextIndex]].id
-      }
-      asyncCacheSearchResult({option, userAgent, cacheConfig, proxy})
-    }
-
-    // 预加载下一页
-    if (preload.page) {
-      option.page++
-      asyncCacheSearchResult({option, userAgent, cacheConfig, proxy})
-    }
+  // 异步预加载并缓存
+  if (items && items.length > 0 && setting.preload) {
+    asyncCacheSearchResult({current, setting})
   }
 }
 
 export default {
   getRuleData,
-  obtainSearchResult
+  obtainSearchResult,
+  clearCache
 }

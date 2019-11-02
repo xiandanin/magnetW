@@ -2,6 +2,7 @@
     <div>
         <h3 class="setting-title">{{title}}</h3>
         <el-divider></el-divider>
+        <slot></slot>
     </div>
 </template>
 

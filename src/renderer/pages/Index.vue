@@ -3,17 +3,18 @@
         <el-aside width="200px" v-if="rule">
             <el-scrollbar>
                 <aside-menu @change="handleSourceChanged" :ruleArray="rule.list"
-                            :active="global.active?global.active.id:''"></aside-menu>
+                            :active="activeRule?activeRule.id:''"></aside-menu>
             </el-scrollbar>
         </el-aside>
 
         <el-main class="drag">
             <div class="page-header-fixed no-drag">
-                <el-input placeholder="请输入关键词" v-model="page.current.keyword" size="medium">
+                <el-input :placeholder="placeholder" v-model="page.current.keyword" @keyup.enter.native="handleSearch"
+                          size="medium">
                     <el-select slot="prepend" @change="handleSortChanged" v-model="page.current.sort" placeholder="排序方式"
-                               v-if="global.active">
+                               v-if="activeRule">
                         <el-option
-                                v-for="(value, key, i) in global.active.paths"
+                                v-for="(value, key, i) in activeRule.paths"
                                 :key="key"
                                 :label="formatPathName(key)"
                                 :value="key">
@@ -21,6 +22,7 @@
                     </el-select>
                     <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 </el-input>
+                <browser-link class="page-header-url" :href="page.current.url">{{page.current.url}}</browser-link>
             </div>
             <div v-loading="loading.table" class="page-search-content">
                 <div v-if="page.items">
@@ -112,12 +114,13 @@
 
 <script>
   import AsideMenu from '../components/AsideMenu'
+  import BrowserLink from '../components/BrowserLink'
   import {ipcRenderer, clipboard, shell} from 'electron'
   import {Base64} from 'js-base64'
 
   export default {
     components: {
-      AsideMenu
+      AsideMenu, BrowserLink
     },
     data () {
       return {
@@ -126,11 +129,13 @@
             keyword: null
           }
         },
+        activeRule: null,
         rule: null,
         loading: {
           table: false,
           page: false
-        }
+        },
+        placeholder: '钢铁侠'
 
       }
     },
@@ -143,17 +148,20 @@
         ipcRenderer.on('on-load-rule-data', (event, rule) => {
           this.loading.page = false
           this.rule = rule
-          this.global.active = rule.list[0]
+          this.handleSourceChanged(rule.list[0])
         })
-
         /**
          * 搜索结果
          */
         ipcRenderer.on('on-search-response', (event, rsp) => {
           this.loading.table = false
-          console.log(rsp)
           if (rsp.success) {
             this.page = rsp.data
+          } else {
+            this.$message({
+              message: rsp.message,
+              type: 'error'
+            })
           }
         })
       },
@@ -229,20 +237,22 @@
        * @param ruleItem
        */
       handleSourceChanged (ruleItem) {
-        this.global.active.id = ruleItem.id
+        this.activeRule = ruleItem
+        this.page.current.id = ruleItem.id
+        this.page.current.page = 1
         if (this.page.current.keyword) {
           this.handleSearch()
         }
       },
       handleSearch () {
         this.loading.table = true
-        this.page.current.id = this.global.active.id
+        this.page.current.keyword = this.page.current.keyword || this.placeholder
         console.log('搜索', this.page.current)
         ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
       },
       handleLoadRuleData () {
         this.loading.page = true
-        ipcRenderer.send('load-rule-data', this.global.settings.localSetting.rule.url)
+        ipcRenderer.send('load-rule-data', this.global.settings.localSetting.ruleUrl)
       }
     },
     created () {
@@ -267,6 +277,11 @@
         display: flex;
         margin-top: 15px;
         align-items: center;
+    }
+
+    .page-header-url {
+        color: $color-text-gray !important;
+        margin-top: 10px;
     }
 
     .page-res-message {
@@ -311,7 +326,12 @@
     }
 
     .page-items-magnet {
+        color: $--color-primary;
         cursor: pointer;
+
+        .highlight-name {
+            color: $--color-danger;
+        }
     }
 
     .el-table__expanded-cell[class*=cell] {

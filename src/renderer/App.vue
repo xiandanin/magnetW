@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <div class="header-placeholder"></div>
         <el-container>
             <el-header class="drag">
                 <pager-header></pager-header>
@@ -38,6 +39,10 @@
         padding: 0 !important;
     }
 
+    .header-placeholder{
+        height: 15px;
+    }
+
     .title {
         font-size: 18px;
         color: $color-title;
@@ -45,6 +50,19 @@
 
     .highlight-name {
         color: $--color-primary;
+    }
+
+    .align-items-center {
+        display: flex;
+        align-items: center;
+    }
+
+    .el-checkbox {
+        font-weight: normal !important;
+    }
+
+    .el-header{
+        border-bottom: 1px solid $color-border;
     }
 
     .el-aside {

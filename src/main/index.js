@@ -27,8 +27,8 @@ function createWindow () {
     // 边框隐藏
     frame: true,
     // 隐藏标题栏, 内容充满整个窗口, 但它依然在左上角, 仍然受标准窗口控制
-    // titleBarStyle: 'hiddenInset'
-    titleBarStyle: 'default'
+    titleBarStyle: 'hidden'
+    // titleBarStyle: 'default'
   })
   mainWindow.loadURL(winURL)
 

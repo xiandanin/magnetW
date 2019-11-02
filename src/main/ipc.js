@@ -10,20 +10,19 @@ export default function () {
   })
 
   ipcMain.on('search', (event, option, localSetting) => {
-    const customUserAgent = localSetting.request.customUserAgent.enabled ? localSetting.request.customUserAgent : null
-    repo.obtainSearchResult(
-      {
-        option,
-        userAgent: customUserAgent,
-        cache: localSetting.cache,
-        proxy: localSetting.proxy,
-        preload: localSetting.optimization.preload
-      }, function (rsp) {
-        event.sender.send('on-search-response', {
-          success: true,
-          data: rsp
-        })
+    repo.obtainSearchResult(option, localSetting, function (err, rsp) {
+      const success = !err
+      const message = success ? null : err.message
+      event.sender.send('on-search-response', {
+        success: success,
+        message: message,
+        data: rsp
       })
+    })
+  })
+
+  ipcMain.on('clear-cache', async (event) => {
+    repo.clearCache()
   })
 
   ipcMain.on('get-app-info', async (event) => {
