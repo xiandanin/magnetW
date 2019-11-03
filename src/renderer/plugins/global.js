@@ -23,16 +23,15 @@ function saveSetting (setting) {
       tempSettingVariable[key] = value
     }
   }
-  // 如果修改了配置
-  if (Object.keys(tempSettingVariable).length > 0) {
-    // 重新合并配置数据
-    let tempSetting = deepCopy(defaultSetting)
+  let tempSetting = deepCopy(defaultSetting)
+  // 如果修改了配置 就重新合并配置数据
+  const isModified = Object.keys(tempSettingVariable).length > 0
+  if (isModified) {
     Object.assign(tempSetting, tempSettingVariable)
-    localSetting = tempSetting
-
-    localStorage.setItem('local_setting_variable', JSON.stringify(tempSettingVariable))
-    console.debug('保存修改设置', tempSettingVariable)
   }
+  Vue.prototype.global.settings.localSetting = tempSetting
+  localStorage.setItem('local_setting_variable', isModified ? JSON.stringify(tempSettingVariable) : '')
+  console.debug('保存修改设置', tempSettingVariable)
 }
 
 Vue.prototype.global = {

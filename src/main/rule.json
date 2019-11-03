@@ -66,6 +66,7 @@
     {
       "id": "btdet",
       "name": "BT蚂蚁",
+      "icon": "https://i.postimg.cc/hQXMw3Tp/btgat.png",
       "proxy": true,
       "url": "http://www.btdet.com",
       "paths": {
@@ -88,6 +89,7 @@
     {
       "id": "nyaa",
       "name": "Nyaa（动漫）",
+      "icon": "https://i.postimg.cc/JGBP5v1h/nyaa.png",
       "proxy": true,
       "url": "https://nyaa.si",
       "paths": {
@@ -130,6 +132,7 @@
     {
       "id": "sukebei",
       "name": "Sukebei Nyaa",
+      "icon": "https://i.postimg.cc/JGBP5v1h/nyaa.png",
       "proxy": true,
       "url": "https://sukebei.nyaa.si",
       "paths": {
@@ -152,8 +155,9 @@
     {
       "id": "btsow",
       "name": "BTSOW",
+      "icon": "https://i.postimg.cc/Cd5vzdXk/btsow.png",
       "proxy": true,
-      "url": "https://btspread.com",
+      "url": "https://btos.pw",
       "paths": {
         "preset": "/search/{keyword}/page/{page}"
       },
@@ -171,6 +175,7 @@
     {
       "id": "idope",
       "name": "idope",
+      "icon": "https://i.postimg.cc/LhWxf2F7/idope.png",
       "proxy": true,
       "url": "https://idope.se",
       "paths": {
@@ -191,6 +196,7 @@
     {
       "id": "skrbt",
       "name": "SkrBT",
+      "icon": "https://i.postimg.cc/7GYK1L6v/skrbt.png",
       "proxy": true,
       "url": "https://www.skrbt.world",
       "paths": {
@@ -210,6 +216,7 @@
     {
       "id": "bt4g",
       "name": "BT4G",
+      "icon": "https://i.postimg.cc/47LBWT7Y/bt4g.png",
       "proxy": true,
       "url": "https://cn.bt4g.com",
       "paths": {
@@ -231,7 +238,7 @@
     {
       "id": "mag",
       "name": "MAG磁力站",
-      "url": "http://oabt005.com",
+      "url": "http://oabt007.com",
       "paths": {
         "preset": "/index/index/k/{keyword}/p/{page}"
       },
@@ -246,6 +253,7 @@
     {
       "id": "kickass",
       "name": "KickassTorrents",
+      "icon": "https://i.postimg.cc/pmfCgj5b/kickasstorrents.png",
       "url": "https://kickasstorrents.to",
       "paths": {
         "preset": "/usearch/{keyword}/{page}"
@@ -264,7 +272,8 @@
     {
       "id": "lemencili",
       "name": "磁力柠檬",
-      "url": "https://lemencili1.xyz",
+      "icon": "https://i.postimg.cc/SnFVTdsf/lemencili.png",
+      "url": "https://lemencili6.xyz",
       "paths": {
         "time": "/search?keyword={keyword}&s=relevance&p={page}",
         "size": "/search?keyword={keyword}&s=length&p={page}"

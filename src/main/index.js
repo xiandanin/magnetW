@@ -1,14 +1,17 @@
 'use strict'
 
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, Menu} from 'electron'
+import openAboutWindow from 'about-window'
 import registerIPC from './ipc'
+
+const path = require('path')
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
 let mainWindow
@@ -21,22 +24,58 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 680,
     useContentSize: true,
     width: 1000,
+    minWidth: 800,
+    minHeight: 550,
     // 边框隐藏
     frame: true,
-    // 隐藏标题栏, 内容充满整个窗口, 但它依然在左上角, 仍然受标准窗口控制
     titleBarStyle: 'hidden'
     // titleBarStyle: 'default'
   })
+
+  if (process.env.NODE_ENV === 'development') {
+    const menu = Menu.buildFromTemplate([{
+      submenu: [
+        {
+          label: '关于',
+          click: function () {
+            openAboutWindow({
+              open_devtools: false,
+              icon_path: path.resolve('build/icons/256x256.png'),
+              homepage: 'http://magnetw.github.io',
+              css_path: path.resolve(__dirname, 'about.css'),
+              package_json_dir: path.resolve(),
+              titleBarStyle: 'hidden',
+              win_options: {
+                resizable: false,
+                minimizable: false,
+                maximizable: false,
+                movable: false,
+                titleBarStyle: 'hidden',
+                modal: true
+              }
+            })
+          }
+        },
+        {
+          label: '开发人员工具',
+          click: function () {
+            mainWindow.webContents.openDevTools()
+          }
+        }]
+    }])
+    Menu.setApplicationMenu(menu)
+  }
+
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 
-  registerIPC()
+  registerIPC(mainWindow)
 }
 
 app.on('ready', createWindow)

@@ -1,10 +1,13 @@
 <template>
-    <div class="header">
+    <div class="header" @dblclick="dblclick">
         <header-version></header-version>
         <div class="header-right">
             <span class="header-disclaimer-text">本应用开源且免费，仅用于爬虫技术交流学习，搜索结果均来自源站，亦不承担任何责任</span>
             <el-menu mode="horizontal" default-active="/" router>
                 <el-menu-item index="/">首页</el-menu-item>
+                <el-menu-item index="/doc">
+                    <browser-link href="http://magnetw.github.io" :underline="false">文档</browser-link>
+                </el-menu-item>
                 <el-menu-item index="/setting">设置</el-menu-item>
             </el-menu>
         </div>
@@ -13,10 +16,12 @@
 
 <script>
   import HeaderVersion from './HeaderVersion'
+  import BrowserLink from './BrowserLink'
 
   export default {
-    name: 'pager-header',
+    props: ['dblclick'],
     components: {
+      BrowserLink,
       HeaderVersion
     }
   }
@@ -29,7 +34,7 @@
         .header-right {
             display: flex;
             flex: 1;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .el-menu {
@@ -39,6 +44,7 @@
 
         .header-disclaimer-text {
             flex: 1;
+            margin-bottom: 10px;
             text-align: left;
             margin-right: 20px;
             color: $color-text-gray;

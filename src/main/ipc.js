@@ -4,9 +4,25 @@ import logger from './logger'
 
 const {ipcMain} = require('electron')
 
-export default function () {
-  ipcMain.on('load-rule-data', async (event, url) => {
+export default function (mainWindow) {
+  async function callLoadRuleData (event, url) {
     event.sender.send('on-load-rule-data', await repo.getRuleData(url))
+  }
+
+  process.on('uncaughtException', function (e) {
+    console.error('出现异常', e)
+  })
+
+  ipcMain.on('window-max', function () {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow.maximize()
+    }
+  })
+
+  ipcMain.on('load-rule-data', async (event, url) => {
+    await callLoadRuleData(event, url)
   })
 
   ipcMain.on('search', (event, option, localSetting) => {
@@ -30,5 +46,9 @@ export default function () {
     event.sender.send('on-get-app-info', {
       logDir: dir
     })
+  })
+
+  ipcMain.on('apply-setting', async (event, setting) => {
+    await callLoadRuleData(event, setting.ruleUrl)
   })
 }

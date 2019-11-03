@@ -62,7 +62,8 @@ function transformSearchOption ({option, id, paths}) {
  * 根据规则和参数构建请求
  * @param rule
  * @param searchOption
- * @returns {{headers: {Origin: *, Referer: *, 'User-Agent': string, Host: string | *}, current: {page: *, sort: *, keyword: (*|string), url: *}, url: *}}
+ * @param setting
+ * @returns
  */
 function buildRequest ({rule, option, setting}) {
   const current = transformSearchOption({option, id: rule.id, paths: rule.paths})
@@ -83,7 +84,7 @@ function buildRequest ({rule, option, setting}) {
   const requestOptions = {
     url: url,
     headers: headers,
-    timeout: 12000,
+    timeout: 8000,
     proxy: proxy
   }
 
@@ -184,9 +185,7 @@ async function getRuleData (url) {
 /**
  * 请求源站搜索结果并解析搜索结果
  * @param url 已拼接好的url
- * @param headers 请求的header
  * @param xpath 规则xpath
- * @param 自定义的ua
  */
 async function requestParseSearchItems ({requestOptions, xpath}) {
   try {
@@ -197,23 +196,27 @@ async function requestParseSearchItems ({requestOptions, xpath}) {
     const document = domParser.parseFromString(outerHTML)
     return {items: parseDocument(document, xpath)}
   } catch (e) {
+    console.error('解析失败', e)
     return {err: e}
   }
 }
 
 /**
  * 异步缓存搜索结果
- * @param option 搜索参数
- * @param userAgent 自定义ua
- * @param cache 缓存配置
- * @returns {Promise<void>}
+ * @param current
+ * @param setting
+ * @returns
  */
 async function asyncCacheSearchResult ({current, setting}) {
   async function asyncRequest (option) {
     const rule = ruleMap[option.id]
     const {current, requestOptions} = buildRequest({rule, option, setting})
-    console.info('构建预加载请求', requestOptions)
     const key = requestOptions.url
+    if (cacheManager.get(key)) {
+      // 如果还有缓存 就不请求了
+      return
+    }
+    console.info('构建预加载请求', requestOptions)
     const {err, items} = await requestParseSearchItems({requestOptions, xpath: rule.xpath})
     if (items && items.length > 0) {
       // 存入缓存
@@ -247,12 +250,9 @@ async function asyncCacheSearchResult ({current, setting}) {
 /**
  * 获取搜索结果
  * @param option 搜索的参数
- * @param userAgent 自定义UserAgent
- * @param cache 缓存设置
- * @param proxy 代理配置
- * @param preload 预加载设置
- * @param callback 成功回调
- * @returns {Promise<void>}
+ * @param setting
+ * @param callback 回调
+ * @returns
  */
 async function obtainSearchResult (option, setting, callback) {
   if (!option.keyword) {

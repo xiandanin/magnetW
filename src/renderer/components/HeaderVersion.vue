@@ -1,6 +1,6 @@
 <template>
     <div class="header-version align-items-center">
-        <img src="../assets/images/logo.png" width="45"/>
+        <img src="../assets/images/logo.png" height="36"/>
         <div>
             <div class="header-version-text">{{ appName }}</div>
             <div class="header-version-text">v{{ version }}-{{ platform }}</div>

@@ -1,9 +1,9 @@
 <template>
     <div id="app">
-        <div class="header-placeholder"></div>
         <el-container>
+            <div class="header-placeholder drag" @dblclick="handleClickMaxWindow"></div>
             <el-header class="drag">
-                <pager-header></pager-header>
+                <pager-header :dblclick="handleClickMaxWindow"></pager-header>
             </el-header>
 
             <el-main class="main">
@@ -16,12 +16,17 @@
 </template>
 
 <script>
+  import {ipcRenderer} from 'electron'
   import PagerHeader from './components/PagerHeader'
 
   export default {
-    name: 'magnetw',
     components: {
       PagerHeader
+    },
+    methods: {
+      handleClickMaxWindow () {
+        ipcRenderer.send('window-max')
+      }
     }
   }
 </script>
@@ -39,7 +44,7 @@
         padding: 0 !important;
     }
 
-    .header-placeholder{
+    .header-placeholder {
         height: 15px;
     }
 
@@ -61,17 +66,23 @@
         font-weight: normal !important;
     }
 
-    .el-header{
+    .el-header {
         border-bottom: 1px solid $color-border;
     }
 
-    .el-aside {
+    .scroll-container {
+        height: 100%;
+
         .el-scrollbar {
             height: 100%;
         }
 
         .el-scrollbar__wrap {
             overflow-x: hidden !important;
+        }
+
+        .el-scrollbar__view {
+            height: auto !important;
         }
     }
 

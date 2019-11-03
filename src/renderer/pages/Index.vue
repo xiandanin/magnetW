@@ -1,112 +1,118 @@
 <template>
     <el-container v-loading="loading.page">
-        <el-aside width="200px" v-if="rule">
+        <el-aside width="200px" v-if="rule" class="scroll-container">
             <el-scrollbar>
                 <aside-menu @change="handleSourceChanged" :ruleArray="rule.list"
                             :active="activeRule?activeRule.id:''"></aside-menu>
             </el-scrollbar>
         </el-aside>
 
-        <el-main class="drag">
-            <div class="page-header-fixed no-drag">
-                <el-input :placeholder="placeholder" v-model="page.current.keyword" @keyup.enter.native="handleSearch"
-                          size="medium">
-                    <el-select slot="prepend" @change="handleSortChanged" v-model="page.current.sort" placeholder="排序方式"
-                               v-if="activeRule">
-                        <el-option
-                                v-for="(value, key, i) in activeRule.paths"
-                                :key="key"
-                                :label="formatPathName(key)"
-                                :value="key">
-                        </el-option>
-                    </el-select>
-                    <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
-                </el-input>
-                <browser-link class="page-header-url" :href="page.current.url">{{page.current.url}}</browser-link>
-            </div>
-            <div v-loading="loading.table" class="page-search-content">
-                <div v-if="page.items">
-                    <el-row class="page-header-option">
-                        <el-col :span="8">
-                            <div v-if="page.res" class="page-res-message">
-                                <span v-show="page.res.useCache"><i class="el-icon-lightning"></i>命中预加载结果，</span><span>耗时{{page.res.time}}ms</span>
-                            </div>
-                        </el-col>
-                        <el-col :span="16">
-                            <el-pagination
-                                    @current-change="handlePageChanged"
-                                    :current-page="page.current.page"
-                                    class="page-items-pagination"
-                                    background
-                                    layout="prev, pager, next"
-                                    :pager-count="5"
-                                    :page-count="50">
-                            </el-pagination>
-                        </el-col>
-                    </el-row>
-                    <el-table
-                            class="page-items-table"
-                            border
-                            default-expand-all
-                            :data="page.items"
-                            style="width: 100%;">
-                        <el-table-column
-                                label="名称">
-                            <template slot-scope="scope">
-                                <el-tag size="mini" v-if="scope.row.resolution"
-                                        :type="getResolutionTagType(scope.row.resolution)">
-                                    {{scope.row.resolution}}
-                                </el-tag>
-                                <span class="page-items-magnet" @click="handleOpenMagnet(scope.row.magnet)"
-                                      v-html="highlight(page.current.keyword, scope.row.name, 'highlight-name')"></span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="大小"
-                                align="right"
-                                :sort-by="['size','hot','date']"
-                                sortable
-                                width="100">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.size| size}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                align="right"
-                                sort-by="hot"
-                                label="人气"
-                                :sort-by="['hot','date','size']"
-                                sortable
-                                width="80">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.hot}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                align="center"
-                                sort-by="date"
-                                sortable
-                                :sort-by="['date','hot','size']"
-                                label="时间"
-                                width="100">
-                            <template slot-scope="scope">
-                                <span>{{scope.row.date| date}}</span>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                                label="操作"
-                                align="center"
-                                width="100">
-                            <template slot-scope="scope">
-                                <el-button-group>
-                                    <el-button size="small" @click="handleCopyMagnet(scope.row.magnet)">复制链接</el-button>
-                                </el-button-group>
-                            </template>
-                        </el-table-column>
-                    </el-table>
+        <el-main class="index-main scroll-container">
+            <el-scrollbar class="index-main-scrollbar">
+                <div class="index-main-content">
+                    <el-input :placeholder="placeholder" v-model="page.current.keyword"
+                              @keyup.enter.native="handleSearch"
+                              size="medium">
+                        <el-select slot="prepend" @change="handleSortChanged" v-model="page.current.sort"
+                                   placeholder="排序方式"
+                                   v-if="activeRule">
+                            <el-option
+                                    v-for="(value, key, i) in activeRule.paths"
+                                    :key="key"
+                                    :label="formatPathName(key)"
+                                    :value="key">
+                            </el-option>
+                        </el-select>
+                        <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+                    </el-input>
+                    <!--<browser-link class="page-header-url" :href="page.current.url">{{page.current.url}}</browser-link>-->
+                    <div v-loading="loading.table" class="page-search-content">
+                        <div v-if="page.items">
+                            <el-row class="page-header-option">
+                                <el-col :span="8">
+                                    <div v-if="page.res" class="page-res-message">
+                                    <span v-show="page.res.useCache"><i
+                                            class="el-icon-lightning"></i>命中预加载结果，</span><span>耗时{{page.res.time}}ms</span>
+                                    </div>
+                                </el-col>
+                                <el-col :span="16">
+                                    <el-pagination
+                                            @current-change="handlePageChanged"
+                                            :current-page="page.current.page"
+                                            class="page-items-pagination"
+                                            background
+                                            layout="prev, pager, next"
+                                            :pager-count="5"
+                                            :page-count="50">
+                                    </el-pagination>
+                                </el-col>
+                            </el-row>
+                            <el-table
+                                    class="page-items-table"
+                                    border
+                                    default-expand-all
+                                    :data="page.items"
+                                    style="width: 100%;">
+                                <el-table-column
+                                        label="名称">
+                                    <template slot-scope="scope">
+                                        <el-tag size="mini" v-if="scope.row.resolution"
+                                                :type="getResolutionTagType(scope.row.resolution)">
+                                            {{scope.row.resolution}}
+                                        </el-tag>
+                                        <span class="page-items-magnet" @click="handleOpenMagnet(scope.row.magnet)"
+                                              v-html="highlight(page.current.keyword, scope.row.name, 'highlight-name')"></span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="大小"
+                                        align="right"
+                                        :sort-by="['size','hot','date']"
+                                        sortable
+                                        width="100">
+                                    <template slot-scope="scope">
+                                        <span>{{scope.row.size| size}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        align="right"
+                                        sort-by="hot"
+                                        label="人气"
+                                        :sort-by="['hot','date','size']"
+                                        sortable
+                                        width="80">
+                                    <template slot-scope="scope">
+                                        <span>{{scope.row.hot}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        align="center"
+                                        sort-by="date"
+                                        sortable
+                                        :sort-by="['date','hot','size']"
+                                        label="时间"
+                                        width="100">
+                                    <template slot-scope="scope">
+                                        <span>{{scope.row.date| date}}</span>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        align="center"
+                                        width="100">
+                                    <template slot-scope="scope">
+                                        <el-button-group>
+                                            <el-button size="small" @click="handleCopyMagnet(scope.row.magnet)">复制链接
+                                            </el-button>
+                                        </el-button-group>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <el-backtop target=".el-main">
+            </el-scrollbar>
+            <el-backtop target=".index-main-scrollbar .el-scrollbar__wrap">
             </el-backtop>
         </el-main>
     </el-container>
@@ -147,8 +153,18 @@
          */
         ipcRenderer.on('on-load-rule-data', (event, rule) => {
           this.loading.page = false
+          // 如果设置不限时代理源站 就过滤掉
+          if (!this.global.settings.localSetting.showProxyRule) {
+            rule.list = rule.list.filter(it => !it.proxy)
+            console.log(rule.list)
+          }
           this.rule = rule
-          this.handleSourceChanged(rule.list[0])
+          // 如果设置记住上次的源站
+          let lastRule
+          if (this.global.settings.localSetting.rememberLastRule) {
+            lastRule = JSON.parse(localStorage.getItem('last_rule'))
+          }
+          this.handleSourceChanged(lastRule || rule.list[0])
         })
         /**
          * 搜索结果
@@ -188,6 +204,13 @@
           'hot': '下载人气'
         }
         return pathKey in paths ? paths[pathKey] : pathKey
+      },
+      formatCurrentSort (sort) {
+        if (!sort) {
+          const sortKeys = Object.keys(this.activeRule.paths)
+          return sortKeys[sortKeys.length - 1]
+        }
+        return sort
       },
       /**
        * 点击磁力链
@@ -237,7 +260,9 @@
        * @param ruleItem
        */
       handleSourceChanged (ruleItem) {
+        localStorage.setItem('last_rule', JSON.stringify(ruleItem))
         this.activeRule = ruleItem
+        this.page.current.sort = this.formatCurrentSort()
         this.page.current.id = ruleItem.id
         this.page.current.page = 1
         if (this.page.current.keyword) {
@@ -256,7 +281,6 @@
       }
     },
     created () {
-      console.log(this.global)
       this.registerRendererListener()
 
       this.handleLoadRuleData()
@@ -268,6 +292,14 @@
 
 <style lang="scss">
 
+    .index-main {
+        padding: 0 !important;
+
+        .index-main-content {
+            padding: 20px;
+        }
+    }
+
     .el-table th {
         padding-top: 7px !important;
         padding-bottom: 7px !important;
@@ -275,8 +307,8 @@
 
     .page-header-option {
         display: flex;
-        margin-top: 15px;
-        align-items: center;
+        margin-top: 10px;
+        align-items: flex-end;
     }
 
     .page-header-url {
@@ -289,7 +321,7 @@
         font-size: 12px;
 
         i {
-            margin-right: 5px;
+            margin-right: 3px;
         }
     }
 
@@ -305,7 +337,7 @@
     }
 
     .page-items-table {
-        margin-top: 15px;
+        margin-top: 10px;
     }
 
 
@@ -337,5 +369,6 @@
     .el-table__expanded-cell[class*=cell] {
         padding: 10px !important;
     }
+
 
 </style>
