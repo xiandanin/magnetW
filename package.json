@@ -70,11 +70,9 @@
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
-    "vuebar": "0.0.20",
     "vuex": "^3.0.1",
     "vuex-electron": "^1.0.0",
     "xmldom": "^0.1.27",
-    "xmlserializer": "^0.6.1",
     "xpath": "0.0.27"
   },
   "devDependencies": {

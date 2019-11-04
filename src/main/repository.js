@@ -84,7 +84,7 @@ function buildRequest ({rule, option, setting}) {
   const requestOptions = {
     url: url,
     headers: headers,
-    timeout: 8000,
+    timeout: 10000,
     proxy: proxy
   }
 
@@ -137,7 +137,7 @@ async function handleUpdateRuleFile (url) {
     if (url.startsWith('http')) {
       // 如果是网络文件
       console.info('获取网络规则文件', url)
-      const rsp = await request(url, {timeout: 5000, json: true})
+      const rsp = await request(url, {timeout: 8000, json: true})
       if (rsp.list) {
         rule = rsp
       }

@@ -5,9 +5,18 @@
             <span class="header-disclaimer-text">本应用开源且免费，仅用于爬虫技术交流学习，搜索结果均来自源站，亦不承担任何责任</span>
             <el-menu mode="horizontal" default-active="/" router>
                 <el-menu-item index="/">首页</el-menu-item>
-                <el-menu-item index="/doc">
-                    <browser-link href="http://magnetw.github.io" :underline="false">文档</browser-link>
-                </el-menu-item>
+                <el-submenu index="doc">
+                    <browser-link slot="title" href="http://magnetw.github.io" :underline="false">文档</browser-link>
+                    <el-menu-item>
+                        <browser-link href="http://magnetw.github.io" :underline="false">文档1</browser-link>
+                    </el-menu-item>
+                    <el-menu-item>
+                        <browser-link href="http://magnetw.github.io" :underline="false">文档2</browser-link>
+                    </el-menu-item>
+                    <el-menu-item>
+                        <browser-link href="http://magnetw.github.io" :underline="false">文档3</browser-link>
+                    </el-menu-item>
+                </el-submenu>
                 <el-menu-item index="/setting">设置</el-menu-item>
             </el-menu>
         </div>
