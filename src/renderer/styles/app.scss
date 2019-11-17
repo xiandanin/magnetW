@@ -22,3 +22,7 @@ body {
 .no-drag {
   -webkit-app-region: no-drag;
 }
+
+.el-button [class*="iconfont"] + span {
+  margin-left: 5px;
+}

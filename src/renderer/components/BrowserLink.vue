@@ -11,7 +11,9 @@
     props: ['href', 'underline'],
     methods: {
       handleClickLink () {
-        shell.openExternal(this.href)
+        if (this.href) {
+          shell.openExternal(this.href)
+        }
       }
     }
   }

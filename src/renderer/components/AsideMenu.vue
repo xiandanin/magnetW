@@ -3,7 +3,7 @@
         <el-menu-item v-for="it in ruleArray" :key="it.id" :index="it.id">
             <div slot="title" class="menu-item-title">
                 <span class="menu-item-title-text">
-                    <el-image :src="it.icon?it.icon:it.url+'/favicon.ico'" class="favicon">
+                    <el-image :src="it.icon?it.icon:formatDefaultIcon(it.id)" class="favicon">
                         <i slot="placeholder"></i>
                         <i slot="error"></i>
                     </el-image>
@@ -36,6 +36,9 @@
             break
           }
         }
+      },
+      formatDefaultIcon (id) {
+        return `${this.project.icons.baseUrl}/${id}.${this.project.icons.extension}`
       }
     },
     mounted () {
@@ -77,7 +80,7 @@
         }
 
         .el-icon-connection {
-            font-size: 18px !important;
+            font-size: 16px !important;
         }
     }
 

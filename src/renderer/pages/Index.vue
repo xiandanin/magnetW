@@ -12,10 +12,12 @@
                 <div class="index-main-content">
                     <div class="active-rule-link">
                         <span class="active-rule-name">{{activeRule.name}}</span>
+                        <el-button icon="el-icon-link" circle size="small"></el-button>
                         <browser-link :href="page.current.url||activeRule.url" :underline="false">
                             {{page.current.url||activeRule.url}}
                         </browser-link>
                     </div>
+                    <search-input :name="activeRule.name"></search-input>
                     <el-input :placeholder="placeholder" v-model="page.current.keyword"
                               @keyup.enter.native="handleSearch"
                               size="medium">
@@ -112,13 +114,14 @@
 <script>
   import AsideMenu from '../components/AsideMenu'
   import BrowserLink from '../components/BrowserLink'
+  import SearchInput from '../components/SearchInput'
   import HighlightName from '../components/HighlightName'
   import ItemButtonGroup from '../components/ItemButtonGroup'
   import {ipcRenderer, remote, shell} from 'electron'
 
   export default {
     components: {
-      AsideMenu, BrowserLink, HighlightName, ItemButtonGroup
+      AsideMenu, BrowserLink, SearchInput, HighlightName, ItemButtonGroup
     },
     data () {
       return {
@@ -271,16 +274,13 @@
         font-size: 12px;
         display: flex;
         align-items: center;
-        background-color: cadetblue;
 
         .el-link {
-            background-color: chocolate;
             color: $--color-info;
         }
     }
 
     .active-rule-name {
-        background-color: #3F8BFA;
         margin-right: 5px;
     }
 
@@ -332,7 +332,7 @@
     .page-column-expand {
         display: flex;
         align-items: center;
-        margin-left: 40px;
+        // margin-left: 40px;
     }
 
     .page-column-expand-action {

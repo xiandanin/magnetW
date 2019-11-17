@@ -7,6 +7,8 @@ import App from './App'
 import router from './router'
 import store from './store'
 import './plugins/element'
+import Project from './plugins/project'
+Vue.use(Project)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios

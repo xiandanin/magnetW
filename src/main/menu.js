@@ -26,7 +26,7 @@ export default function (mainWindow) {
         })
       }
     }]
-  if (process.env.NODE_ENV !== 'development') {
+  if (process.env.NODE_ENV === 'development') {
     submenu.push({
       label: '开发人员工具',
       click: function () {
