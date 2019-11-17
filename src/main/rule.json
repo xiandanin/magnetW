@@ -3,13 +3,13 @@
   "updateTime": "2019-10-25 14:52:15",
   "list": [
     {
-      "id": "zhongzilou",
+      "id": "zhongzisou",
       "name": "种子搜",
       "url": "https://www.zhongzihu.com",
       "paths": {
-        "time": "/list/{keyword}/{page}",
-        "size": "/list_length/{keyword}/{page}",
-        "hot": "/list_click/{keyword}/{page}"
+        "time": "/list/{k}/{p}",
+        "size": "/list_length/{k}/{p}",
+        "hot": "/list_click/{k}/{p}"
       },
       "xpath": {
         "group": "//table[@class='table table-bordered table-striped']",
@@ -26,11 +26,11 @@
     {
       "id": "ciliwang",
       "name": "磁力王",
-      "url": "https://www.ciliwang.live",
+      "url": "https://www.ciliwang1.me",
       "paths": {
-        "preset": "/list.html?keyword={keyword}&page={page}&sort=ai",
-        "time": "/list.html?keyword={keyword}&page={page}&sort=time",
-        "hot": "/list.html?keyword={keyword}&page={page}&sort=hot"
+        "preset": "/list.html?keyword={k}&page={p}&sort=ai",
+        "time": "/list.html?keyword={k}&page={p}&sort=time",
+        "hot": "/list.html?keyword={k}&page={p}&sort=hot"
       },
       "xpath": {
         "group": "//div[@class=\"single_cont\"]",
@@ -47,9 +47,9 @@
     {
       "id": "ciliguo",
       "name": "磁力果",
-      "url": "https://ciliguo.cc",
+      "url": "https://www.ciliguo.best",
       "paths": {
-        "preset": "/search?q={keyword}&p={page}"
+        "preset": "/search?q={k}&p={p}"
       },
       "xpath": {
         "group": "//div[@class=\"card mb-4\"]",
@@ -70,9 +70,9 @@
       "proxy": true,
       "url": "http://www.btdet.com",
       "paths": {
-        "time": "/search/{keyword}-first-asc-{page}",
-        "size": "/search/{keyword}-size-desc-{page}",
-        "hot": "/search/{keyword}-hot-desc-{page}"
+        "time": "/search/{k}-first-asc-{p}",
+        "size": "/search/{k}-size-desc-{p}",
+        "hot": "/search/{k}-hot-desc-{p}"
       },
       "xpath": {
         "group": "//div[@id='wall']/div[@class='search-item']",
@@ -93,9 +93,9 @@
       "proxy": true,
       "url": "https://nyaa.si",
       "paths": {
-        "time": "?q={keyword}&p={page}",
-        "size": "?q={keyword}&s=size&o=desc",
-        "hot": "?q={keyword}&s=downloads&o=desc"
+        "time": "?q={k}&p={p}",
+        "size": "?q={k}&s=size&o=desc",
+        "hot": "?q={k}&s=downloads&o=desc"
       },
       "xpath": {
         "group": "//div[@class='table-responsive']/table/tbody/tr",
@@ -115,7 +115,7 @@
       "proxy": false,
       "url": "https://dmhy.anoneko.com",
       "paths": {
-        "time": "/topics/list/page/{page}?keyword={keyword}"
+        "time": "/topics/list/page/{p}?keyword={k}"
       },
       "xpath": {
         "group": "//*[@id=\"topic_list\"]/tbody/tr",
@@ -136,9 +136,9 @@
       "proxy": true,
       "url": "https://sukebei.nyaa.si",
       "paths": {
-        "time": "?q={keyword}&p={page}",
-        "size": "?q={keyword}&s=size&o=desc",
-        "hot": "?q={keyword}&s=downloads&o=desc"
+        "time": "?q={k}&p={p}",
+        "size": "?q={k}&s=size&o=desc",
+        "hot": "?q={k}&s=downloads&o=desc"
       },
       "xpath": {
         "group": "//div[@class='table-responsive']/table/tbody/tr",
@@ -159,7 +159,7 @@
       "proxy": true,
       "url": "https://btos.pw",
       "paths": {
-        "preset": "/search/{keyword}/page/{page}"
+        "preset": "/search/{k}/page/{p}"
       },
       "xpath": {
         "group": "//div[@class='row']",
@@ -179,8 +179,8 @@
       "proxy": true,
       "url": "https://idope.se",
       "paths": {
-        "preset": "/torrent-list/{keyword}/?p={page}",
-        "size": "/torrent-list/{keyword}/?p={page}&o=-2"
+        "preset": "/torrent-list/{k}/?p={p}",
+        "size": "/torrent-list/{k}/?p={p}&o=-2"
       },
       "xpath": {
         "group": "//div[@class=\"resultdiv\"]",
@@ -200,9 +200,9 @@
       "proxy": true,
       "url": "https://www.skrbt.world",
       "paths": {
-        "preset": "/search?keyword={keyword}&s=relevance&p={page}",
-        "time": "/search?keyword={keyword}&s=date&p={page}",
-        "size": "/search?keyword={keyword}&s=length&p={page}"
+        "preset": "/search?keyword={k}&s=relevance&p={p}",
+        "time": "/search?keyword={k}&s=date&p={p}",
+        "size": "/search?keyword={k}&s=length&p={p}"
       },
       "xpath": {
         "group": "//ul[@class='list-unstyled']",
@@ -220,9 +220,9 @@
       "proxy": true,
       "url": "https://cn.bt4g.com",
       "paths": {
-        "time": "/search/{keyword}/{page}",
-        "size": "/search/{keyword}/bysize/{page}",
-        "hot": "/search/{keyword}/byrequests/{page}"
+        "time": "/search/{k}/{p}",
+        "size": "/search/{k}/bysize/{p}",
+        "hot": "/search/{k}/byrequests/{p}"
       },
       "xpath": {
         "group": "/html/body/main/div/div[3]/div/div",
@@ -240,7 +240,7 @@
       "name": "MAG磁力站",
       "url": "http://oabt007.com",
       "paths": {
-        "preset": "/index/index/k/{keyword}/p/{page}"
+        "preset": "/index/index/k/{k}/p/{p}"
       },
       "xpath": {
         "group": "//ul[@class='link-list']",
@@ -256,7 +256,7 @@
       "icon": "https://i.postimg.cc/pmfCgj5b/kickasstorrents.png",
       "url": "https://kickasstorrents.to",
       "paths": {
-        "preset": "/usearch/{keyword}/{page}"
+        "preset": "/usearch/{k}/{p}"
       },
       "xpath": {
         "group": "//tr[@class='odd']",
@@ -275,8 +275,8 @@
       "icon": "https://i.postimg.cc/SnFVTdsf/lemencili.png",
       "url": "https://lemencili6.xyz",
       "paths": {
-        "time": "/search?keyword={keyword}&s=relevance&p={page}",
-        "size": "/search?keyword={keyword}&s=length&p={page}"
+        "time": "/search?keyword={k}&s=relevance&p={p}",
+        "size": "/search?keyword={k}&s=length&p={p}"
       },
       "xpath": {
         "group": "//div[@class='panel panel-default border-radius']",

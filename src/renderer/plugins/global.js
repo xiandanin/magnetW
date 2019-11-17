@@ -4,7 +4,7 @@ import {ipcRenderer, shell} from 'electron'
 import defaultSetting from '../config'
 
 let localSetting = deepCopy(defaultSetting)
-let localSettingVariable = JSON.parse(localStorage.getItem('local_setting_variable'))
+let localSettingVariable = getLocalSettingVariable()
 if (localSettingVariable) {
   // 合并配置
   Object.assign(localSetting, localSettingVariable)
@@ -12,6 +12,14 @@ if (localSettingVariable) {
 
 function deepCopy (obj) {
   return JSON.parse(JSON.stringify(obj))
+}
+
+function getLocalSettingVariable () {
+  try {
+    return JSON.parse(localStorage.getItem('local_setting_variable'))
+  } catch (e) {
+    return null
+  }
 }
 
 function saveSetting (setting) {
@@ -30,7 +38,7 @@ function saveSetting (setting) {
     Object.assign(tempSetting, tempSettingVariable)
   }
   Vue.prototype.global.settings.localSetting = tempSetting
-  localStorage.setItem('local_setting_variable', isModified ? JSON.stringify(tempSettingVariable) : '')
+  localStorage.setItem('local_setting_variable', isModified ? JSON.stringify(tempSettingVariable) : null)
   console.debug('保存修改设置', tempSettingVariable)
 }
 

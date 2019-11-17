@@ -54,7 +54,7 @@ function transformSearchOption ({option, id, paths}) {
       break
     }
   }
-  const path = paths[sort].replace(/{keyword}/g, encodeURIComponent(keyword)).replace(/{page}/g, page)
+  const path = paths[sort].replace(/{k}/g, encodeURIComponent(keyword)).replace(/{p}/g, page)
   return {id, keyword, page, sort, path}
 }
 

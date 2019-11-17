@@ -1,16 +1,13 @@
 {
   "name": "magnetw",
   "version": "3.0.0",
-  "author": "denghaha <denghahae@qq.com>",
-  "description": "磁力链接聚合搜索",
+  "description": "跨平台磁力链接聚合搜索",
   "license": "GNU General Public License v3.0",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder --platform=all",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
     "mac": "node .electron-vue/build.js && electron-builder --platform=mac",
     "win": "node .electron-vue/build.js && electron-builder --platform=win",
     "dev": "node .electron-vue/dev-runner.js",
@@ -54,19 +51,28 @@
     },
     "linux": {
       "icon": "build/icons"
-    }
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://localhost/"
+      },
+      {
+        "provider": "github"
+      }
+    ]
   },
   "dependencies": {
     "about-window": "^1.13.0",
     "axios": "^0.19.0",
     "electron-log": "^3.0.8",
     "electron-store": "^5.1.0",
+    "electron-updater": "^4.2.0",
     "htmlparser2": "^4.0.0",
     "js-base64": "^2.5.1",
     "moment": "^2.24.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "update-electron-app": "^1.5.0",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
@@ -92,9 +98,9 @@
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
     "devtron": "^1.4.0",
-    "electron": "^2.0.4",
-    "electron-builder": "^20.19.2",
-    "electron-debug": "^1.5.0",
+    "electron": "^4.2.4",
+    "electron-builder": "^20.43.0",
+    "electron-debug": "^3.0.0",
     "electron-devtools-installer": "^2.2.4",
     "element-ui": "^2.12.0",
     "eslint": "^4.19.1",
@@ -120,7 +126,6 @@
     "vue-loader": "^15.2.4",
     "vue-style-loader": "^4.1.0",
     "vue-template-compiler": "^2.5.16",
-    "vuepress": "^1.2.0",
     "webpack": "^4.15.1",
     "webpack-cli": "^3.0.8",
     "webpack-dev-server": "^3.1.4",

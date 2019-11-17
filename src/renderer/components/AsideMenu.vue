@@ -9,21 +9,16 @@
                     </el-image>
                     <span class="source-name">{{it.name}}</span>
                 </span>
-                <browser-link title="去源站看看" :underline="false" :href="it.url">
-                    <i class="el-icon-link"></i>
-                </browser-link>
+                <el-tooltip v-if="it.proxy" effect="dark" content="此源站需要设置代理" placement="right">
+                    <i class="el-icon-connection"></i>
+                </el-tooltip>
             </div>
         </el-menu-item>
     </el-menu>
 </template>
 
 <script>
-  import BrowserLink from './BrowserLink'
-
   export default {
-    components: {
-      BrowserLink
-    },
     props: {ruleArray: Array, active: String},
     data () {
       return {
@@ -79,6 +74,10 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             flex: 1;
+        }
+
+        .el-icon-connection {
+            font-size: 18px !important;
         }
     }
 

@@ -10,6 +10,12 @@
         <el-main class="index-main scroll-container">
             <el-scrollbar class="index-main-scrollbar">
                 <div class="index-main-content">
+                    <div class="active-rule-link">
+                        <span class="active-rule-name">{{activeRule.name}}</span>
+                        <browser-link :href="page.current.url||activeRule.url" :underline="false">
+                            {{page.current.url||activeRule.url}}
+                        </browser-link>
+                    </div>
                     <el-input :placeholder="placeholder" v-model="page.current.keyword"
                               @keyup.enter.native="handleSearch"
                               size="medium">
@@ -23,6 +29,7 @@
                                     :value="key">
                             </el-option>
                         </el-select>
+                        <i slot="suffix" class="el-input__icon el-icon-link"></i>
                         <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                     </el-input>
                     <!--<browser-link class="page-header-url" :href="page.current.url">{{page.current.url}}</browser-link>-->
@@ -54,14 +61,17 @@
                                     :data="page.items"
                                     style="width: 100%;">
                                 <el-table-column
+                                        type="index"
+                                        width="40"
+                                        align="center"
+                                        label="#">
+                                </el-table-column>
+                                <el-table-column
                                         label="名称">
                                     <template slot-scope="scope">
-                                        <el-tag size="mini" v-if="scope.row.resolution"
-                                                :type="getResolutionTagType(scope.row.resolution)">
-                                            {{scope.row.resolution}}
-                                        </el-tag>
-                                        <span class="page-items-magnet" @click="handleOpenMagnet(scope.row.magnet)"
-                                              v-html="highlight(page.current.keyword, scope.row.name, 'highlight-name')"></span>
+                                        <highlight-name :keyword="page.current.keyword" :url="scope.row.magent"
+                                                        :resolution="scope.row.resolution" :value="scope.row.name"
+                                        ></highlight-name>
                                     </template>
                                 </el-table-column>
                                 <el-table-column
@@ -74,38 +84,19 @@
                                         <span>{{scope.row.size| size}}</span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column
-                                        align="right"
-                                        sort-by="hot"
-                                        label="人气"
-                                        :sort-by="['hot','date','size']"
-                                        sortable
-                                        width="80">
-                                    <template slot-scope="scope">
-                                        <span>{{scope.row.hot}}</span>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        align="center"
-                                        sort-by="date"
-                                        sortable
-                                        :sort-by="['date','hot','size']"
-                                        label="时间"
-                                        width="100">
-                                    <template slot-scope="scope">
-                                        <span>{{scope.row.date| date}}</span>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="操作"
-                                        align="center"
-                                        width="100">
-                                    <template slot-scope="scope">
-                                        <el-button-group>
-                                            <el-button size="small" @click="handleCopyMagnet(scope.row.magnet)">复制链接
-                                            </el-button>
-                                        </el-button-group>
-                                    </template>
+                                <el-table-column type="expand">
+                                    <div class="page-column-expand" slot-scope="scope">
+                                        <div>
+                                            <span class="page-item-expand"><span
+                                                    class="page-item-expand-label">人气</span>{{scope.row.hot}}</span>
+                                            <span class="page-item-expand"><span
+                                                    class="page-item-expand-label">时间</span>{{scope.row.date|date}}</span>
+                                        </div>
+                                        <div class="page-column-expand-action">
+                                            <item-button-group :activeUrl="activeRule.url" :item="scope.row">
+                                            </item-button-group>
+                                        </div>
+                                    </div>
                                 </el-table-column>
                             </el-table>
                         </div>
@@ -121,12 +112,13 @@
 <script>
   import AsideMenu from '../components/AsideMenu'
   import BrowserLink from '../components/BrowserLink'
-  import {ipcRenderer, clipboard, shell} from 'electron'
-  import {Base64} from 'js-base64'
+  import HighlightName from '../components/HighlightName'
+  import ItemButtonGroup from '../components/ItemButtonGroup'
+  import {ipcRenderer, remote, shell} from 'electron'
 
   export default {
     components: {
-      AsideMenu, BrowserLink
+      AsideMenu, BrowserLink, HighlightName, ItemButtonGroup
     },
     data () {
       return {
@@ -156,7 +148,6 @@
           // 如果设置不限时代理源站 就过滤掉
           if (!this.global.settings.localSetting.showProxyRule) {
             rule.list = rule.list.filter(it => !it.proxy)
-            console.log(rule.list)
           }
           this.rule = rule
           // 如果设置记住上次的源站
@@ -181,21 +172,6 @@
           }
         })
       },
-      getResolutionTagType (resolution) {
-        if (resolution) {
-          const regx = {
-            '4K': 'primary',
-            '2K': 'danger',
-            '1080P': 'success'
-          }
-          for (let key in regx) {
-            if (new RegExp(key, 'i').test(resolution)) {
-              return regx[key]
-            }
-          }
-          return 'info'
-        }
-      },
       formatPathName (pathKey) {
         const paths = {
           'preset': '默认排序',
@@ -211,33 +187,6 @@
           return sortKeys[sortKeys.length - 1]
         }
         return sort
-      },
-      /**
-       * 点击磁力链
-       */
-      handleOpenMagnet (url) {
-        shell.openExternal(url)
-      },
-      /**
-       * 复制链接
-       * @param url
-       */
-      handleCopyMagnet (url) {
-        clipboard.writeText(url)
-        this.$message({
-          message: '复制成功',
-          type: 'success'
-        })
-      },
-      /**
-       * 小米路由
-       * @param url
-       */
-      handleMiWiFi (url) {
-        const miwifi = 'http://d.miwifi.com/d2r/?url=' + Base64.encodeURI(url)
-        shell.openExternal(miwifi)
-      },
-      handleFiles (detailUrl) {
       },
       /**
        * 排序切换
@@ -316,6 +265,25 @@
         margin-top: 10px;
     }
 
+    .active-rule-link {
+        margin-bottom: 10px;
+        color: $--color-info;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        background-color: cadetblue;
+
+        .el-link {
+            background-color: chocolate;
+            color: $--color-info;
+        }
+    }
+
+    .active-rule-name {
+        background-color: #3F8BFA;
+        margin-right: 5px;
+    }
+
     .page-res-message {
         color: $--color-success;
         font-size: 12px;
@@ -357,18 +325,29 @@
         width: 110px;
     }
 
-    .page-items-magnet {
-        color: $--color-primary;
-        cursor: pointer;
-
-        .highlight-name {
-            color: $--color-danger;
-        }
-    }
-
     .el-table__expanded-cell[class*=cell] {
         padding: 10px !important;
     }
 
+    .page-column-expand {
+        display: flex;
+        align-items: center;
+        margin-left: 40px;
+    }
+
+    .page-column-expand-action {
+        text-align: right;
+        flex: 1;
+    }
+
+    .page-item-expand-label {
+        color: #99a9bf;
+        margin-right: 8px;
+    }
+
+    .page-item-expand {
+        color: #606266;
+        margin-right: 15px;
+    }
 
 </style>
