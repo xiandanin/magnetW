@@ -1,6 +1,7 @@
 import repo from './repository'
 import path from 'path'
 import logger from './logger'
+import fs from 'fs'
 
 const {ipcMain} = require('electron')
 
@@ -21,8 +22,13 @@ export default function (mainWindow) {
     }
   })
 
+  ipcMain.on('get-guide-markdown', async (event) => {
+    const filepath = path.join(__dirname, '../data/guide.md')
+    event.returnValue = fs.readFileSync(filepath, 'utf-8')
+  })
+
   ipcMain.on('load-rule-data', async (event, url) => {
-    await callLoadRuleData(event, url)
+    event.returnValue = await repo.getRuleData(url)
   })
 
   ipcMain.on('search', (event, option, localSetting) => {

@@ -1,17 +1,18 @@
 <template>
     <div>
         <qrcode-popover :text="item.magnet" :title="item.name">
-            <el-button size="small" icon="iconfont icon-qrcode" class="popover-button">
+            <el-button :size="size" icon="iconfont icon-qrcode" class="popover-button">
                 二维码
             </el-button>
         </qrcode-popover>
-        <el-button size="small" icon="el-icon-document" @click="handleDetailUrl(item.detailUrl)">
+        <el-button :size="size" icon="el-icon-document" @click="handleDetailUrl(item.detailUrl)">
             源站详情
         </el-button>
-        <el-button size="small" icon="iconfont icon-router" @click="handleMiWiFi(item.magnet)">
+        <el-button :size="size" icon="iconfont icon-router" @click="handleMiWiFi(item.magnet)">
             小米路由
         </el-button>
-        <el-button size="small" icon="el-icon-copy-document" @click="handleCopyMagnet(item.magnet)">
+        <el-button :size="size" type="primary" plain icon="el-icon-copy-document"
+                   @click="handleCopyMagnet(item.magnet)">
             复制链接
         </el-button>
     </div>
@@ -23,9 +24,14 @@
   import QrcodePopover from './QrcodePopover'
 
   export default {
-    props: {'activeUrl': String, 'item': Object},
+    props: {'baseURL': String, 'item': Object},
     components: {
       QrcodePopover
+    },
+    data () {
+      return {
+        size: 'mini'
+      }
     },
     methods: {
       /**
@@ -52,7 +58,7 @@
        * @param detailUrl
        */
       handleDetailUrl (detailUrl) {
-        shell.openExternal(this.activeUrl + detailUrl)
+        shell.openExternal(this.baseURL + detailUrl)
       }
     }
   }
@@ -74,5 +80,9 @@
 
     .el-button + .el-button {
         margin-left: 5px;
+    }
+
+    .el-button--mini {
+        padding: 7px 10px;
     }
 </style>

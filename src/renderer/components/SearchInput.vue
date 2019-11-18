@@ -1,9 +1,8 @@
 <template>
-    <div>
-        <span>{{name}}</span>
-        <el-button size="medium">去源站</el-button>
+    <div class="search-input">
         <el-input :placeholder="project.searchPlaceholder"
                   @keyup.enter.native="handleClickSearch"
+                  v-model="input"
                   size="medium">
             <span slot="prepend">{{name}}</span>
             <el-button slot="append" icon="el-icon-search" @click="handleClickSearch">搜索</el-button>
@@ -14,8 +13,15 @@
 <script>
   export default {
     props: ['name'],
+    components: {},
+    data () {
+      return {
+        input: null
+      }
+    },
     methods: {
-      handleClickSearch (value) {
+      handleClickSearch () {
+        const value = this.input || this.project.searchPlaceholder
         this.$emit('search', value)
       }
     },
@@ -23,7 +29,3 @@
     }
   }
 </script>
-
-<style lang="scss">
-
-</style>

@@ -3,6 +3,7 @@
 import {app, BrowserWindow, Menu} from 'electron'
 import registerIPC from './ipc'
 import registerMenu from './menu'
+import is from 'electron-is'
 
 import {autoUpdater} from 'electron-updater'
 
@@ -25,11 +26,12 @@ function createWindow () {
   /**
    * Initial window options
    */
+  const width = is.dev() ? 1200 : 1000
   mainWindow = new BrowserWindow({
     height: 680,
     useContentSize: true,
-    width: 1000,
-    minWidth: 800,
+    width: width,
+    minWidth: 900,
     minHeight: 550,
     // 边框隐藏
     frame: true,

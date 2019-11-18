@@ -1,106 +1,33 @@
 <template>
     <el-container v-loading="loading.page">
-        <el-aside width="200px" v-if="rule" class="scroll-container">
+        <el-aside ref="indexAside" width="200px" class="scroll-container">
             <el-scrollbar>
-                <aside-menu @change="handleSourceChanged" :ruleArray="rule.list"
+                <aside-menu @change="handleSourceChanged" :ruleArray="rule?rule.list:[]"
                             :active="activeRule?activeRule.id:''"></aside-menu>
             </el-scrollbar>
         </el-aside>
 
         <el-main class="index-main scroll-container">
             <el-scrollbar class="index-main-scrollbar">
-                <div class="index-main-content">
-                    <div class="active-rule-link">
-                        <span class="active-rule-name">{{activeRule.name}}</span>
-                        <el-button icon="el-icon-link" circle size="small"></el-button>
-                        <browser-link :href="page.current.url||activeRule.url" :underline="false">
-                            {{page.current.url||activeRule.url}}
-                        </browser-link>
-                    </div>
-                    <search-input :name="activeRule.name"></search-input>
-                    <el-input :placeholder="placeholder" v-model="page.current.keyword"
-                              @keyup.enter.native="handleSearch"
-                              size="medium">
-                        <el-select slot="prepend" @change="handleSortChanged" v-model="page.current.sort"
-                                   placeholder="排序方式"
-                                   v-if="activeRule">
-                            <el-option
-                                    v-for="(value, key, i) in activeRule.paths"
-                                    :key="key"
-                                    :label="formatPathName(key)"
-                                    :value="key">
-                            </el-option>
-                        </el-select>
-                        <i slot="suffix" class="el-input__icon el-icon-link"></i>
-                        <el-button slot="append" icon="el-icon-search" @click="handleSearch">搜索</el-button>
-                    </el-input>
-                    <!--<browser-link class="page-header-url" :href="page.current.url">{{page.current.url}}</browser-link>-->
-                    <div v-loading="loading.table" class="page-search-content">
-                        <div v-if="page.items">
-                            <el-row class="page-header-option">
-                                <el-col :span="8">
-                                    <div v-if="page.res" class="page-res-message">
-                                    <span v-show="page.res.useCache"><i
-                                            class="el-icon-lightning"></i>命中预加载结果，</span><span>耗时{{page.res.time}}ms</span>
-                                    </div>
-                                </el-col>
-                                <el-col :span="16">
-                                    <el-pagination
-                                            @current-change="handlePageChanged"
-                                            :current-page="page.current.page"
-                                            class="page-items-pagination"
-                                            background
-                                            layout="prev, pager, next"
-                                            :pager-count="5"
-                                            :page-count="50">
-                                    </el-pagination>
-                                </el-col>
-                            </el-row>
-                            <el-table
-                                    class="page-items-table"
-                                    border
-                                    default-expand-all
-                                    :data="page.items"
-                                    style="width: 100%;">
-                                <el-table-column
-                                        type="index"
-                                        width="40"
-                                        align="center"
-                                        label="#">
-                                </el-table-column>
-                                <el-table-column
-                                        label="名称">
-                                    <template slot-scope="scope">
-                                        <highlight-name :keyword="page.current.keyword" :url="scope.row.magent"
-                                                        :resolution="scope.row.resolution" :value="scope.row.name"
-                                        ></highlight-name>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column
-                                        label="大小"
-                                        align="right"
-                                        :sort-by="['size','hot','date']"
-                                        sortable
-                                        width="100">
-                                    <template slot-scope="scope">
-                                        <span>{{scope.row.size| size}}</span>
-                                    </template>
-                                </el-table-column>
-                                <el-table-column type="expand">
-                                    <div class="page-column-expand" slot-scope="scope">
-                                        <div>
-                                            <span class="page-item-expand"><span
-                                                    class="page-item-expand-label">人气</span>{{scope.row.hot}}</span>
-                                            <span class="page-item-expand"><span
-                                                    class="page-item-expand-label">时间</span>{{scope.row.date|date}}</span>
-                                        </div>
-                                        <div class="page-column-expand-action">
-                                            <item-button-group :activeUrl="activeRule.url" :item="scope.row">
-                                            </item-button-group>
-                                        </div>
-                                    </div>
-                                </el-table-column>
-                            </el-table>
+                <guide-page></guide-page>
+                <div class="pager-search-header" ref="pagerSearchHeader">
+                    <!--搜索框与排序菜单-->
+                    <search-input v-if="activeRule" :name="activeRule.name"
+                                  @search="handleSearch"
+                                  class="pager-row-container"
+                                  :paths="activeRule.paths"></search-input>
+                    <!--排序选项-->
+                    <search-option v-if="activeRule" :url="page.current.url||activeRule.url"
+                                   :paths="activeRule.paths"
+                                   @change="handleSortChanged"></search-option>
+                </div>
+                <!--搜索结果-->
+                <div ref="pagerSearchItems" class="pager-search-items">
+                    <div class="index-main-content">
+                        <div v-loading="loading.table">
+                            <pager-items v-if="page.items" :items="page.items"
+                                         :keyword="page.current.keyword"
+                                         :baseURL="activeRule.url"></pager-items>
                         </div>
                     </div>
                 </div>
@@ -115,13 +42,14 @@
   import AsideMenu from '../components/AsideMenu'
   import BrowserLink from '../components/BrowserLink'
   import SearchInput from '../components/SearchInput'
-  import HighlightName from '../components/HighlightName'
-  import ItemButtonGroup from '../components/ItemButtonGroup'
+  import SearchOption from '../components/SearchOption'
+  import PagerItems from '../components/PagerItems'
+  import GuidePage from '../components/GuidePage'
   import {ipcRenderer, remote, shell} from 'electron'
 
   export default {
     components: {
-      AsideMenu, BrowserLink, SearchInput, HighlightName, ItemButtonGroup
+      AsideMenu, BrowserLink, SearchOption, SearchInput, PagerItems, GuidePage
     },
     data () {
       return {
@@ -130,14 +58,27 @@
             keyword: null
           }
         },
-        activeRule: null,
+        activeRule: {},
         rule: null,
         loading: {
           table: false,
           page: false
         },
+        searchHeaderStyle: {
+          left: 0
+        },
         placeholder: '钢铁侠'
 
+      }
+    },
+    watch: {
+      activeRule: function (val) {
+        /*
+        this.$nextTick(() => {
+          this.$refs.pagerSearchHeader.style.left = this.$refs.indexAside.width
+          this.$refs.pagerSearchItems.style.marginTop = `${this.$refs.pagerSearchHeader.offsetHeight}px`
+        })
+        */
       }
     },
     methods: {
@@ -174,15 +115,6 @@
             })
           }
         })
-      },
-      formatPathName (pathKey) {
-        const paths = {
-          'preset': '默认排序',
-          'time': '收录时间',
-          'size': '文件大小',
-          'hot': '下载人气'
-        }
-        return pathKey in paths ? paths[pathKey] : pathKey
       },
       formatCurrentSort (sort) {
         if (!sort) {
@@ -221,15 +153,27 @@
           this.handleSearch()
         }
       },
-      handleSearch () {
+      handleSearch (value) {
         this.loading.table = true
-        this.page.current.keyword = this.page.current.keyword || this.placeholder
+        this.page.current.keyword = value
         console.log('搜索', this.page.current)
         ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
       },
       handleLoadRuleData () {
         this.loading.page = true
-        ipcRenderer.send('load-rule-data', this.global.settings.localSetting.ruleUrl)
+        const ruleData = ipcRenderer.sendSync('load-rule-data', this.global.settings.localSetting.ruleUrl)
+        this.loading.page = false
+        // 如果设置不限时代理源站 就过滤掉
+        if (!this.global.settings.localSetting.showProxyRule) {
+          ruleData.list = ruleData.list.filter(it => !it.proxy)
+        }
+        this.rule = ruleData
+        // 如果设置记住上次的源站
+        let lastRule
+        if (this.global.settings.localSetting.rememberLastRule) {
+          lastRule = JSON.parse(localStorage.getItem('last_rule'))
+        }
+        this.handleSourceChanged(lastRule || ruleData.list[0])
       }
     },
     created () {
@@ -242,112 +186,42 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+
+    .pager-search-header {
+        padding: 20px;
+        background-color: white;
+        /*
+        position: fixed;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.12);
+        */
+    }
+
+    .pager-search-items {
+        padding: 0 20px 20px 20px;
+        margin-top: 0;
+    }
 
     .index-main {
         padding: 0 !important;
-
-        .index-main-content {
-            padding: 20px;
-        }
     }
 
-    .el-table th {
-        padding-top: 7px !important;
-        padding-bottom: 7px !important;
-    }
-
-    .page-header-option {
-        display: flex;
-        margin-top: 10px;
-        align-items: flex-end;
-    }
-
-    .page-header-url {
-        color: $color-text-gray !important;
-        margin-top: 10px;
-    }
-
-    .active-rule-link {
-        margin-bottom: 10px;
-        color: $--color-info;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-
-        .el-link {
-            color: $--color-info;
-        }
-    }
-
-    .active-rule-name {
-        margin-right: 5px;
-    }
-
-    .page-res-message {
-        color: $--color-success;
-        font-size: 12px;
-
-        i {
-            margin-right: 3px;
-        }
-    }
-
-    .page-items-pagination {
-        text-align: right;
+    .index-main-scrollbar {
+        border-right: none;
     }
 
     .page-search-content {
 
         .el-loading-spinner {
-            top: 100px !important;
+            top: 150px !important;
         }
     }
 
-    .page-items-table {
-        margin-top: 10px;
+    .pager-row-container {
+        margin-bottom: 15px;
     }
 
-
-    .el-pagination {
-        padding-right: 0 !important;
-
-        .number:last-child {
-            display: none;
-        }
-
-        .btn-next {
-            margin-right: 0 !important;
-        }
-    }
-
-    .el-select .el-input {
-        width: 110px;
-    }
-
-    .el-table__expanded-cell[class*=cell] {
-        padding: 10px !important;
-    }
-
-    .page-column-expand {
-        display: flex;
-        align-items: center;
-        // margin-left: 40px;
-    }
-
-    .page-column-expand-action {
-        text-align: right;
-        flex: 1;
-    }
-
-    .page-item-expand-label {
-        color: #99a9bf;
-        margin-right: 8px;
-    }
-
-    .page-item-expand {
-        color: #606266;
-        margin-right: 15px;
-    }
 
 </style>

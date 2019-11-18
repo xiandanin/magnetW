@@ -2,7 +2,6 @@
     <div class="header" @dblclick="dblclick">
         <header-version></header-version>
         <div class="header-right">
-            <span class="header-disclaimer-text">{{project.headerText}}</span>
             <el-menu mode="horizontal" default-active="/" router>
                 <el-menu-item index="/">首页</el-menu-item>
                 <el-menu-item index="/setting">设置</el-menu-item>
@@ -43,23 +42,12 @@
         display: flex;
 
         .header-right {
-            display: flex;
-            flex: 1;
-            align-items: flex-end;
+            margin-left: auto;
         }
 
         .el-menu {
             background-color: transparent;
             border: none !important;
-        }
-
-        .header-disclaimer-text {
-            flex: 1;
-            margin-bottom: 10px;
-            text-align: left;
-            margin-right: 20px;
-            color: $color-text-gray;
-            font-size: 12px;
         }
 
         .el-link {

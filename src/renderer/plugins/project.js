@@ -1,7 +1,7 @@
 export default {
   install: (Vue, options) => {
     const data = {
-      headerText: '本应用开源且免费，仅用于爬虫技术交流学习，搜索结果均来自源站，亦不承担任何责任',
+      footerText: '本应用开源且免费，仅用于爬虫技术交流学习，搜索结果均来自源站，亦不承担任何责任',
       icons: {
         baseUrl: 'https://magnetw.app/favicon',
         extension: 'ico'
