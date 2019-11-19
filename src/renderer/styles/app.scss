@@ -27,3 +27,9 @@ body {
 .el-button [class*="iconfont"] + span {
   margin-left: 5px;
 }
+
+.header-submenu {
+  .el-menu--popup {
+    min-width: 80px !important;
+  }
+}

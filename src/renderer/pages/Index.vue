@@ -9,26 +9,36 @@
 
         <el-main class="index-main scroll-container">
             <el-scrollbar class="index-main-scrollbar">
-                <guide-page></guide-page>
+                <guide-page ref="guidePage" v-show="showGuidePage"></guide-page>
                 <div class="pager-search-header" ref="pagerSearchHeader">
                     <!--搜索框与排序菜单-->
                     <search-input v-if="activeRule" :name="activeRule.name"
                                   @search="handleSearch"
                                   class="pager-row-container"
+                                  v-model="page.current.keyword"
                                   :paths="activeRule.paths"></search-input>
-                    <!--排序选项-->
-                    <search-option v-if="activeRule" :url="page.current.url||activeRule.url"
-                                   :paths="activeRule.paths"
-                                   @change="handleSortChanged"></search-option>
+                    <div class="search-option">
+                        <!--排序选项-->
+                        <search-sort
+                                class="search-option-left"
+                                :url="page.current.url||activeRule.url"
+                                :paths="activeRule.paths"
+                                @change="handleSearch"
+                                v-model="page.current.sort"></search-sort>
+                        <!--页码-->
+                        <search-pagination v-model="page.current.page"
+                                           @change="handleSearch"></search-pagination>
+                    </div>
                 </div>
                 <!--搜索结果-->
-                <div ref="pagerSearchItems" class="pager-search-items">
-                    <div class="index-main-content">
-                        <div v-loading="loading.table">
-                            <pager-items v-if="page.items" :items="page.items"
-                                         :keyword="page.current.keyword"
-                                         :baseURL="activeRule.url"></pager-items>
-                        </div>
+                <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
+                    <div class="index-main-content" v-if="page.items">
+                        <pager-items :items="page.items"
+                                     :keyword="page.current.keyword"
+                                     :baseURL="activeRule.url"></pager-items>
+                        <search-pagination class="footer-search-pagination"
+                                           v-model="page.current.page"
+                                           @change="handleSearch"></search-pagination>
                     </div>
                 </div>
             </el-scrollbar>
@@ -42,14 +52,15 @@
   import AsideMenu from '../components/AsideMenu'
   import BrowserLink from '../components/BrowserLink'
   import SearchInput from '../components/SearchInput'
-  import SearchOption from '../components/SearchOption'
+  import SearchSort from '../components/SearchSort'
+  import SearchPagination from '../components/SearchPagination'
   import PagerItems from '../components/PagerItems'
   import GuidePage from '../components/GuidePage'
   import {ipcRenderer, remote, shell} from 'electron'
 
   export default {
     components: {
-      AsideMenu, BrowserLink, SearchOption, SearchInput, PagerItems, GuidePage
+      AsideMenu, BrowserLink, SearchSort, SearchInput, SearchPagination, PagerItems, GuidePage
     },
     data () {
       return {
@@ -64,15 +75,15 @@
           table: false,
           page: false
         },
-        searchHeaderStyle: {
-          left: 0
-        },
-        placeholder: '钢铁侠'
+        showGuidePage: true
 
       }
     },
     watch: {
       activeRule: function (val) {
+        this.$nextTick(() => {
+          this.$refs.guidePage.$el.style.marginTop = `${this.$refs.pagerSearchHeader.offsetHeight}px`
+        })
         /*
         this.$nextTick(() => {
           this.$refs.pagerSearchHeader.style.left = this.$refs.indexAside.width
@@ -124,22 +135,6 @@
         return sort
       },
       /**
-       * 排序切换
-       * @param sort
-       */
-      handleSortChanged (sort) {
-        this.page.current.sort = sort
-        this.handleSearch()
-      },
-      /**
-       *页码切换
-       * @param page
-       */
-      handlePageChanged (page) {
-        this.page.current.page = page
-        this.handleSearch()
-      },
-      /**
        * 源站切换
        * @param ruleItem
        */
@@ -153,11 +148,11 @@
           this.handleSearch()
         }
       },
-      handleSearch (value) {
+      handleSearch () {
+        this.showGuidePage = false
         this.loading.table = true
-        this.page.current.keyword = value
-        console.log('搜索', this.page.current)
-        ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
+        console.info('搜索', JSON.stringify(this.page.current, '/t', 2))
+        // ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
       },
       handleLoadRuleData () {
         this.loading.page = true
@@ -212,6 +207,12 @@
         border-right: none;
     }
 
+    .guide-page {
+        padding: 0 20px 20px 20px;
+        position: absolute;
+        z-index: 2000;
+    }
+
     .page-search-content {
 
         .el-loading-spinner {
@@ -223,5 +224,23 @@
         margin-bottom: 15px;
     }
 
+    .footer-search-option {
+        margin-top: 20px;
+    }
+
+
+    .search-option {
+        display: flex;
+        align-items: center;
+
+        .search-option-left {
+            flex: 1;
+
+        }
+    }
+
+    .footer-search-pagination {
+        text-align: right;
+    }
 
 </style>

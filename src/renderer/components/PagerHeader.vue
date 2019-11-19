@@ -7,16 +7,14 @@
                 <el-menu-item index="/setting">设置</el-menu-item>
 
                 <template v-for="menuItem in project.menu">
-                    <el-submenu v-if="menuItem.submenu" :index="menuItem.index">
-                        <browser-link slot="title" :href="menuItem.link" :underline="false">{{menuItem.text}}
-                        </browser-link>
+                    <el-submenu v-if="menuItem.submenu" :index="menuItem.index" popper-class="header-submenu">
+                        <browser-link slot="title" :href="menuItem.link" :underline="false">{{menuItem.text}}</browser-link>
                         <el-menu-item v-for="subItem in menuItem.submenu">
                             <browser-link :href="subItem.link" :underline="false">{{subItem.text}}</browser-link>
                         </el-menu-item>
                     </el-submenu>
                     <el-menu-item v-else :index="menuItem.index">
-                        <browser-link :href="menuItem.link" :underline="false">{{menuItem.text}}
-                        </browser-link>
+                        <browser-link :href="menuItem.link" :underline="false">{{menuItem.text}}</browser-link>
                     </el-menu-item>
                 </template>
             </el-menu>
@@ -37,7 +35,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .header {
         display: flex;
 
@@ -54,4 +52,5 @@
             vertical-align: baseline !important;
         }
     }
+
 </style>
