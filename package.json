@@ -19,7 +19,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "磁力搜",
+    "productName": "磁力搜 For magnetW",
     "appId": "app.magnetw.desktop",
     "artifactName": "${name}-${version}-${os}.${ext}",
     "directories": {

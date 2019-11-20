@@ -1,9 +1,9 @@
 <template>
-    <el-menu v-if="ruleArray" :default-active="active" @select="handleSourceChanged">
+    <el-menu :default-active="active" @select="emitRuleChanged">
         <el-menu-item v-for="it in ruleArray" :key="it.id" :index="it.id">
             <div slot="title" class="menu-item-title">
                 <span class="menu-item-title-text">
-                    <el-image :src="it.icon?it.icon:formatDefaultIcon(it.id)" class="favicon">
+                    <el-image :src="it.icon||formatDefaultIcon(it.id)" class="favicon">
                         <i slot="placeholder"></i>
                         <i slot="error"></i>
                     </el-image>
@@ -19,27 +19,35 @@
 
 <script>
   export default {
-    props: {ruleArray: Array, active: String},
+    props: {
+      ruleArray: Array,
+      id: String
+    },
+    model: {
+      prop: 'id',
+      event: 'change'
+    },
     data () {
       return {
-        loading: false
+        active: null
+      }
+    },
+    watch: {
+      id (val) {
+        console.log('我擦', val)
+        this.active = val
       }
     },
     methods: {
-      handleSourceChanged (index) {
-        const list = this.ruleArray
-        for (let i = 0; i < list.length; i++) {
-          const item = list[i]
-          if (item.id === index) {
-            this.global.active = item
-            this.$emit('change', item)
-            break
-          }
-        }
+      emitRuleChanged (index) {
+        this.$emit('change', index)
       },
       formatDefaultIcon (id) {
         return `${this.project.icons.baseUrl}/${id}.${this.project.icons.extension}`
       }
+    },
+    created () {
+      this.active = this.id
     },
     mounted () {
     }

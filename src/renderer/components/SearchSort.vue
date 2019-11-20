@@ -4,9 +4,10 @@
         <browser-link button="true" size="mini" :href="url" class="link-button">去源站</browser-link>
 
         <!--排序方式-->
-        <el-radio-group @change="emitSortChanged" size="mini" v-model="checkedLabel">
+        <el-radio-group @change="emitSortChanged" size="mini" v-model="sortKey">
             <el-radio-button v-for="(value, key, i) in paths" :key="key"
-                             :label="getLabelByKey(key)"></el-radio-button>
+                             :label="key">{{getLabelByKey(key)}}
+            </el-radio-button>
         </el-radio-group>
     </div>
 </template>
@@ -24,7 +25,7 @@
     },
     data () {
       return {
-        checkedLabel: null,
+        checkedSortKey: null,
         presetLabels: {
           'preset': '默认排序',
           'time': '收录时间',
@@ -33,25 +34,18 @@
         }
       }
     },
+    watch: {
+      sortKey (val) {
+        console.log('sortKey---', this.sortKey, this.checkedSortKey)
+        this.checkedSortKey = val
+      }
+    },
     components: {
       BrowserLink
     },
     methods: {
-      emitSortChanged (label) {
-        this.$emit('change', this.getKeyByLabel(label))
-      },
-      /**
-       * 根据显示文字返回key
-       * @param label
-       * @returns {*}
-       */
-      getKeyByLabel (label) {
-        for (let key in this.presetLabels) {
-          if (this.presetLabels.hasOwnProperty(key) && label === this.presetLabels[key]) {
-            return key
-          }
-        }
-        return label
+      emitSortChanged (key) {
+        this.$emit('change', key)
       },
       /**
        * 根据key返回显示文字
@@ -62,9 +56,8 @@
         return key in this.presetLabels ? this.presetLabels[key] : key
       }
     },
-    created () {
-      const keys = Object.keys(this.paths)
-      this.checkedLabel = keys[0]
+    mounted () {
+      console.log(this.sortKey, this.checkedSortKey)
     }
   }
 </script>

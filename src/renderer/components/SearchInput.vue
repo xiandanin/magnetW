@@ -23,13 +23,22 @@
         value: null
       }
     },
+    watch: {
+      keyword (val) {
+        console.log('keyword----->' + val)
+        this.value = val
+      }
+    },
     methods: {
       emitInputChanged (value) {
         this.$emit('input', value)
       },
       emitClickSearch () {
-        const value = this.value || this.project.searchPlaceholder
-        this.$emit('search', value)
+        if (!this.value) {
+          this.value = this.project.searchPlaceholder
+          this.emitInputChanged(this.value)
+        }
+        this.$emit('search', this.value)
       }
     },
     mounted () {

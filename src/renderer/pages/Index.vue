@@ -2,8 +2,9 @@
     <el-container v-loading="loading.page">
         <el-aside ref="indexAside" width="200px" class="scroll-container">
             <el-scrollbar>
-                <aside-menu @change="handleSourceChanged" :ruleArray="rule?rule.list:[]"
-                            :active="activeRule?activeRule.id:''"></aside-menu>
+                <aside-menu :ruleArray="rule.list"
+                            @change="handleSearch"
+                            v-model="page.current.id"></aside-menu>
             </el-scrollbar>
         </el-aside>
 
@@ -66,10 +67,11 @@
       return {
         page: {
           current: {
-            keyword: null
+            keyword: null,
+            id: 'ciliwang'
           }
         },
-        activeRule: {},
+        activeRule: null,
         rule: null,
         loading: {
           table: false,
@@ -81,37 +83,14 @@
     },
     watch: {
       activeRule: function (val) {
+        this.handleUpdateActiveRule()
         this.$nextTick(() => {
           this.$refs.guidePage.$el.style.marginTop = `${this.$refs.pagerSearchHeader.offsetHeight}px`
         })
-        /*
-        this.$nextTick(() => {
-          this.$refs.pagerSearchHeader.style.left = this.$refs.indexAside.width
-          this.$refs.pagerSearchItems.style.marginTop = `${this.$refs.pagerSearchHeader.offsetHeight}px`
-        })
-        */
       }
     },
     methods: {
       registerRendererListener () {
-        /**
-         * 加载规则
-         *
-         */
-        ipcRenderer.on('on-load-rule-data', (event, rule) => {
-          this.loading.page = false
-          // 如果设置不限时代理源站 就过滤掉
-          if (!this.global.settings.localSetting.showProxyRule) {
-            rule.list = rule.list.filter(it => !it.proxy)
-          }
-          this.rule = rule
-          // 如果设置记住上次的源站
-          let lastRule
-          if (this.global.settings.localSetting.rememberLastRule) {
-            lastRule = JSON.parse(localStorage.getItem('last_rule'))
-          }
-          this.handleSourceChanged(lastRule || rule.list[0])
-        })
         /**
          * 搜索结果
          */
@@ -127,26 +106,14 @@
           }
         })
       },
-      formatCurrentSort (sort) {
-        if (!sort) {
-          const sortKeys = Object.keys(this.activeRule.paths)
-          return sortKeys[sortKeys.length - 1]
+      handleUpdateActiveRule () {
+        this.page.current.id = this.activeRule.id
+        // 如果当前规则没有此排序 就默认选择一个排序
+        let keys = Object.keys(this.activeRule.paths)
+        if (keys.indexOf(this.page.current.sort) === -1) {
+          this.page.current.sort = keys[0]
         }
-        return sort
-      },
-      /**
-       * 源站切换
-       * @param ruleItem
-       */
-      handleSourceChanged (ruleItem) {
-        localStorage.setItem('last_rule', JSON.stringify(ruleItem))
-        this.activeRule = ruleItem
-        this.page.current.sort = this.formatCurrentSort()
-        this.page.current.id = ruleItem.id
-        this.page.current.page = 1
-        if (this.page.current.keyword) {
-          this.handleSearch()
-        }
+        console.log(this.page.current)
       },
       handleSearch () {
         this.showGuidePage = false
@@ -154,29 +121,47 @@
         console.info('搜索', JSON.stringify(this.page.current, '/t', 2))
         // ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
       },
+      /**
+       * 加载规则
+       */
       handleLoadRuleData () {
         this.loading.page = true
-        const ruleData = ipcRenderer.sendSync('load-rule-data', this.global.settings.localSetting.ruleUrl)
+        const rule = ipcRenderer.sendSync('load-rule-data', this.global.settings.localSetting.ruleUrl)
         this.loading.page = false
+
+        let activeRule
         // 如果设置不限时代理源站 就过滤掉
-        if (!this.global.settings.localSetting.showProxyRule) {
-          ruleData.list = ruleData.list.filter(it => !it.proxy)
-        }
-        this.rule = ruleData
+        let ruleArray = !this.global.settings.localSetting.showProxyRule ? rule.list.filter(it => !it.proxy) : rule.list
+
         // 如果设置记住上次的源站
-        let lastRule
-        if (this.global.settings.localSetting.rememberLastRule) {
-          lastRule = JSON.parse(localStorage.getItem('last_rule'))
+        let lastRuleID = this.global.settings.localSetting.rememberLastRule ? localStorage.getItem('last_rule_id') : null
+        if (lastRuleID) {
+          for (let i = 0; i < ruleArray.length; i++) {
+            if (ruleArray[i].id === lastRuleID) {
+              activeRule = ruleArray[i]
+              break
+            }
+          }
+        } else {
+          activeRule = ruleArray[0]
         }
-        this.handleSourceChanged(lastRule || ruleData.list[0])
+        rule.list = ruleArray
+        this.rule = rule
+        this.activeRule = activeRule
+
+        console.info('加载规则完成', this.rule)
       }
     },
     created () {
       this.registerRendererListener()
 
       this.handleLoadRuleData()
+
+      this.page.current.id = 'ciliwangss'
     },
     mounted () {
+      this.page.current.id = 'cisdsdliwangss'
+      console.log(this.page.current)
     }
   }
 </script>
@@ -213,10 +198,10 @@
         z-index: 2000;
     }
 
-    .page-search-content {
+    .pager-search-items {
 
-        .el-loading-spinner {
-            top: 150px !important;
+        /deep/ .el-loading-mask {
+            top: 230px !important;
         }
     }
 
