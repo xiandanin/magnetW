@@ -22,12 +22,14 @@
   import {ipcRenderer, clipboard, shell} from 'electron'
   import {Base64} from 'js-base64'
   import QrcodePopover from './QrcodePopover'
+  import mixin from '../mixins/mixin'
 
   export default {
     props: {'baseURL': String, 'item': Object},
     components: {
       QrcodePopover
     },
+    mixins: [mixin],
     data () {
       return {
         size: 'mini'
@@ -58,7 +60,7 @@
        * @param detailUrl
        */
       handleDetailUrl (detailUrl) {
-        shell.openExternal(this.baseURL + detailUrl)
+        shell.openExternal(this.formatURL(this.baseURL + detailUrl))
       }
     }
   }

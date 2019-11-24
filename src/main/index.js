@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, BrowserWindow, Menu} from 'electron'
+import {app, BrowserWindow, session} from 'electron'
 import registerIPC from './ipc'
 import registerMenu from './menu'
 import is from 'electron-is'
@@ -36,10 +36,13 @@ function createWindow () {
     // 边框隐藏
     frame: true,
     titleBarStyle: 'hidden'
-    // titleBarStyle: 'default'
   })
 
   registerMenu(mainWindow)
+
+  const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(app.getName(), 'gi'), 'MWSpider')
+  mainWindow.webContents.setUserAgent(userAgent)
+  session.defaultSession.setUserAgent(userAgent)
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
@@ -100,6 +103,6 @@ autoUpdater.on('update-downloaded', (info) => {
 app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') {
     autoUpdater.logger = console
-    autoUpdater.checkForUpdates()
+    // autoUpdater.checkForUpdates()
   }
 })

@@ -1,13 +1,16 @@
 import Vue from 'vue'
 import axios from 'axios'
 
-import './plugins/global'
 import './plugins/filter'
 import App from './App'
 import router from './router'
 import store from './store'
 import './plugins/element'
-import Project from './plugins/project'
+import Setting from './plugins/setting'
+import Project from './data/project'
+import './plugins/analytics.js'
+
+Vue.use(Setting)
 Vue.use(Project)
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

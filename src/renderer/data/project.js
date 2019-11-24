@@ -1,19 +1,21 @@
 export default {
   install: (Vue, options) => {
-    const data = {
+    const baseURL = 'https://magnetw.app'
+    Vue.prototype.project = {
+      baseURL: baseURL,
       icons: {
-        baseUrl: 'https://magnetw.app/favicon',
+        baseUrl: `${baseURL}/favicon`,
         extension: 'ico'
       },
       menu: [
         {
           index: 'doc',
-          link: 'https://magnetw.app',
+          link: baseURL,
           text: '文档',
           submenu: [
-            {link: 'https://magnetw.app/doc', text: '使用指南'},
-            {link: 'https://magnetw.app/doc', text: '进阶指南'},
-            {link: 'https://magnetw.app/doc', text: '常见问题'}
+            {link: `${baseURL}/guide`, text: '使用指南'},
+            {link: `${baseURL}/advanced`, text: '进阶指南'},
+            {link: `${baseURL}/tool/issues`, text: '反馈Bug'}
           ]
         }
       ],
@@ -25,15 +27,15 @@ export default {
             items: [
               {
                 text: '使用指南',
-                link: 'https://magnetw.app/guide'
+                link: `${baseURL}/guide`
               },
               {
-                text: '如何添加源站',
-                link: 'https://magnetw.app/guide'
+                text: '如何编辑源站列表',
+                link: `${baseURL}/guide`
               },
               {
                 text: '如何使用需要代理的源站',
-                link: 'https://magnetw.app/guide'
+                link: `${baseURL}/guide`
               }
             ]
           },
@@ -46,8 +48,9 @@ export default {
             ]
           }
         ]
-      }
+      },
+      proxyDocURL: `${baseURL}/guide/proxy.html`,
+      checkUpdateURL: `${baseURL}/update.json`
     }
-    Vue.prototype.project = data
   }
 }

@@ -25,7 +25,6 @@
     },
     watch: {
       keyword (val) {
-        console.log('keyword----->' + val)
         this.value = val
       }
     },

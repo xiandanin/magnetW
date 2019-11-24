@@ -9,21 +9,17 @@
 
 <script>
   import {shell} from 'electron'
+  import mixin from '../mixins/mixin'
 
   export default {
-    props: ['href', 'underline', 'type', 'button', 'size', 'from'],
+    props: ['href', 'underline', 'type', 'button', 'size'],
+    mixins: [mixin],
     methods: {
       handleClickLink () {
-        console.log(this.href)
         if (this.href) {
-          const url = this.from ? this.formatURL(this.href) : this.href
+          const url = this.formatURL(this.href)
           shell.openExternal(url)
         }
-      },
-      formatURL (url) {
-        const params = 'from=mw'
-        const symbol = url.indexOf('?') !== -1 ? '&' : '?'
-        return url + symbol + params
       }
     }
   }

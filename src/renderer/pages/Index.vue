@@ -2,22 +2,21 @@
     <el-container v-loading="loading.page">
         <el-aside ref="indexAside" width="200px" class="scroll-container">
             <el-scrollbar>
-                <aside-menu :ruleArray="rule.list"
-                            @change="handleSearch"
-                            v-model="page.current.id"></aside-menu>
+                <aside-menu :active="page.current.id"
+                            @active-rule="handleActiveRule"
+                            @change="handleRuleChanged"></aside-menu>
             </el-scrollbar>
         </el-aside>
 
-        <el-main class="index-main scroll-container">
+        <el-main class="index-main scroll-container" v-if="activeRule">
             <el-scrollbar class="index-main-scrollbar">
                 <guide-page ref="guidePage" v-show="showGuidePage"></guide-page>
                 <div class="pager-search-header" ref="pagerSearchHeader">
                     <!--搜索框与排序菜单-->
-                    <search-input v-if="activeRule" :name="activeRule.name"
+                    <search-input :name="activeRule.name"
                                   @search="handleSearch"
                                   class="pager-row-container"
-                                  v-model="page.current.keyword"
-                                  :paths="activeRule.paths"></search-input>
+                                  v-model="page.current.keyword"></search-input>
                     <div class="search-option">
                         <!--排序选项-->
                         <search-sort
@@ -28,6 +27,7 @@
                                 v-model="page.current.sort"></search-sort>
                         <!--页码-->
                         <search-pagination v-model="page.current.page"
+                                           v-show="page.items"
                                            @change="handleSearch"></search-pagination>
                     </div>
                 </div>
@@ -67,26 +67,17 @@
       return {
         page: {
           current: {
-            keyword: null,
-            id: 'ciliwang'
+            keyword: null
           }
         },
-        activeRule: null,
         rule: null,
+        activeRule: null,
         loading: {
           table: false,
           page: false
         },
         showGuidePage: true
 
-      }
-    },
-    watch: {
-      activeRule: function (val) {
-        this.handleUpdateActiveRule()
-        this.$nextTick(() => {
-          this.$refs.guidePage.$el.style.marginTop = `${this.$refs.pagerSearchHeader.offsetHeight}px`
-        })
       }
     },
     methods: {
@@ -106,62 +97,62 @@
           }
         })
       },
-      handleUpdateActiveRule () {
-        this.page.current.id = this.activeRule.id
+      handleRuleChanged (item) {
+        this.handleActiveRule(item)
+        this.handleSearch()
+      },
+      handleSearch () {
+        if (this.page.current.keyword) {
+          this.showGuidePage = false
+          this.loading.table = true
+          console.info('搜索', JSON.stringify(this.page.current, '/t', 2))
+          ipcRenderer.send('search', this.page.current, this.settings.local)
+        }
+      },
+      handleActiveRule (active) {
         // 如果当前规则没有此排序 就默认选择一个排序
-        let keys = Object.keys(this.activeRule.paths)
+        let keys = Object.keys(active.paths)
         if (keys.indexOf(this.page.current.sort) === -1) {
           this.page.current.sort = keys[0]
         }
-        console.log(this.page.current)
-      },
-      handleSearch () {
-        this.showGuidePage = false
-        this.loading.table = true
-        console.info('搜索', JSON.stringify(this.page.current, '/t', 2))
-        // ipcRenderer.send('search', this.page.current, this.global.settings.localSetting)
+        this.activeRule = active
+        this.page.current.id = active.id
+        this.page.current.page = 1
+        this.page.current.url = active.url
+        localStorage.setItem('last_rule_id', active.id)
       },
       /**
-       * 加载规则
+       * 检查更新
        */
-      handleLoadRuleData () {
-        this.loading.page = true
-        const rule = ipcRenderer.sendSync('load-rule-data', this.global.settings.localSetting.ruleUrl)
-        this.loading.page = false
-
-        let activeRule
-        // 如果设置不限时代理源站 就过滤掉
-        let ruleArray = !this.global.settings.localSetting.showProxyRule ? rule.list.filter(it => !it.proxy) : rule.list
-
-        // 如果设置记住上次的源站
-        let lastRuleID = this.global.settings.localSetting.rememberLastRule ? localStorage.getItem('last_rule_id') : null
-        if (lastRuleID) {
-          for (let i = 0; i < ruleArray.length; i++) {
-            if (ruleArray[i].id === lastRuleID) {
-              activeRule = ruleArray[i]
-              break
+      checkUpdate () {
+        this.$http.get(this.project.checkUpdateURL)
+          .then(response => {
+            let newVerArray = response.data.version.split('.')
+            let currentVerArray = remote.app.getVersion().split('.')
+            for (let i = 0; i < newVerArray.length; i++) {
+              if (parseInt(newVerArray[i]) > parseInt(currentVerArray[i])) {
+                this.$confirm(response.data.content, `有新版本 v${response.data.version}`, {
+                  confirmButtonText: '去更新',
+                  cancelButtonText: '取消',
+                  dangerouslyUseHTMLString: true
+                }).then(() => {
+                  shell.openExternal(response.data.url)
+                }).catch(() => {
+                })
+                break
+              }
             }
-          }
-        } else {
-          activeRule = ruleArray[0]
-        }
-        rule.list = ruleArray
-        this.rule = rule
-        this.activeRule = activeRule
-
-        console.info('加载规则完成', this.rule)
+          })
+          .catch(error => {
+            console.error('检查更新失败', error)
+          })
       }
     },
     created () {
       this.registerRendererListener()
-
-      this.handleLoadRuleData()
-
-      this.page.current.id = 'ciliwangss'
     },
     mounted () {
-      this.page.current.id = 'cisdsdliwangss'
-      console.log(this.page.current)
+      this.checkUpdate()
     }
   }
 </script>
@@ -193,6 +184,7 @@
     }
 
     .guide-page {
+        margin-top: 150px;
         padding: 0 20px 20px 20px;
         position: absolute;
         z-index: 2000;
@@ -200,7 +192,7 @@
 
     .pager-search-items {
 
-        /deep/ .el-loading-mask {
+        /deep/ .el-loading-spinner {
             top: 230px !important;
         }
     }
@@ -225,6 +217,7 @@
     }
 
     .footer-search-pagination {
+        margin-top: 15px;
         text-align: right;
     }
 

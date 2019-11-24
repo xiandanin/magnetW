@@ -1,5 +1,7 @@
 import format from './format-parser'
 
+import {session} from 'electron'
+
 const request = require('request-promise-native')
 const fs = require('fs')
 const cacheManager = require('./cache')
@@ -9,31 +11,21 @@ const htmlparser2 = require('htmlparser2')
 const domParser = new DOMParser({
   errorHandler: {
     warning: w => {
+      console.warn(w)
+    },
+    error: e => {
+      console.error(e)
+    },
+    fatalError: e => {
+      console.error(e)
     }
   }
 })
 
 let ruleMap = {}
 
-const userAgentPool = [
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:47.0) Gecko/20100101 Firefox/47.0',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15',
-  'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.26 Safari/537.36 Core/1.63.6726.400 QQBrowser/10.2.2265.400',
-  'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/537.36 Edge/18.18362'
-]
-
 function clearCache () {
   cacheManager.clear()
-}
-
-/**
- * 随机获取ua
- * @returns {string}
- */
-function randomUserAgent () {
-  return userAgentPool[Math.floor((Math.random() * userAgentPool.length))]
 }
 
 /**
@@ -73,13 +65,14 @@ function buildRequest ({rule, option, setting}) {
   current['url'] = url
 
   const host = root.substr(root.indexOf('://') + 3)
-  const userAgent = setting.customUserAgent ? setting.customUserAgentValue : randomUserAgent()
   const headers = {
     'Host': host,
     'Origin': root,
     'Referer': root,
-    'User-Agent': userAgent
+    'Accept-Language': 'zh-CN,zh-TW;q=0.9,zh;q=0.8,en;q=0.7,und;q=0.6,ja;q=0.5'
   }
+  // 如果要自定义UA
+  headers['User-Agent'] = setting.customUserAgent ? setting.customUserAgentValue : session.defaultSession.getUserAgent()
   const proxy = rule.proxy && setting.proxy ? `http://${setting.proxyHost}:${setting.proxyPort}` : null
   const requestOptions = {
     url: url,
@@ -131,52 +124,45 @@ function parseDocument (document, expression) {
  * @param url
  * @returns {Promise<void>}
  */
-async function handleUpdateRuleFile (url) {
+async function loadRuleByURL (url) {
   let rule
   try {
     if (url.startsWith('http')) {
       // 如果是网络文件
       console.info('获取网络规则文件', url)
-      const rsp = await request(url, {timeout: 8000, json: true})
-      if (rsp.list) {
-        rule = rsp
-      }
+      rule = await request(url, {timeout: 8000, json: true})
     } else {
       console.info('读取本地规则文件', url)
-      let rsp = JSON.parse(fs.readFileSync(url))
-      if (rsp && rsp.list) {
-        rule = rsp
-      }
+      rule = JSON.parse(fs.readFileSync(url))
     }
+    if (!Array.isArray(rule) || rule.length <= 0) {
+      throw new Error('规则格式不正确')
+    }
+    let log = ''
+    rule.forEach(it => {
+      log += `\n[加载][${it.name}][${it.url}]`
+    })
+    const proxyCount = rule.filter(it => it.proxy).length
+    log += `\n${rule.length}个规则加载完成，其中${rule.length - proxyCount}个可直接使用，${proxyCount}个需要代理`
+    console.info(log)
+
+    cacheManager.set('rule_json', JSON.stringify(rule))
   } catch (e) {
-    rule = require('./rule.json')
     console.error('缓存规则失败，将使用本地规则', e.message)
   }
-  let log = ''
-  let proxy = 0
-  rule.list.forEach(function (it) {
-    log += `\n[加载][${it.name}][${it.url}]`
-    if (it.proxy) {
-      proxy++
-    }
-  })
-  log += `\n${rule.list.length}个规则加载完成，其中${rule.list.length - proxy}个可直接使用，${proxy}个需要代理`
-  console.info(log)
-  cacheManager.set('rule_json', JSON.stringify(rule))
+  return rule
 }
 
-async function getRuleData (url) {
+async function getRule () {
+  let rule
   let ruleJson = cacheManager.get('rule_json')
   if (ruleJson) {
-    // 如果有缓存 直接使用缓存 然后异步更新
-    handleUpdateRuleFile(url)
+    // 如果有规则缓存 就使用缓存
+    rule = JSON.parse(ruleJson)
   } else {
-    // 如果没有缓存 等待更新到规则
-    await handleUpdateRuleFile(url)
-    ruleJson = cacheManager.get('rule_json')
+    rule = require('./rule.json')
   }
-  let rule = JSON.parse(ruleJson)
-  rule.list.forEach(function (it) {
+  rule.forEach(it => {
     ruleMap[it.id] = it
   })
   return rule
@@ -297,7 +283,8 @@ async function obtainSearchResult (option, setting, callback) {
 }
 
 export default {
-  getRuleData,
+  loadRuleByURL,
+  getRule,
   obtainSearchResult,
   clearCache
 }

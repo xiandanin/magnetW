@@ -4,7 +4,7 @@
         <browser-link button="true" size="mini" :href="url" class="link-button">去源站</browser-link>
 
         <!--排序方式-->
-        <el-radio-group @change="emitSortChanged" size="mini" v-model="sortKey">
+        <el-radio-group @change="emitSortChanged" size="mini" v-model="checkedSortKey">
             <el-radio-button v-for="(value, key, i) in paths" :key="key"
                              :label="key">{{getLabelByKey(key)}}
             </el-radio-button>
@@ -36,7 +36,6 @@
     },
     watch: {
       sortKey (val) {
-        console.log('sortKey---', this.sortKey, this.checkedSortKey)
         this.checkedSortKey = val
       }
     },
@@ -57,7 +56,7 @@
       }
     },
     mounted () {
-      console.log(this.sortKey, this.checkedSortKey)
+      this.checkedSortKey = this.sortKey
     }
   }
 </script>

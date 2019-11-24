@@ -13,10 +13,6 @@
                             <el-input v-model="localSetting.ruleUrl" size="mini"
                                       :placeholder="defaultSetting.ruleUrl">
                             </el-input>
-                            <div>
-                                <el-checkbox v-model="localSetting.rememberLastRule" label="记住上次使用的源站"></el-checkbox>
-                                <el-checkbox v-model="localSetting.showProxyRule" label="显示需要代理的源站"></el-checkbox>
-                            </div>
                         </setting-item>
                     </setting-group>
 
@@ -109,15 +105,14 @@
         })
       },
       handleSaveSetting () {
-        this.global.settings.saveSetting(this.localSetting)
-        ipcRenderer.send('apply-setting', this.localSetting)
+        this.settings.saveSetting(this.localSetting)
         this.$message({
           message: '保存成功',
           type: 'success'
         })
       },
       handleResetSetting () {
-        this.localSetting = this.deepCopy(this.defaultSetting)
+        this.localSetting = this.settings.createDefault()
       },
       handleClearCache () {
         ipcRenderer.send('clear-cache')
@@ -133,8 +128,8 @@
     created () {
       this.registerRendererListener()
       ipcRenderer.send('get-app-info')
-      this.defaultSetting = this.deepCopy(this.global.settings.defaultSetting)
-      this.localSetting = this.deepCopy(this.global.settings.localSetting)
+      this.defaultSetting = this.settings.createDefault()
+      this.localSetting = this.settings.createLocal()
     }
   }
 </script>

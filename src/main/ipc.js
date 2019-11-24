@@ -6,10 +6,6 @@ import fs from 'fs'
 const {ipcMain} = require('electron')
 
 export default function (mainWindow) {
-  async function callLoadRuleData (event, url) {
-    event.sender.send('on-load-rule-data', await repo.getRuleData(url))
-  }
-
   process.on('uncaughtException', function (e) {
     console.error('出现异常', e)
   })
@@ -21,14 +17,22 @@ export default function (mainWindow) {
       mainWindow.maximize()
     }
   })
-
-  ipcMain.on('get-guide-markdown', async (event) => {
-    const filepath = path.join(__dirname, '../data/guide.md')
-    event.returnValue = fs.readFileSync(filepath, 'utf-8')
+  ipcMain.on('get-rule', async (event) => {
+    event.returnValue = await repo.getRule()
   })
 
   ipcMain.on('load-rule-data', async (event, url) => {
-    event.returnValue = await repo.getRuleData(url)
+    const rule = await repo.loadRuleByURL(url)
+    if (rule) {
+      event.sender.send('on-load-rule-data', rule)
+    }
+  })
+
+  ipcMain.on('reload-rule-data', async (event, url) => {
+    const rule = await repo.loadRuleByURL(url)
+    if (rule) {
+      event.sender.send('on-reload-rule-data', rule)
+    }
   })
 
   ipcMain.on('search', (event, option, localSetting) => {
@@ -52,9 +56,5 @@ export default function (mainWindow) {
     event.sender.send('on-get-app-info', {
       logDir: dir
     })
-  })
-
-  ipcMain.on('apply-setting', async (event, setting) => {
-    await callLoadRuleData(event, setting.ruleUrl)
   })
 }

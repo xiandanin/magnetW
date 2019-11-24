@@ -6,13 +6,19 @@ const path = require('path')
 export default function (mainWindow) {
   const submenu = [
     {
+      label: '重新加载',
+      click: function () {
+        mainWindow.reload()
+      }
+    },
+    {
       label: '关于',
       click: function () {
         openAboutWindow({
           open_devtools: false,
-          icon_path: path.resolve('build/icons/256x256.png'),
-          homepage: 'http://magnetw.github.io',
-          css_path: path.resolve(__dirname, 'about.css'),
+          icon_path: path.resolve(__dirname, 'assets/logo.png'),
+          homepage: 'https://magnetw.app',
+          css_path: path.resolve(__dirname, 'assets/about.css'),
           package_json_dir: path.resolve(),
           titleBarStyle: 'hidden',
           win_options: {

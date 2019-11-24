@@ -37,7 +37,7 @@
     .guide-title {
         display: block;
         font-size: 1.3em;
-        margin: 5px 0;
+        margin: 10px 0;
         font-weight: bold;
         color: $--color-text-primary;
     }

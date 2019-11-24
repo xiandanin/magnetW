@@ -1,7 +1,7 @@
 {
   "name": "magnetw",
   "version": "3.0.0",
-  "description": "跨平台磁力链接聚合搜索",
+  "description": "磁力链接聚合搜索",
   "license": "GNU General Public License v3.0",
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -75,6 +75,7 @@
     "moment": "^2.24.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
+    "universal-analytics": "^0.4.20",
     "vue": "^2.6.10",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
