@@ -4,6 +4,7 @@
                   @keyup.enter.native="emitClickSearch"
                   v-model="value"
                   @change="emitInputChanged"
+                  clearable
                   size="medium">
             <span slot="prepend">{{name}}</span>
             <el-button slot="append" icon="el-icon-search" @click="emitClickSearch">搜索</el-button>

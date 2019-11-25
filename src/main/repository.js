@@ -155,11 +155,16 @@ async function loadRuleByURL (url) {
 
 async function getRule () {
   let rule
-  let ruleJson = cacheManager.get('rule_json')
-  if (ruleJson) {
-    // 如果有规则缓存 就使用缓存
-    rule = JSON.parse(ruleJson)
-  } else {
+  try {
+    let ruleJson = cacheManager.get('rule_json')
+    if (ruleJson) {
+      // 如果有规则缓存 就使用缓存
+      rule = JSON.parse(ruleJson)
+    }
+    if (!Array.isArray(rule) || rule.length <= 0) {
+      throw new Error('规则格式不正确')
+    }
+  } catch (e) {
     rule = require('./rule.json')
   }
   rule.forEach(it => {

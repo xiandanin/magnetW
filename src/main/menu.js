@@ -15,11 +15,11 @@ export default function (mainWindow) {
       label: '关于',
       click: function () {
         openAboutWindow({
-          open_devtools: false,
-          icon_path: path.resolve(__dirname, 'assets/logo.png'),
+          open_devtools: true,
+          icon_path: path.resolve(__dirname, 'static/logo.png'),
           homepage: 'https://magnetw.app',
-          css_path: path.resolve(__dirname, 'assets/about.css'),
-          package_json_dir: path.resolve(),
+          css_path: path.resolve(__dirname, 'static/about.css'),
+          package_json_dir: path.resolve(__dirname, '../../'),
           titleBarStyle: 'hidden',
           win_options: {
             resizable: false,

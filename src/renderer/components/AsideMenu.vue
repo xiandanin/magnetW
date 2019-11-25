@@ -24,9 +24,16 @@
                     <span class="source-name">{{it.name}}</span>
                 </span>
                     <el-tooltip v-if="it.proxy" effect="dark" placement="right">
-                        <div slot="content">此源站需要设置代理，<span class="tooltip-content-proxy" @click="handleClickProxyDoc">查看详情</span>
-                        </div>
-                        <i class="el-icon-connection"></i>
+                        <template v-if="localSetting.proxy">
+                            <div slot="content">此源站需要设置代理，已开启代理</div>
+                            <i class="el-icon-connection el-icon-connection-success"></i>
+                        </template>
+                        <template v-else>
+                            <div slot="content">此源站需要设置代理，<span class="tooltip-content-proxy"
+                                                                @click="handleClickProxyDoc">查看详情</span>
+                            </div>
+                            <i class="el-icon-connection"></i>
+                        </template>
                     </el-tooltip>
                 </div>
             </el-menu-item>
@@ -70,14 +77,25 @@
          */
         ipcRenderer.on('on-reload-rule-data', (event, rule) => {
           this.loading = false
-          let mapRule = this.mapRule(rule)
-          localStorage.setItem('rule_json', JSON.stringify(mapRule))
-          this.rule = mapRule
+          if (rule) {
+            let mapRule = this.mapRule(rule)
+            localStorage.setItem('rule_json', JSON.stringify(mapRule))
+            this.rule = mapRule
 
-          // 默认选择一个源站
-          this.emitActiveRule()
+            // 默认选择一个源站
+            this.emitActiveRule()
 
-          console.info('加载规则完成', mapRule)
+            this.$message({
+              message: '刷新完成',
+              type: 'success'
+            })
+            console.info('加载规则完成', mapRule)
+          } else {
+            this.$message({
+              message: '刷新失败，请检查URL',
+              type: 'error'
+            })
+          }
         })
       },
       mapRule (rule) {
@@ -93,7 +111,7 @@
         return rule
       },
       emitActiveRule () {
-        const id = this.settings.local.memoryLastRule ? localStorage.getItem('last_rule_id') : null
+        const id = this.localSetting.memoryLastRule ? localStorage.getItem('last_rule_id') : null
         let active = this.getRuleByID(id)
         this.$emit('active-rule', active || this.rule[0])
       },
@@ -118,7 +136,7 @@
       },
       handleUpdateRule () {
         this.loading = true
-        ipcRenderer.send('reload-rule-data', this.settings.local.ruleUrl)
+        ipcRenderer.send('reload-rule-data', this.localSetting.ruleUrl)
       }
     },
     created () {
@@ -129,9 +147,12 @@
       this.emitActiveRule()
 
       // 更新缓存
-      ipcRenderer.send('load-rule-data', this.settings.local.ruleUrl)
+      ipcRenderer.send('load-rule-data', this.localSetting.ruleUrl)
     },
     mounted () {
+    },
+    activated () {
+      this.localSetting = this.settings.getLocal()
     }
   }
 </script>
@@ -171,6 +192,11 @@
 
         .el-icon-connection {
             font-size: 16px !important;
+            color: $--color-info !important;
+        }
+
+        .el-icon-connection-success {
+            color: $--color-primary !important;
         }
 
     }

@@ -3,7 +3,7 @@
         <img src="../assets/images/logo.png" height="36"/>
         <div>
             <div class="header-version-text">{{ appName }}</div>
-            <div class="header-version-text">v{{ version }}-{{ platform }}</div>
+            <div class="header-version-text">v{{ version }}</div>
         </div>
     </div>
 </template>
@@ -24,7 +24,7 @@
 </script>
 <style lang="scss">
     .header-version {
-        width: 180px;
+        width: 280px;
     }
 
     .header-version-text {

@@ -30,9 +30,7 @@ export default function (mainWindow) {
 
   ipcMain.on('reload-rule-data', async (event, url) => {
     const rule = await repo.loadRuleByURL(url)
-    if (rule) {
-      event.sender.send('on-reload-rule-data', rule)
-    }
+    event.sender.send('on-reload-rule-data', rule)
   })
 
   ipcMain.on('search', (event, option, localSetting) => {

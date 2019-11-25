@@ -4,20 +4,18 @@
 [![GitHub license](https://img.shields.io/github/license/dengyuhan/magnetW)](https://github.com/dengyuhan/magnetW/blob/master/LICENSE)
 ![Support Platforms](https://camo.githubusercontent.com/a50c47295f350646d08f2e1ccd797ceca3840e52/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f706c6174666f726d2d6d61634f5325323025374325323057696e646f77732532302537432532304c696e75782d6c69676874677265792e737667)
  
-[[中文文档]](http://magnetw.app/)
+[[中文文档]](http://magnetw.app/guide/)
 
 ## 简介
 `magnetW`基于[magnetX](https://github.com/youusername/magnetX)的规则原理，将各个磁力站的搜索结果统一格式化
 
 ## 安装
-从[Github Releases](https://github.com/dengyuhan/magnetW/releases)下载对应平台
-
-或者
-
+从[Github Releases](https://github.com/dengyuhan/magnetW/releases)下载对应平台  
+或者  
 从[文档页](http://magnetw.app/)下载对应平台
 
 ## 截图
-<img src="screenshots/5.gif" height="320"/><img src="screenshots/9.gif" height ="320"/>
+![](/screenshots/app.gif)
 
 
 ## 免责声明
@@ -37,3 +35,7 @@
 2. 不能以盈利为目的，不能插入任何形式的广告
 3. 注明原项目出处
 4. 继承相同协议
+
+## 相关项目
+* [magnetX](https://github.com/youusername/magnetX)
+* [磁力搜自动采集](https://github.com/dengyuhan/LardMonkeyScripts#%E7%A3%81%E5%8A%9B%E6%90%9C%E8%87%AA%E5%8A%A8%E9%87%87%E9%9B%86)

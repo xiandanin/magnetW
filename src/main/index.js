@@ -3,6 +3,7 @@
 import {app, BrowserWindow, session} from 'electron'
 import registerIPC from './ipc'
 import registerMenu from './menu'
+import {build} from '../../package.json'
 import is from 'electron-is'
 
 import {autoUpdater} from 'electron-updater'
@@ -43,6 +44,7 @@ function createWindow () {
   const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(app.getName(), 'gi'), 'MWSpider')
   mainWindow.webContents.setUserAgent(userAgent)
   session.defaultSession.setUserAgent(userAgent)
+  app.setName(build.productName)
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {

@@ -9,12 +9,13 @@ function saveSetting (newSetting) {
     // 如果不是默认配置 就保存
     if (newSetting.hasOwnProperty(key)) {
       const value = newSetting[key]
-      if (value !== defaultSetting[key]) {
+      if (value && value !== defaultSetting[key]) {
         tempSettingVariable[key] = value
       }
     }
   }
   // 如果修改了配置 就重新合并配置数据
+  console.log(tempSettingVariable)
   const isModified = Object.keys(tempSettingVariable).length > 0
   if (isModified) {
     let tempSetting = createDefault()
@@ -24,6 +25,10 @@ function saveSetting (newSetting) {
   console.info('保存修改设置', tempSettingVariable)
 
   local = createLocal()
+}
+
+function getLocal () {
+  return local
 }
 
 function createLocal () {
@@ -47,7 +52,7 @@ export default {
       createDefault,
       createLocal,
       saveSetting,
-      local
+      getLocal
     }
   }
 }

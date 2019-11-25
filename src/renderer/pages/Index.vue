@@ -106,7 +106,7 @@
           this.showGuidePage = false
           this.loading.table = true
           console.info('搜索', JSON.stringify(this.page.current, '/t', 2))
-          ipcRenderer.send('search', this.page.current, this.settings.local)
+          ipcRenderer.send('search', this.page.current, this.settings.getLocal())
         }
       },
       handleActiveRule (active) {
