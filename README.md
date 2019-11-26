@@ -1,4 +1,6 @@
-[![GitHub release](https://img.sxiandanin/hields.io/github/release/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/releases)
+# magnetW
+
+[![GitHub release](https://img.shields.io/github/release/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/stars)
 [![GitHub forks](https://img.shields.io/github/forks/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/forks)
 [![GitHub license](https://img.shields.io/github/license/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/blob/master/LICENSE)
