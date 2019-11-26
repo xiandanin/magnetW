@@ -10,3 +10,4 @@ thumbs.db
 !.gitkeep
 .idea
 package-lock.json
+build/icons/.icns.iconset

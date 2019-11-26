@@ -1,6 +1,6 @@
 <template>
     <div class="header" @dblclick="dblclick">
-        <header-version></header-version>
+        <header-version class="drag"></header-version>
         <div class="header-right">
             <el-menu mode="horizontal" default-active="/" router>
                 <el-menu-item index="/">首页</el-menu-item>
@@ -8,7 +8,8 @@
 
                 <template v-for="menuItem in project.menu">
                     <el-submenu v-if="menuItem.submenu" :index="menuItem.index" popper-class="header-submenu">
-                        <browser-link slot="title" :href="menuItem.link" :underline="false">{{menuItem.text}}</browser-link>
+                        <browser-link slot="title" :href="menuItem.link" :underline="false">{{menuItem.text}}
+                        </browser-link>
                         <el-menu-item v-for="subItem in menuItem.submenu">
                             <browser-link :href="subItem.link" :underline="false">{{subItem.text}}</browser-link>
                         </el-menu-item>
@@ -50,6 +51,10 @@
 
         .el-link {
             vertical-align: baseline !important;
+        }
+
+        .header-version {
+            flex: 1;
         }
     }
 

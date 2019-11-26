@@ -24,7 +24,7 @@
 </script>
 <style lang="scss">
     .header-version {
-        width: 280px;
+
     }
 
     .header-version-text {

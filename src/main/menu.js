@@ -15,7 +15,7 @@ export default function (mainWindow) {
       label: '关于',
       click: function () {
         openAboutWindow({
-          open_devtools: true,
+          open_devtools: false,
           icon_path: path.resolve(__dirname, 'static/logo.png'),
           homepage: 'https://magnetw.app',
           css_path: path.resolve(__dirname, 'static/about.css'),

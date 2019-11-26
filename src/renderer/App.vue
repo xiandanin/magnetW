@@ -2,7 +2,7 @@
     <div id="app">
         <el-container>
             <div class="header-placeholder drag" @dblclick="handleClickMaxWindow"></div>
-            <el-header class="drag">
+            <el-header>
                 <pager-header :dblclick="handleClickMaxWindow"></pager-header>
             </el-header>
 

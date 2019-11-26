@@ -10,6 +10,7 @@
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "mac": "node .electron-vue/build.js && electron-builder --platform=mac",
     "win": "node .electron-vue/build.js && electron-builder --platform=win",
+    "linux": "node .electron-vue/build.js && electron-builder --platform=linux",
     "dev": "node .electron-vue/dev-runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
