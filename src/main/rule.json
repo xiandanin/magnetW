@@ -186,44 +186,6 @@
     }
   },
   {
-    "id": "crsoso",
-    "name": " 超人搜索",
-    "url": "https://www.crsoso.xyz",
-    "paths": {
-      "preset": "/search/{k}/page-{p}.html",
-      "hot": "/search-hot/{k}/page-{p}.html",
-      "size": "search-size/{k}/page-{p}.html"
-    },
-    "xpath": {
-      "group": "//article[@class='item']/div",
-      "magnet": "./a[1]/@href",
-      "name": "./a[1]",
-      "size": "./p[1]",
-      "date": "./p[1]",
-      "hot": "./p[1]"
-    }
-  },
-  {
-    "id": "dmhy",
-    "name": "动漫花园",
-    "proxy": false,
-    "url": "https://dmhy.anoneko.com",
-    "paths": {
-      "time": "/topics/list/page/{p}?keyword={k}"
-    },
-    "xpath": {
-      "group": "//*[@id=\"topic_list\"]/tbody/tr",
-      "magnet": "./td[4]/a/@href",
-      "name": "./td[3]/a",
-      "size": "./td[5]",
-      "date": "./td[1]/text()",
-      "hot": "./td[8]",
-      "detail": {
-        "files": "//div[@class=\"file_list\"]/ul/li"
-      }
-    }
-  },
-  {
     "id": "mag",
     "name": "MAG磁力站",
     "url": "http://f.cili001.com",
@@ -290,6 +252,45 @@
       "size": "./div[2]/div[2]",
       "date": "./div[2]/div[4]",
       "hot": "./div[2]/div[1]"
+    }
+  },
+
+  {
+    "id": "crsoso",
+    "name": " 超人搜索",
+    "url": "https://www.crsoso.xyz",
+    "paths": {
+      "preset": "/search/{k}/page-{p}.html",
+      "hot": "/search-hot/{k}/page-{p}.html",
+      "size": "search-size/{k}/page-{p}.html"
+    },
+    "xpath": {
+      "group": "//article[@class='item']/div",
+      "magnet": "./a[1]/@href",
+      "name": "./a[1]",
+      "size": "./p[1]",
+      "date": "./p[1]",
+      "hot": "./p[1]"
+    }
+  },
+  {
+    "id": "dmhy",
+    "name": "动漫花园",
+    "proxy": false,
+    "url": "https://dmhy.anoneko.com",
+    "paths": {
+      "time": "/topics/list/page/{p}?keyword={k}"
+    },
+    "xpath": {
+      "group": "//*[@id=\"topic_list\"]/tbody/tr",
+      "magnet": "./td[4]/a/@href",
+      "name": "./td[3]/a",
+      "size": "./td[5]",
+      "date": "./td[1]/text()",
+      "hot": "./td[8]",
+      "detail": {
+        "files": "//div[@class=\"file_list\"]/ul/li"
+      }
     }
   },
   {
