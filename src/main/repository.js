@@ -148,6 +148,7 @@ async function loadRuleByURL (url) {
 
     cacheManager.set('rule_json', JSON.stringify(rule))
   } catch (e) {
+    rule = require('./rule.json')
     console.error('缓存规则失败，将使用本地规则', e.message)
   }
   return rule
@@ -161,11 +162,16 @@ async function getRule () {
       // 如果有规则缓存 就使用缓存
       rule = JSON.parse(ruleJson)
     }
-    if (!Array.isArray(rule) || rule.length <= 0) {
-      throw new Error('规则格式不正确')
+    if (!rule) {
+      throw new Error('没有可用的规则缓存')
     }
+    if (!Array.isArray(rule) || rule.length <= 0) {
+      throw new Error('缓存规则格式不正确')
+    }
+    console.debug('使用缓存规则', rule)
   } catch (e) {
     rule = require('./rule.json')
+    console.error('使用本地规则', e.message)
   }
   rule.forEach(it => {
     ruleMap[it.id] = it
