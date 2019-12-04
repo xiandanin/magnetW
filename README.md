@@ -13,8 +13,6 @@
 
 magnetW全面升级3.x，网页版不再更新 [https://biedian.me](https://biedian.me/)（需要梯子）
 
-[或者你希望继续更新？](https://github.com/xiandanin/magnetW/issues/53)
-
 ## 安装
 从[Github Releases](https://github.com/xiandanin/magnetW/releases)下载对应平台  
 或者  
