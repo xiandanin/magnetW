@@ -1,65 +1,52 @@
 <template>
-    <el-container v-loading="loading.page" :class="windowKey === 'max' ? 'container-full' : 'container'" ref="main">
-        <el-header ref="header">
-            <pager-header>
-                <!--搜索框与排序菜单-->
-                <search-input :name="activeRule?activeRule.name:null"
-                              class="pager-header-input"
-                              @search="handleClickSearch"
-                              :keyword="page.current.keyword"></search-input>
-            </pager-header>
-        </el-header>
-        <el-container style="height: 89%">
-            <el-aside ref="indexAside" width="200px" class="scroll-container">
-                <el-scrollbar>
-                    <aside-menu :active="page.current.id"
-                                :ruleList="rule"
-                                @rule-refresh-finished="handleRuleRefreshFinished"
-                                @change="handleRuleChanged"></aside-menu>
+    <el-container>
+        <el-aside ref="indexAside" width="200px">
+            <aside-menu :active="page.current.id"
+                        :ruleList="rule"
+                        @rule-refresh-finished="handleRuleRefreshFinished"
+                        @change="handleRuleChanged"></aside-menu>
+        </el-aside>
+        <el-main>
+            <guide-page ref="guidePage" v-show="guidePage.show"
+                        :message="guidePage.message" :type="guidePage.type"></guide-page>
+            <div class="index-main scroll-container" v-if="activeRule">
+                <el-scrollbar class="index-main-scrollbar">
+                    <div class="pager-search-header" ref="pagerSearchHeader">
+                        <div class="search-option">
+                            <!--排序选项-->
+                            <search-sort
+                                    class="search-option-left"
+                                    :url="page.current.url||activeRule.url"
+                                    :paths="activeRule.paths"
+                                    :window-key="windowKey"
+                                    @change="handleSortChanged"
+                                    @window-change="handleWindowChanged"
+                                    :sortKey="page.current.sort"></search-sort>
+                            <!--页码-->
+                            <search-pagination :page="page.current.page"
+                                               v-if="page.items"
+                                               @change="handlePageChanged"></search-pagination>
+                        </div>
+                    </div>
+                    <!--搜索结果-->
+                    <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
+                        <div class="index-main-content" v-if="page.items">
+                            <pager-items :items="page.items"
+                                         :keyword="page.current.keyword"
+                                         :baseURL="activeRule.url"
+                                         @show-detail="handleShowDetailDialog"></pager-items>
+                            <search-pagination class="footer-search-pagination"
+                                               :page="page.current.page"
+                                               @change="handlePageChanged"></search-pagination>
+                        </div>
+                    </div>
                 </el-scrollbar>
-            </el-aside>
-            <el-main>
-                <guide-page ref="guidePage" v-show="guidePage.show"
-                            :message="guidePage.message" :type="guidePage.type"></guide-page>
-                <div class="index-main scroll-container" v-if="activeRule">
-                    <el-scrollbar class="index-main-scrollbar">
-                        <div class="pager-search-header" ref="pagerSearchHeader">
-                            <div class="search-option">
-                                <!--排序选项-->
-                                <search-sort
-                                        class="search-option-left"
-                                        :url="page.current.url||activeRule.url"
-                                        :paths="activeRule.paths"
-                                        :window-key="windowKey"
-                                        @change="handleSortChanged"
-                                        @window-change="handleWindowChanged"
-                                        :sortKey="page.current.sort"></search-sort>
-                                <!--页码-->
-                                <search-pagination :page="page.current.page"
-                                                   v-if="page.items"
-                                                   @change="handlePageChanged"></search-pagination>
-                            </div>
-                        </div>
-                        <!--搜索结果-->
-                        <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
-                            <div class="index-main-content" v-if="page.items">
-                                <pager-items :items="page.items"
-                                             :keyword="page.current.keyword"
-                                             :baseURL="activeRule.url"
-                                             @show-detail="handleShowDetailDialog"></pager-items>
-                                <search-pagination class="footer-search-pagination"
-                                                   :page="page.current.page"
-                                                   @change="handlePageChanged"></search-pagination>
-                            </div>
-                        </div>
-                    </el-scrollbar>
-                    <el-backtop target=".index-main-scrollbar .el-scrollbar__wrap" ref="backtop">
-                    </el-backtop>
-                    <detail-dialog v-if="detailDialog"
-                                   :dialog="detailDialog"></detail-dialog>
-                </div>
-            </el-main>
-        </el-container>
+                <el-backtop target=".index-main-scrollbar .el-scrollbar__wrap" ref="backtop">
+                </el-backtop>
+                <detail-dialog v-if="detailDialog"
+                               :dialog="detailDialog"></detail-dialog>
+            </div>
+        </el-main>
     </el-container>
 </template>
 
@@ -304,13 +291,6 @@
     .footer-search-pagination {
         margin-top: 15px;
         text-align: right;
-    }
-
-    .pager-header-input {
-        padding-left: 30px;
-        padding-right: 30px;
-        max-width: 500px;
-        margin: auto;
     }
 
 </style>

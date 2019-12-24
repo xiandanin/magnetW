@@ -42,18 +42,18 @@
                           v-model="config.customUserAgentValue" placeholder="自定义UserAgent"
                           :size="formSize"></el-input>
             </el-form-item>
-            <!--<el-form-item label="日志" class="form-input-center">
-              <el-input disabled :size="formSize">
-                <el-button slot="append" icon="el-icon-folder-opened"></el-button>
-              </el-input>
-            </el-form-item>-->
+            <el-form-item label="日志">
+                <el-input disabled :size="formSize" v-model="appInfo.logDir">
+                    <el-button slot="append" icon="el-icon-folder-opened" @click="handleOpenLoggerDir"></el-button>
+                </el-input>
+            </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script>
   import TooltipFormItem from './TooltipFormItem'
-  import {ipcRenderer} from 'electron'
+  import {ipcRenderer, shell} from 'electron'
 
   export default {
     components: {TooltipFormItem},
@@ -63,10 +63,17 @@
     data () {
       return {
         formSize: 'mini',
-        defaultConfig: ipcRenderer.sendSync('get-default-server-config')
+        defaultConfig: ipcRenderer.sendSync('get-default-server-config'),
+        appInfo: ipcRenderer.sendSync('get-app-info')
       }
     },
-    methods: {},
+    methods: {
+      handleOpenLoggerDir () {
+        if (this.appInfo.logDir) {
+          shell.showItemInFolder(this.appInfo.logDir)
+        }
+      }
+    },
     created () {
     }
   }
@@ -110,4 +117,5 @@
     .medium-input-width {
         width: 180px;
     }
+
 </style>

@@ -2,7 +2,8 @@
     <el-container>
         <div class="header-placeholder drag" @dblclick="handleClickMaxWindow"></div>
         <el-header class="drag">
-            <pager-header :dblclick="handleClickMaxWindow"></pager-header>
+            <pager-header :dblclick="handleClickMaxWindow">
+            </pager-header>
         </el-header>
 
         <el-main class="main">
@@ -16,10 +17,11 @@
 <script>
   import {ipcRenderer, remote, shell} from 'electron'
   import PagerHeader from '../components/PagerHeader'
+  import SearchInput from '../components/SearchInput'
 
   export default {
     components: {
-      PagerHeader
+      PagerHeader, SearchInput
     },
     data () {
       return {}
@@ -60,4 +62,12 @@
         padding: 0 !important;
         height: 100%;
     }
+
+    .pager-header-input {
+        padding-left: 30px;
+        padding-right: 30px;
+        max-width: 500px;
+        margin: auto;
+    }
+
 </style>

@@ -15,9 +15,6 @@ app.use(require('koa-bodyparser')())
 app.use(require('./middleware/block'))
 app.use(require('./middleware/response-template'))
 
-app.use(koaStatic(
-  process.env.NODE_ENV === 'development' ? path.resolve('./dist/electron/web') : path.resolve(__dirname, './web')
-))
 router.get('/rule', async (ctx) => {
   ctx.success(await repo.getRule())
 })

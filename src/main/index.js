@@ -3,7 +3,6 @@
 import {app, BrowserWindow, session} from 'electron'
 
 const registerMenu = require('./menu')
-const registerIPC = require('./ipc')
 const {build} = require('../../package.json')
 const is = require('electron-is')
 
@@ -36,7 +35,6 @@ function createWindow () {
   })
 
   registerMenu(mainWindow)
-  registerIPC(mainWindow)
 
   const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(app.getName(), 'gi'), 'MWBrowser')
   mainWindow.webContents.setUserAgent(userAgent)
@@ -47,6 +45,14 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  registerServer()
+}
+
+async function registerServer () {
+  const {registerIPC, registerServer} = require('./ipc')
+  registerIPC(mainWindow)
+  registerServer()
 }
 
 app.on('ready', createWindow)
