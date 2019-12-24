@@ -1,27 +1,23 @@
 <template>
-    <div class="search-input">
-        <el-input :placeholder="project.searchPlaceholder"
-                  @keyup.enter.native="emitClickSearch"
-                  v-model="value"
-                  @change="emitInputChanged"
-                  clearable
-                  size="medium">
-            <span slot="prepend">{{name}}</span>
-            <el-button slot="append" icon="el-icon-search" @click="emitClickSearch">搜索</el-button>
-        </el-input>
-    </div>
+  <div class="search-input">
+    <el-input :placeholder="placeholder"
+              @keyup.enter.native="emitClickSearch"
+              v-model="value"
+              clearable
+              size="medium">
+      <span slot="prepend">{{name||'请选择源站'}}</span>
+      <el-button slot="append" icon="el-icon-search" @click="emitClickSearch">搜索</el-button>
+    </el-input>
+  </div>
 </template>
 
 <script>
   export default {
     props: ['name', 'keyword'],
-    model: {
-      prop: 'keyword',
-      event: 'input'
-    },
     data () {
       return {
-        value: null
+        value: null,
+        placeholder: null
       }
     },
     watch: {
@@ -30,16 +26,13 @@
       }
     },
     methods: {
-      emitInputChanged (value) {
-        this.$emit('input', value)
-      },
       emitClickSearch () {
-        if (!this.value) {
-          this.value = this.project.searchPlaceholder
-          this.emitInputChanged(this.value)
-        }
-        this.$emit('search', this.value)
+        this.$emit('search', this.value || this.placeholder)
       }
+    },
+    created () {
+      this.placeholder = this.$config.searchPlaceholder[Math.floor(Math.random() * this.$config.searchPlaceholder.length)]
+      this.value = this.keyword
     },
     mounted () {
     }

@@ -16,6 +16,8 @@ module.exports = {
     'html'
   ],
   'rules': {
+    // 关闭缩进检查
+    'indent': 0,
     'no-unused-vars': 0,
     // allow paren-less arrow functions
     'arrow-parens': 0,

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Main from '@/pages/Main'
 import Index from '@/pages/Index'
 import Setting from '@/pages/Setting'
 
@@ -9,13 +10,18 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'index',
-      component: Index
-    },
-    {
-      path: '/setting',
-      name: 'setting',
-      component: Setting
+      name: 'main',
+      component: Main,
+      children: [
+        {
+          path: 'index',
+          component: Index
+        },
+        {
+          path: 'setting',
+          component: Setting
+        }
+      ]
     }
   ]
 })

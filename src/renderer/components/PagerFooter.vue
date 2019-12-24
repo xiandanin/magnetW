@@ -1,6 +1,6 @@
 <template>
     <div class="pager-footer">
-        <span class="header-disclaimer-text">{{project.footerText}}</span>
+        <span class="header-disclaimer-text">{{$config.footerText}}</span>
     </div>
 </template>
 

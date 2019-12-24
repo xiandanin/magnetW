@@ -8,6 +8,7 @@ npm-debug.log
 npm-debug.log.*
 thumbs.db
 !.gitkeep
-.idea
+workspace.xml
+src/dist
+Project_Default.xml
 package-lock.json
-build/icons/.icns.iconset

@@ -1,21 +1,18 @@
 'use strict'
 
 import {app, BrowserWindow, session} from 'electron'
-import registerIPC from './ipc'
-import registerMenu from './menu'
-import {build} from '../../package.json'
-import is from 'electron-is'
 
-import {autoUpdater} from 'electron-updater'
-
-const path = require('path')
+const registerMenu = require('./menu')
+const registerIPC = require('./ipc')
+const {build} = require('../../package.json')
+const is = require('electron-is')
 
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
 if (process.env.NODE_ENV !== 'development') {
-  global.__static = path.join(__dirname, '/static').replace(/\\/g, '\\\\')
+  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
 let mainWindow
@@ -39,8 +36,9 @@ function createWindow () {
   })
 
   registerMenu(mainWindow)
+  registerIPC(mainWindow)
 
-  const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(app.getName(), 'gi'), 'MWSpider')
+  const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(app.getName(), 'gi'), 'MWBrowser')
   mainWindow.webContents.setUserAgent(userAgent)
   session.defaultSession.setUserAgent(userAgent)
   app.setName(build.productName)
@@ -49,8 +47,6 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-
-  registerIPC(mainWindow)
 }
 
 app.on('ready', createWindow)
@@ -74,36 +70,15 @@ app.on('activate', () => {
  * support auto updating. Code Signing with a valid certificate is required.
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
  */
-function sendStatusToWindow (text) {
-  console.info(text)
-  mainWindow.webContents.send('message', text)
-}
 
-autoUpdater.on('checking-for-update', () => {
-  sendStatusToWindow('Checking for update...')
-})
-autoUpdater.on('update-available', (info) => {
-  sendStatusToWindow('Update available.')
-})
-autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow('Update not available.')
-})
-autoUpdater.on('error', (err) => {
-  sendStatusToWindow('Error in auto-updater. ' + err)
-})
-autoUpdater.on('download-progress', (progressObj) => {
-  let message = 'Download speed: ' + progressObj.bytesPerSecond
-  message = message + ' - Downloaded ' + progressObj.percent + '%'
-  message = message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
-  sendStatusToWindow(message)
-})
-autoUpdater.on('update-downloaded', (info) => {
-  sendStatusToWindow('Update downloaded')
+/*
+import { autoUpdater } from 'electron-updater'
+
+autoUpdater.on('update-downloaded', () => {
+  autoUpdater.quitAndInstall()
 })
 
 app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') {
-    autoUpdater.logger = console
-    // autoUpdater.checkForUpdates()
-  }
+  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
+ */

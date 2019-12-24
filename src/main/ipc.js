@@ -1,15 +1,13 @@
-import repo from './repository'
-import path from 'path'
-import logger from './logger'
-import fs from 'fs'
+// import fs from 'fs'
 
-const {ipcMain} = require('electron')
+const {ipcMain, app} = require('electron')
+const request = require('request-promise-native')
+const {reload} = require('./api')
+const processConfig = require('./process-config')
+const Store = require('electron-store')
+const store = new Store()
 
-export default function (mainWindow) {
-  process.on('uncaughtException', function (e) {
-    console.error('出现异常', e)
-  })
-
+function registerIPC (mainWindow) {
   ipcMain.on('window-max', function () {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize()
@@ -17,42 +15,57 @@ export default function (mainWindow) {
       mainWindow.maximize()
     }
   })
-  ipcMain.on('get-rule', async (event) => {
-    event.returnValue = await repo.getRule()
-  })
+  /**
+   * 保存配置
+   */
+  ipcMain.on('save-server-config', async (event, config) => {
+    const configVariable = processConfig.extractConfigVariable(config)
+    const newConfig = processConfig.getConfig(configVariable)
 
-  ipcMain.on('load-rule-data', async (event, url) => {
-    const rule = await repo.loadRuleByURL(url)
-    if (rule) {
-      event.sender.send('on-load-rule-data', rule)
+    configVariable ? console.info('使用自定义配置加载服务', configVariable, newConfig) : console.info('使用默认配置加载服务', configVariable, newConfig)
+    let err
+    try {
+      await reload(newConfig)
+    } catch (e) {
+      err = e.message
+    }
+    configVariable ? store.set('config_variable', configVariable) : store.delete('config_variable')
+    event.sender.send('on-save-server-config', newConfig, err)
+  })
+  /**
+   * 获取配置信息
+   */
+  ipcMain.on('get-server-config', (event) => {
+    event.sender.send('on-server-config', processConfig.getConfig(store.get('config_variable')))
+  })
+  /**
+   * 获取默认配置信息
+   */
+  ipcMain.on('get-default-server-config', (event, callbackName) => {
+    event.returnValue = processConfig.defaultConfig()
+  })
+  /**
+   * 检查更新
+   */
+  ipcMain.on('check-update', async (event) => {
+    try {
+      const response = await request({
+        url: processConfig.defaultConfig().checkUpdateURL,
+        json: true
+      })
+      let newVerArray = response.version.split('.')
+      let currentVerArray = app.getVersion().split('.')
+      for (let i = 0; i < newVerArray.length; i++) {
+        if (parseInt(newVerArray[i]) > parseInt(currentVerArray[i])) {
+          event.sender.send('new-version', response)
+          return
+        }
+      }
+      console.info('暂无更新', response.version)
+    } catch (e) {
+      console.error(e.message)
     }
   })
-
-  ipcMain.on('reload-rule-data', async (event, url) => {
-    const rule = await repo.loadRuleByURL(url)
-    event.sender.send('on-reload-rule-data', rule)
-  })
-
-  ipcMain.on('search', (event, option, localSetting) => {
-    repo.obtainSearchResult(option, localSetting, function (err, rsp) {
-      const success = !err
-      const message = success ? null : err.message
-      event.sender.send('on-search-response', {
-        success: success,
-        message: message,
-        data: rsp
-      })
-    })
-  })
-
-  ipcMain.on('clear-cache', async (event) => {
-    repo.clearCache()
-  })
-
-  ipcMain.on('get-app-info', async (event) => {
-    let dir = path.resolve(logger.transports.file.file, '..')
-    event.sender.send('on-get-app-info', {
-      logDir: dir
-    })
-  })
 }
+
+module.exports = registerIPC
