@@ -3,6 +3,8 @@
         <div class="header-placeholder drag" @dblclick="handleClickMaxWindow"></div>
         <el-header class="drag">
             <pager-header :dblclick="handleClickMaxWindow">
+                <!--搜索框与排序菜单-->
+                <search-input></search-input>
             </pager-header>
         </el-header>
 
@@ -15,7 +17,7 @@
 </template>
 
 <script>
-  import {ipcRenderer, remote, shell} from 'electron'
+  import {ipcRenderer, shell} from 'electron'
   import PagerHeader from '../components/PagerHeader'
   import SearchInput from '../components/SearchInput'
 
@@ -63,11 +65,21 @@
         height: 100%;
     }
 
+    .el-header {
+        border-bottom: 1px solid $color-border;
+    }
+
     .pager-header-input {
         padding-left: 30px;
         padding-right: 30px;
         max-width: 500px;
         margin: auto;
+    }
+
+    .search-input {
+        margin-left: 15%;
+        margin-right: 15%;
+        width: 100%;
     }
 
 </style>

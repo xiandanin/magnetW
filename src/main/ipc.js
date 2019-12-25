@@ -5,13 +5,13 @@ const path = require('path')
 const {ipcMain, app} = require('electron')
 const request = require('request-promise-native')
 const {reload, start} = require('./api')
-const processConfig = require('./process-config')
+const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
 const Store = require('electron-store')
 const store = new Store()
 
 async function registerServer () {
   const configVariable = store.get('config_variable')
-  const newConfig = processConfig.getConfig(configVariable)
+  const newConfig = getConfig(configVariable)
   configVariable ? console.info('使用自定义配置加载服务', configVariable, newConfig) : console.info('使用默认配置加载服务', configVariable, newConfig)
   const {port, ip, local, message} = await start(newConfig)
   if (message) {
@@ -21,7 +21,15 @@ async function registerServer () {
   }
 }
 
+function getLocalConfig () {
+  return getConfig(store.get('config_variable'))
+}
+
 function registerIPC (mainWindow) {
+  if (getLocalConfig().maxWindow) {
+    mainWindow.maximize()
+  }
+
   ipcMain.on('window-max', function () {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize()
@@ -33,12 +41,15 @@ function registerIPC (mainWindow) {
    * 保存配置
    */
   ipcMain.on('save-server-config', async (event, config) => {
-    const configVariable = processConfig.extractConfigVariable(config)
-    const newConfig = processConfig.getConfig(configVariable)
+    const configVariable = extractConfigVariable(config)
+    const newConfig = getConfig(configVariable)
 
     let err
     try {
-      await reload(newConfig)
+      // 如果修改了规则url 就重新加载
+      if (newConfig.ruleUrl !== defaultConfig().ruleUrl) {
+        await reload(newConfig)
+      }
     } catch (e) {
       err = e.message
     }
@@ -54,13 +65,13 @@ function registerIPC (mainWindow) {
    * 获取配置信息
    */
   ipcMain.on('get-server-config', (event) => {
-    event.sender.send('on-server-config', processConfig.getConfig(store.get('config_variable')))
+    event.returnValue = getLocalConfig()
   })
   /**
    * 获取默认配置信息
    */
   ipcMain.on('get-default-server-config', (event) => {
-    event.returnValue = processConfig.defaultConfig()
+    event.returnValue = defaultConfig()
   })
   /**
    * 检查更新
@@ -68,7 +79,7 @@ function registerIPC (mainWindow) {
   ipcMain.on('check-update', async (event) => {
     try {
       const response = await request({
-        url: processConfig.defaultConfig().checkUpdateURL,
+        url: defaultConfig().checkUpdateURL,
         json: true
       })
       let newVerArray = response.version.split('.')

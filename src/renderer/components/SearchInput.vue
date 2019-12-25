@@ -4,8 +4,7 @@
               @keyup.enter.native="emitClickSearch"
               v-model="value"
               clearable
-              size="medium">
-      <span slot="prepend">{{name||'请选择源站'}}</span>
+              size="small">
       <el-button slot="append" icon="el-icon-search" @click="emitClickSearch">搜索</el-button>
     </el-input>
   </div>
@@ -27,7 +26,11 @@
     },
     methods: {
       emitClickSearch () {
-        this.$emit('search', this.value || this.placeholder)
+        const keyword = this.value || this.placeholder
+        const query = {}
+        Object.assign(query, this.$router.query)
+        query.k = keyword
+        this.$router.push({path: 'index', query})
       }
     },
     created () {

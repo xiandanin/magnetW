@@ -12,3 +12,4 @@ workspace.xml
 src/dist
 Project_Default.xml
 package-lock.json
+.idea

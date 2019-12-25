@@ -36,16 +36,14 @@ function createWindow () {
 
   registerMenu(mainWindow)
 
-  const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(app.getName(), 'gi'), 'MWBrowser')
+  const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(`${app.getName()}\\/.* `, 'gi'), '')
   mainWindow.webContents.setUserAgent(userAgent)
   session.defaultSession.setUserAgent(userAgent)
   app.setName(build.productName)
   mainWindow.loadURL(winURL)
-
   mainWindow.on('closed', () => {
     mainWindow = null
   })
-
   registerServer()
 }
 

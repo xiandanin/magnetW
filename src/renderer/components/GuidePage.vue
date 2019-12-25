@@ -21,21 +21,21 @@
 </template>
 
 <script>
-  import BrowserLink from './BrowserLink'
+import BrowserLink from './BrowserLink'
 
-  export default {
-    props: ['message', 'type'],
-    components: {
-      BrowserLink
-    },
-    data () {
-      return {}
-    },
-    computed: {},
-    methods: {},
-    created () {
-    }
+export default {
+  props: ['message', 'type'],
+  components: {
+    BrowserLink
+  },
+  data () {
+    return {}
+  },
+  computed: {},
+  methods: {},
+  created () {
   }
+}
 </script>
 
 <style scoped lang="scss">

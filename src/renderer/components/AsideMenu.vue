@@ -1,15 +1,16 @@
 <template>
-  <div class="aside-menu">
-    <div class="menu-setting">
-      <div class="menu-setting-checkbox">
-        <el-checkbox v-model='localSetting.memoryLastRule'
-                     @change='handleApplySetting' label="记住上次使用的源站" border
-                     size="mini"></el-checkbox>
+  <el-scrollbar>
+    <div class="aside-menu">
+      <div class="menu-setting">
+        <div class="menu-setting-checkbox">
+          <el-checkbox v-model='localSetting.memoryLastRule'
+                       @change='handleApplySetting' label="记住上次使用的源站" border
+                       size="mini"></el-checkbox>
+        </div>
       </div>
-    </div>
-    <el-menu :default-active="active" @select="emitRuleChangeByID">
-      <el-menu-item v-for="it in ruleList" :key="it.id" :index="it.id">
-        <div slot="title" class="menu-item-title">
+      <el-menu :default-active="active" @select="emitRuleChangeByID">
+        <el-menu-item v-for="it in ruleList" :key="it.id" :index="it.id">
+          <div slot="title" class="menu-item-title">
           <span class="menu-item-title-text">
             <el-image :src="it.icon||formatDefaultIcon(it.id)" class="favicon">
               <i slot="placeholder"></i>
@@ -17,38 +18,45 @@
             </el-image>
             <span class="source-name">{{it.name}}</span>
           </span>
-          <el-tooltip v-if="it.proxy" effect="dark" placement="right">
-            <template v-if="localSetting.proxy">
-              <div slot="content">此源站需要设置代理，已开启代理</div>
-              <i class="el-icon-connection el-icon-connection-success"></i>
-            </template>
-            <template v-else>
-              <div slot="content">此源站需要设置代理，<span class="tooltip-content-proxy"
-                                                  @click="handleClickProxyDoc">查看详情</span>
-              </div>
-              <i class="el-icon-connection"></i>
-            </template>
-          </el-tooltip>
-        </div>
-      </el-menu-item>
-    </el-menu>
-  </div>
+            <el-tooltip v-if="it.proxy" effect="dark" placement="right">
+              <template v-if="config.proxy">
+                <div slot="content">此源站需要设置代理，已开启代理</div>
+                <i class="el-icon-connection el-icon-connection-success"></i>
+              </template>
+              <template v-else>
+                <div slot="content">此源站需要设置代理，
+                  <browser-link class="tooltip-content-proxy"
+                                :href="$config.proxyDocURL" type="primary">查看详情
+                  </browser-link>
+                </div>
+                <i class="el-icon-connection"></i>
+              </template>
+            </el-tooltip>
+          </div>
+        </el-menu-item>
+      </el-menu>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script>
+  import {ipcRenderer} from 'electron'
   import ruleList from '~/rule'
   import axios from '@/plugins/axios'
+  import BrowserLink from './BrowserLink'
 
   export default {
+    components: {BrowserLink},
     props: {
       active: String
     },
     data () {
       return {
-        ruleList: ruleList,
+        ruleList: this.$localSetting.get('rule_list') || ruleList,
         localSetting: {
           memoryLastRule: false
-        }
+        },
+        config: ipcRenderer.sendSync('get-server-config')
       }
     },
     watch: {
@@ -68,6 +76,18 @@
         }
         this.$emit('change', active)
       },
+      handleRefreshActiveRule () {
+        const localSetting = this.$localSetting.get()
+        if (Object.keys(localSetting).length > 0) {
+          this.localSetting = localSetting
+        }
+        let active = this.active
+        if (localSetting.memoryLastRule && localSetting.last_rule_id) {
+          active = localSetting.last_rule_id
+        }
+
+        this.emitRuleChangeByID(active)
+      },
       handleClickProxyDoc () {
         window.open(this.$config.proxyDocURL)
       },
@@ -81,6 +101,7 @@
         axios.get('/rule').then((rsp) => {
           this.$localSetting.saveValue('rule_list', rsp.data)
           this.ruleList = rsp.data
+          this.handleRefreshActiveRule()
           this.$emit('rule-refresh-finished', rsp.data)
         }).catch((err) => {
           this.$emit('rule-refresh-finished', null, err)
@@ -91,26 +112,13 @@
     created () {
     },
     mounted () {
-      const localSetting = this.$localSetting.get()
-      if (Object.keys(localSetting).length > 0) {
-        this.localSetting = localSetting
-      }
-      let active = this.active
-      if (localSetting.memoryLastRule && localSetting.last_rule_id) {
-        active = localSetting.last_rule_id
-      }
-
-      this.emitRuleChangeByID(active)
+      this.handleRefreshActiveRule()
       this.handleReloadRules()
     }
   }
 </script>
 
 <style lang="scss">
-
-  .el-scrollbar__view {
-    height: 100%;
-  }
 
   .el-scrollbar {
     border-right: solid 1px $color-border;

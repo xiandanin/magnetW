@@ -1,30 +1,30 @@
 <template>
-    <div class="header">
-        <div class="header-left" @dblclick="dblclick">
-            <header-version></header-version>
-        </div>
-        <div class="header-center">
-            <slot></slot>
-        </div>
-        <div class="header-right">
-            <el-menu mode="horizontal" default-active="/index" router>
-                <el-menu-item index="/index">首页</el-menu-item>
-                <el-menu-item index="/setting">设置</el-menu-item>
-                <template v-for="menuItem in $config.menu" v-if="$config.menu">
-                    <el-submenu v-if="menuItem.submenu" :index="menuItem.index" popper-class="header-submenu"
-                                :key="menuItem.index">
-                        <template slot="title">{{menuItem.text}}</template>
-                        <el-menu-item v-for="subItem in menuItem.submenu" :key="subItem.link">
-                            <browser-link :href="subItem.link" :underline="false">{{subItem.text}}</browser-link>
-                        </el-menu-item>
-                    </el-submenu>
-                    <el-menu-item v-else :index="menuItem.index" :key="menuItem.index">
-                        <browser-link :href="menuItem.link" :underline="false">{{menuItem.text}}</browser-link>
-                    </el-menu-item>
-                </template>
-            </el-menu>
-        </div>
+  <div class="pager-header">
+    <div class="header-left" @dblclick="dblclick">
+      <header-version></header-version>
     </div>
+    <div class="header-center">
+      <slot></slot>
+    </div>
+    <div class="header-right">
+      <el-menu mode="horizontal" default-active="index" router>
+        <el-menu-item index="index">首页</el-menu-item>
+        <el-menu-item index="setting">设置</el-menu-item>
+        <template v-for="menuItem in $config.menu">
+          <el-submenu v-if="menuItem.submenu" :index="menuItem.index" popper-class="header-submenu"
+                      :key="menuItem.index">
+            <template slot="title">{{menuItem.text}}</template>
+            <el-menu-item v-for="subItem in menuItem.submenu" :key="subItem.link">
+              <browser-link :href="subItem.link" :underline="false">{{subItem.text}}</browser-link>
+            </el-menu-item>
+          </el-submenu>
+          <el-menu-item v-else :index="menuItem.index" :key="menuItem.index">
+            <browser-link :href="menuItem.link" :underline="false">{{menuItem.text}}</browser-link>
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -52,35 +52,36 @@
 </script>
 
 <style lang="scss" scoped>
-    .header {
-        display: flex;
+  .pager-header {
+    display: flex;
 
-        .header-right, .el-menu, .el-menu .el-submenu, /deep/ .el-menu .el-submenu__title, .el-menu .el-link {
-            height: 100%;
-        }
-
-        .header-right {
-            margin-left: auto;
-        }
-
-        .el-menu {
-            background-color: transparent;
-            border: none !important;
-        }
-
-        .header-left {
-            display: flex;
-        }
-
-        .header-center {
-            flex: 1;
-            display: flex;
-            align-items: center;
-
-            .pager-header-input {
-                width: 100%;
-            }
-        }
+    .header-right, .el-menu, .el-menu .el-submenu, /deep/ .el-menu .el-submenu__title, .el-menu .el-link {
+      height: 100%;
     }
+
+    .header-right {
+      margin-left: auto;
+    }
+
+    .el-menu {
+      background-color: transparent;
+      border: none !important;
+    }
+
+    .header-left {
+      display: flex;
+    }
+
+    .header-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .pager-header-input {
+        width: 100%;
+      }
+    }
+  }
 
 </style>

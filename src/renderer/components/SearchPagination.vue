@@ -15,8 +15,7 @@
     props: {
       page: Number
     },
-    components: {
-    },
+    components: {},
     methods: {
       emitPageChanged (page) {
         this.$emit('change', page)

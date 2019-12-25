@@ -1,7 +1,10 @@
 <template>
   <div class="search-sort">
     <!--源站按钮-->
-    <browser-link v-show="false" :button="true" size="mini" :href="url|formatURL" :_blank="true" class="link-button">去源站</browser-link>
+    <browser-link v-show="config.showSourceLink" :button="true" size="mini" :href="url|formatURL" :_blank="true"
+                  class="link-button">
+      去源站
+    </browser-link>
 
     <!--排序方式-->
     <el-dropdown>
@@ -16,7 +19,7 @@
     </el-dropdown>
 
     <!--调整窗口-->
-    <el-dropdown @command="emitWindowChanged">
+    <el-dropdown @command="emitWindowChanged" v-if="false">
       <el-button size="mini">{{windowName||'调整窗口'}}<i class="el-icon-arrow-down el-icon--right"></i>
       </el-button>
       <el-dropdown-menu slot="dropdown">
@@ -29,6 +32,7 @@
 </template>
 
 <script>
+  import {ipcRenderer} from 'electron'
   import BrowserLink from './BrowserLink'
   import Router from './Router'
 
@@ -38,6 +42,7 @@
     },
     data () {
       return {
+        config: ipcRenderer.sendSync('get-server-config'),
         checkedSortKey: null,
         presetLabels: {
           'preset': '默认排序',
@@ -79,6 +84,9 @@
     },
     created () {
       this.checkedSortKey = this.sortKey
+    },
+    activated () {
+      this.config = ipcRenderer.sendSync('get-server-config')
     }
   }
 </script>

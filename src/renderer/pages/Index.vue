@@ -1,53 +1,55 @@
 <template>
-    <el-container>
-        <el-aside ref="indexAside" width="200px">
-            <aside-menu :active="page.current.id"
-                        :ruleList="rule"
-                        @rule-refresh-finished="handleRuleRefreshFinished"
-                        @change="handleRuleChanged"></aside-menu>
-        </el-aside>
-        <el-main>
-            <guide-page ref="guidePage" v-show="guidePage.show"
-                        :message="guidePage.message" :type="guidePage.type"></guide-page>
-            <div class="index-main scroll-container" v-if="activeRule">
-                <el-scrollbar class="index-main-scrollbar">
-                    <div class="pager-search-header" ref="pagerSearchHeader">
-                        <div class="search-option">
-                            <!--排序选项-->
-                            <search-sort
-                                    class="search-option-left"
-                                    :url="page.current.url||activeRule.url"
-                                    :paths="activeRule.paths"
-                                    :window-key="windowKey"
-                                    @change="handleSortChanged"
-                                    @window-change="handleWindowChanged"
-                                    :sortKey="page.current.sort"></search-sort>
-                            <!--页码-->
-                            <search-pagination :page="page.current.page"
-                                               v-if="page.items"
-                                               @change="handlePageChanged"></search-pagination>
-                        </div>
-                    </div>
-                    <!--搜索结果-->
-                    <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
-                        <div class="index-main-content" v-if="page.items">
-                            <pager-items :items="page.items"
-                                         :keyword="page.current.keyword"
-                                         :baseURL="activeRule.url"
-                                         @show-detail="handleShowDetailDialog"></pager-items>
-                            <search-pagination class="footer-search-pagination"
-                                               :page="page.current.page"
-                                               @change="handlePageChanged"></search-pagination>
-                        </div>
-                    </div>
-                </el-scrollbar>
-                <el-backtop target=".index-main-scrollbar .el-scrollbar__wrap" ref="backtop">
-                </el-backtop>
-                <detail-dialog v-if="detailDialog"
-                               :dialog="detailDialog"></detail-dialog>
+  <el-container>
+    <el-aside ref="indexAside" width="200px">
+      <aside-menu
+        :active="page.current.id"
+        @rule-refresh-finished="handleRuleRefreshFinished"
+        @change="handleRuleChanged"></aside-menu>
+    </el-aside>
+    <el-main>
+      <el-scrollbar class="index-main">
+        <guide-page ref="guidePage" v-show="guidePage.show"
+                    :message="guidePage.message" :type="guidePage.type"></guide-page>
+        <div v-if="activeRule">
+          <div class="pager-content">
+            <div ref="pagerSearchHeader">
+              <div class="search-option">
+                <!--排序选项-->
+                <search-sort
+                  class="search-option-left"
+                  :url="page.current.url||activeRule.url"
+                  :paths="activeRule.paths"
+                  :window-key="windowKey"
+                  @change="handleSortChanged"
+                  @window-change="handleWindowChanged"
+                  :sortKey="page.current.sort"></search-sort>
+                <!--页码-->
+                <search-pagination :page="page.current.page"
+                                   v-if="page.items"
+                                   @change="handlePageChanged"></search-pagination>
+              </div>
             </div>
-        </el-main>
-    </el-container>
+            <!--搜索结果-->
+            <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
+              <div class="index-main-content" v-if="page.items">
+                <pager-items :items="page.items"
+                             :keyword="page.current.keyword"
+                             :baseURL="activeRule.url"
+                             @show-detail="handleShowDetailDialog"></pager-items>
+                <search-pagination class="footer-search-pagination"
+                                   :page="page.current.page"
+                                   @change="handlePageChanged"></search-pagination>
+              </div>
+            </div>
+          </div>
+          <el-backtop target=".index-main .el-scrollbar__wrap" ref="backtop">
+          </el-backtop>
+          <detail-dialog v-if="detailDialog"
+                         :dialog="detailDialog"></detail-dialog>
+        </div>
+      </el-scrollbar>
+    </el-main>
+  </el-container>
 </template>
 
 <script>
@@ -97,6 +99,7 @@
     },
     watch: {
       '$route.query' (to, from) {
+        console.log(to)
         if (to.k) this.page.current.keyword = to.k
         if (to.s) this.page.current.sort = to.s
         if (to.p) this.page.current.page = to.p
@@ -120,10 +123,6 @@
         this.page.current.sort = keys[0]
         this.page.current.page = 1
         this.page.current.url = active.url
-
-        if (active.id !== this.$route.params.id) {
-          this.redirectSearch()
-        }
       },
       handleClickSearch (keyword) {
         this.page.current.keyword = keyword
@@ -215,82 +214,71 @@
 
 <style lang="scss" scoped>
 
-    .container {
-        max-width: 960px;
-        margin: auto;
+  .container {
+    max-width: 960px;
+    margin: auto;
+  }
+
+  .container-full {
+    max-width: inherit;
+    margin: auto;
+  }
+
+  .el-main {
+    position: relative;
+    padding: 0;
+  }
+
+  .pager-search-items {
+    margin-top: 20px;
+  }
+
+  .index-main {
+    padding: 0 !important;
+    position: relative;
+
+    .el-backtop {
+      position: absolute;
     }
+  }
 
-    .container-full {
-        max-width: inherit;
-        margin: auto;
+  .guide-page {
+    margin-top: 55px;
+    padding: 0 20px 20px 20px;
+    position: absolute;
+    z-index: 2000;
+    left: 0;
+    right: 0;
+  }
+
+  .pager-search-items {
+
+    /deep/ .el-loading-spinner {
+      top: 230px !important;
     }
+  }
 
-    .el-main {
-        position: relative;
+  .footer-search-option {
+    margin-top: 20px;
+  }
+
+  .search-option {
+    display: flex;
+    align-items: center;
+
+    .search-option-left {
+      flex: 1;
+
     }
+  }
 
-    .pager-search-header {
-        padding: 20px;
-        background-color: white;
-        /*
-        position: fixed;
-        right: 0;
-        z-index: 1000;
-        box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.12);
-        */
-    }
+  .pager-content {
+    padding: 20px;
+  }
 
-    .pager-search-items {
-        padding: 0 20px 20px 20px;
-        margin-top: 0;
-    }
-
-    .index-main {
-        padding: 0 !important;
-        position: relative;
-
-        .el-backtop {
-            position: absolute;
-        }
-    }
-
-    .index-main-scrollbar {
-        border-right: none;
-    }
-
-    .guide-page {
-        margin-top: 70px;
-        padding: 0 20px 20px 20px;
-        position: absolute;
-        z-index: 2000;
-        left: 0;
-        right: 0;
-    }
-
-    .pager-search-items {
-
-        /deep/ .el-loading-spinner {
-            top: 230px !important;
-        }
-    }
-
-    .footer-search-option {
-        margin-top: 20px;
-    }
-
-    .search-option {
-        display: flex;
-        align-items: center;
-
-        .search-option-left {
-            flex: 1;
-
-        }
-    }
-
-    .footer-search-pagination {
-        margin-top: 15px;
-        text-align: right;
-    }
+  .footer-search-pagination {
+    margin-top: 15px;
+    text-align: right;
+  }
 
 </style>

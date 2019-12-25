@@ -77,7 +77,7 @@ async function requestDocument (url, clientHeaders) {
   }
   const userAgent = clientHeaders['user-agent']
   if (userAgent) {
-    const newUserAgent = /windows|mac|android|ios/gi.test(userAgent) && process.env.npm_package_version ? `${userAgent} MWBrowser/${process.env.npm_package_version}` : userAgent
+    const newUserAgent = config.requestIdentifier && /windows|mac|android|ios/gi.test(userAgent) && process.env.npm_package_version ? `${userAgent} MWBrowser/${process.env.npm_package_version}` : userAgent
     headers['User-Agent'] = config.customUserAgent && config.customUserAgentValue ? config.customUserAgentValue : newUserAgent
   }
   console.info({url, headers})

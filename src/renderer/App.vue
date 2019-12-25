@@ -17,4 +17,10 @@
             overflow-x: hidden;
         }
     }
+
+    .header-submenu {
+        .el-menu--popup {
+            min-width: 120px !important;
+        }
+    }
 </style>

@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title><%= htmlWebpackPlugin.options.title %> - <%= htmlWebpackPlugin.options.description %></title>
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta http-equiv="window-target" content="_top">
     <% if (htmlWebpackPlugin.options.nodeModules) { %>
       <!-- Add `node_modules/` to global paths so `require` works properly in development -->
       <script>

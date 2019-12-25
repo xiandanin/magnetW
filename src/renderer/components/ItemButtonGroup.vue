@@ -8,7 +8,7 @@
     <browser-link :size="size" icon="el-icon-document"
                   :href="baseURL + item.detailUrl|formatURL"
                   :button="true"
-                  v-if="show('detail')"
+                  v-if="config.showSourceLink&&show('detail')"
                   :_blank="true">
       源站详情
     </browser-link>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+  import {ipcRenderer} from 'electron'
   import {Base64} from 'js-base64'
   import QrcodePopover from './QrcodePopover'
   import BrowserButton from './BrowserButton'
@@ -53,6 +54,7 @@
     },
     data () {
       return {
+        config: ipcRenderer.sendSync('get-server-config'),
         size: 'mini'
       }
     },

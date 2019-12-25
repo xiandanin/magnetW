@@ -1,12 +1,12 @@
 <template>
-    <el-link :type="type"
-             :target="target||'_blank'"
-             :underline="underline||false"
-             :icon="icon"
-             :class="linkClass"
-             @click="handleClickLink">
-        <slot></slot>
-    </el-link>
+  <el-link :type="type"
+           :target="target||'_blank'"
+           :underline="underline||false"
+           :icon="icon"
+           :class="linkClass"
+           @click="handleClickLink">
+    <slot></slot>
+  </el-link>
 </template>
 
 <script>
@@ -37,17 +37,17 @@
 </script>
 
 <style lang="scss" scoped>
-    .browser-link {
-        font-size: inherit;
-        font-weight: normal;
-    }
+  .browser-link {
+    font-size: inherit;
+    font-weight: normal;
+  }
 
-    .browser-link-button {
-        vertical-align: baseline;
-    }
+  .browser-link-button {
+    vertical-align: baseline;
+  }
 
-    .browser-link-empty, .browser-link-empty:hover {
-        color: $--color-text-primary;
-        cursor: inherit;
-    }
+  .browser-link-empty, .browser-link-empty:hover {
+    color: $--color-text-primary;
+    cursor: inherit;
+  }
 </style>
