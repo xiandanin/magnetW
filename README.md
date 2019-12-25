@@ -1,4 +1,4 @@
-# magnetW
+最近太忙实在无暇维护规则，所以可能已经有大部分源站失效了，有条件的可以[参考文档](https://magnetw.app/advanced/rule-write.html#%E6%89%8B%E5%8A%A8%E9%87%87%E9%9B%86)提交PR
 
 [![GitHub release](https://img.shields.io/github/release/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/stars)
