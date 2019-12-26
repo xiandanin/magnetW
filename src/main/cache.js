@@ -1,5 +1,5 @@
 const moment = require('moment')
-const store = require('memory-cache')
+const store = process.env.BUILD_TARGET === 'electron' ? require('./electron-cache') : require('./memory-cache')
 
 /**
  * 添加缓存
@@ -29,7 +29,7 @@ function get (key) {
     if (moment().isBefore(value.expired)) {
       return value.data
     } else {
-      store.del(key)
+      store.delete(key)
       console.info(`删除过期缓存: ${key}`)
     }
   }

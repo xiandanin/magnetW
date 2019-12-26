@@ -1,3 +1,5 @@
+import {session} from 'electron'
+
 const format = require('./format-parser')
 const URI = require('urijs')
 const fs = require('fs')
@@ -57,7 +59,7 @@ function getRuleById (id) {
 }
 
 async function requestDocument (url, clientHeaders) {
-  const timeout = config.timeout
+  const timeout = config.timeout || 10000
   const proxyURL = config.proxy ? `http://${config.proxyHost}:${config.proxyPort}` : null
 
   // header
@@ -75,9 +77,9 @@ async function requestDocument (url, clientHeaders) {
   if (xForwardedFor) {
     headers['X-Forwarded-For'] = xForwardedFor
   }
-  const userAgent = clientHeaders['user-agent']
+  const userAgent = session.defaultSession.getUserAgent() || clientHeaders['user-agent']
   if (userAgent) {
-    const newUserAgent = config.requestIdentifier && /windows|mac|android|ios/gi.test(userAgent) && process.env.npm_package_version ? `${userAgent} MWBrowser/${process.env.npm_package_version}` : userAgent
+    const newUserAgent = config.requestIdentifier && / windows | mac | android | ios /gi.test(userAgent) && process.env.npm_package_version ? `${userAgent} MWBrowser/${process.env.npm_package_version}` : userAgent
     headers['User-Agent'] = config.customUserAgent && config.customUserAgentValue ? config.customUserAgentValue : newUserAgent
   }
   console.info({url, headers})

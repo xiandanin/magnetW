@@ -56,7 +56,8 @@ Vue.filter('size', function (size) {
 
 Vue.filter('date', function (time) {
   if (/^-?\d+$/.test(time)) {
-    return moment(time).format('YYYY-MM-DD HH:mm')
+    const momentTime = moment(time)
+    return momentTime.format(momentTime.hour() === 0 && momentTime.minute() === 0 ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm')
   } else {
     return time
   }

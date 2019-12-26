@@ -33,7 +33,6 @@
 </template>
 
 <script>
-  import axios from '@/plugins/axios'
   import BrowserLink from './BrowserLink'
   import ItemButtonGroup from './ItemButtonGroup'
   import Qrcode from '@chenfengyuan/vue-qrcode'
@@ -71,7 +70,7 @@
           vm.detail = vm.detailCache[path]
         } else {
           vm.loading = true
-          axios.get('/detail', {
+          this.$http.get('/detail', {
             params: {id, path}
           }).then((rsp) => {
             const data = rsp.data
@@ -118,7 +117,9 @@
     }
   }
 
-  .el-dialog__header {
+  /deep/ .el-dialog__header {
+    word-break: break-all;
+    margin-right: 20px;
     padding-bottom: 0;
   }
 

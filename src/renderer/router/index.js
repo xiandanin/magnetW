@@ -4,15 +4,17 @@ import Main from '@/pages/Main'
 import Index from '@/pages/Index'
 import Setting from '@/pages/Setting'
 
+const routerPush = Router.prototype.push
+Router.prototype.push = function push (location) {
+  return routerPush.call(this, location).catch(error => error)
+}
 Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'main',
       component: Main,
-      redirect: 'index',
       children: [
         {
           path: 'index',

@@ -7,16 +7,20 @@
     </browser-link>
 
     <!--排序方式-->
+    <!--
     <el-dropdown>
-      <el-button size="mini">{{getLabelByKey(checkedSortKey)||'选择排序'}}<i class="el-icon-arrow-down el-icon--right"></i>
+      <el-button size="mini">{{getLabelByKey(checkedSortKey)||'选择排序'}}<i class="el-icon-arrow-down el-icon&#45;&#45;right"></i>
       </el-button>
-      <el-dropdown-menu slot="dropdown">
+      <el-dropdown-menu slot="dropdown" @command="emitSortChanged">
         <el-dropdown-item v-for="(value, key) in paths" :key="key"
-                          :command="key" class="dropdown-sort">
-          <router :query="{ s: key ,p:1}" class="dropdown-sort-item">{{getLabelByKey(key)}}</router>
+                          :command="key" class="dropdown-sort">{{getLabelByKey(key)}}
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+    -->
+    <el-radio-group v-model="checkedLabel" size="mini" @change="emitSortChanged">
+      <el-radio-button v-for="(value, key) in paths" :key="key" :label="getLabelByKey(key)"></el-radio-button>
+    </el-radio-group>
 
     <!--调整窗口-->
     <el-dropdown @command="emitWindowChanged" v-if="false">
@@ -34,7 +38,6 @@
 <script>
   import {ipcRenderer} from 'electron'
   import BrowserLink from './BrowserLink'
-  import Router from './Router'
 
   export default {
     props: {
@@ -43,7 +46,7 @@
     data () {
       return {
         config: ipcRenderer.sendSync('get-server-config'),
-        checkedSortKey: null,
+        checkedLabel: null,
         presetLabels: {
           'preset': '默认排序',
           'time': '收录时间',
@@ -58,7 +61,7 @@
     },
     watch: {
       sortKey (val) {
-        this.checkedSortKey = val
+        this.checkedLabel = this.getLabelByKey(val)
       }
     },
     computed: {
@@ -67,9 +70,12 @@
       }
     },
     components: {
-      BrowserLink, Router
+      BrowserLink
     },
     methods: {
+      emitSortChanged (label) {
+        this.$emit('sort-change', this.getKeyByLabel(label))
+      },
       emitWindowChanged (key) {
         this.$emit('window-change', key)
       },
@@ -80,10 +86,23 @@
        */
       getLabelByKey (key) {
         return key in this.presetLabels ? this.presetLabels[key] : key
+      },
+      /**
+       * 根据文字返回key
+       * @param label
+       * @returns {*}
+       */
+      getKeyByLabel (label) {
+        for (let key in this.presetLabels) {
+          if (this.presetLabels.hasOwnProperty(key) && this.presetLabels[key] === label) {
+            return key
+          }
+        }
+        return label
       }
     },
     created () {
-      this.checkedSortKey = this.sortKey
+      this.checkedLabel = this.getLabelByKey(this.sortKey)
     },
     activated () {
       this.config = ipcRenderer.sendSync('get-server-config')

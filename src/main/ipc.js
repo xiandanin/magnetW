@@ -13,7 +13,7 @@ async function registerServer () {
   const configVariable = store.get('config_variable')
   const newConfig = getConfig(configVariable)
   configVariable ? console.info('使用自定义配置加载服务', configVariable, newConfig) : console.info('使用默认配置加载服务', configVariable, newConfig)
-  const {port, ip, local, message} = await start(newConfig)
+  const {port, ip, local, message} = await start(newConfig, false)
   if (message) {
     console.error(message)
   } else {
@@ -47,9 +47,7 @@ function registerIPC (mainWindow) {
     let err
     try {
       // 如果修改了规则url 就重新加载
-      if (newConfig.ruleUrl !== defaultConfig().ruleUrl) {
-        await reload(newConfig)
-      }
+      await reload(newConfig, newConfig.ruleUrl !== defaultConfig().ruleUrl)
     } catch (e) {
       err = e.message
     }

@@ -81,9 +81,19 @@ module.exports = {
     if (dateText) {
       const parser = [
         {
-          // 2019-12-22 21:26:51
+          // 2019-12-22
           regx: /(\d{4})-(\d{1,2})-(\d{1,2})/,
-          format: ['YYYY-MM-DD', 'YYYY-MM-DD HH:mm:ss']
+          format: ['YYYY-MM-DD']
+        },
+        {
+          // 2019-12-22 21:26
+          regx: /(\d{4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2})/,
+          format: ['YYYY-MM-DD HH:mm']
+        },
+        {
+          // 2019-12-22 21:26:51
+          regx: /(\d{4})-(\d{1,2})-(\d{1,2}) (\d{1,2}):(\d{1,2}):(\d{1,2})/,
+          format: ['YYYY-MM-DD HH:mm:ss']
         },
         {
           // 09-09 2018

@@ -4,12 +4,13 @@
       <div class="menu-setting">
         <div class="menu-setting-checkbox">
           <el-checkbox v-model='localSetting.memoryLastRule'
-                       @change='handleApplySetting' label="记住上次使用的源站" border
+                       @change='handleApplySetting' label="记住选择" border
                        size="mini"></el-checkbox>
+          <el-button size="mini" class="menu-setting-button-right" @click="handleReloadRules(true)">刷新</el-button>
         </div>
       </div>
-      <el-menu :default-active="active" @select="emitRuleChangeByID">
-        <el-menu-item v-for="it in ruleList" :key="it.id" :index="it.id">
+      <el-menu :default-active="active" v-loading="loading" @select="emitRuleChangeByID">
+        <el-menu-item v-for="it in filterRules" :key="it.id" :index="it.id">
           <div slot="title" class="menu-item-title">
           <span class="menu-item-title-text">
             <el-image :src="it.icon||formatDefaultIcon(it.id)" class="favicon">
@@ -18,10 +19,14 @@
             </el-image>
             <span class="source-name">{{it.name}}</span>
           </span>
-            <el-tooltip v-if="it.proxy" effect="dark" placement="right">
+            <el-tooltip v-if="config.cloud&&config.cloudUrl" effect="dark" placement="right">
+              <div slot="content">此源站将使用云解析</div>
+              <i class="el-icon-cloudy"></i>
+            </el-tooltip>
+            <el-tooltip v-else-if="it.proxy" effect="dark" placement="right">
               <template v-if="config.proxy">
-                <div slot="content">此源站需要设置代理，已开启代理</div>
-                <i class="el-icon-connection el-icon-connection-success"></i>
+                <div slot="content">此源站需要设置代理，已启用代理</div>
+                <i class="el-icon-connection"></i>
               </template>
               <template v-else>
                 <div slot="content">此源站需要设置代理，
@@ -29,7 +34,7 @@
                                 :href="$config.proxyDocURL" type="primary">查看详情
                   </browser-link>
                 </div>
-                <i class="el-icon-connection"></i>
+                <i class=" el-icon-warning-outline"></i>
               </template>
             </el-tooltip>
           </div>
@@ -42,7 +47,6 @@
 <script>
   import {ipcRenderer} from 'electron'
   import ruleList from '~/rule'
-  import axios from '@/plugins/axios'
   import BrowserLink from './BrowserLink'
 
   export default {
@@ -56,12 +60,22 @@
         localSetting: {
           memoryLastRule: false
         },
-        config: ipcRenderer.sendSync('get-server-config')
+        config: ipcRenderer.sendSync('get-server-config'),
+        loading: false
       }
     },
     watch: {
       active (id) {
-        this.emitRuleChangeByID(id)
+        // this.emitRuleChangeByID(id)
+      }
+    },
+    computed: {
+      filterRules () {
+        if (this.config.showProxyRule) {
+          return this.ruleList
+        } else {
+          return this.ruleList.filter((it) => !it.proxy)
+        }
       }
     },
     methods: {
@@ -88,37 +102,44 @@
 
         this.emitRuleChangeByID(active)
       },
-      handleClickProxyDoc () {
-        window.open(this.$config.proxyDocURL)
-      },
       formatDefaultIcon (id) {
         return `${this.$config.icons.baseUrl}/${id}.${this.$config.icons.extension}`
       },
       handleApplySetting () {
         this.$localSetting.save(this.localSetting)
       },
-      handleReloadRules () {
-        axios.get('/rule').then((rsp) => {
+      handleReloadRules (reload) {
+        if (reload) this.loading = true
+        this.$http.get('load-rule').then((rsp) => {
           this.$localSetting.saveValue('rule_list', rsp.data)
           this.ruleList = rsp.data
           this.handleRefreshActiveRule()
-          this.$emit('rule-refresh-finished', rsp.data)
+
+          let message = `成功刷新${this.ruleList.length}个规则`
+          if (!this.config.showProxyRule) {
+            message = message + `，其中${this.ruleList.length - this.filterRules.length}个已隐藏`
+          }
+          this.$emit('rule-refresh-finished', 'success', message)
         }).catch((err) => {
-          this.$emit('rule-refresh-finished', null, err)
+          this.$emit('rule-refresh-finished', 'error', err.message)
+        }).finally(() => {
+          if (reload) this.loading = false
         })
       }
     },
-    computed: {},
     created () {
     },
     mounted () {
       this.handleRefreshActiveRule()
       this.handleReloadRules()
+    },
+    activated () {
+      this.config = ipcRenderer.sendSync('get-server-config')
     }
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
   .el-scrollbar {
     border-right: solid 1px $color-border;
@@ -151,16 +172,6 @@
     .el-link {
       justify-content: left;
     }
-
-    .el-icon-connection {
-      font-size: 16px !important;
-      color: $--color-info !important;
-    }
-
-    .el-icon-connection-success {
-      color: $--color-primary !important;
-    }
-
   }
 
   .tooltip-content-proxy {
@@ -179,10 +190,11 @@
 
     .menu-setting-checkbox {
       margin-top: 12px;
+      margin-bottom: 12px;
     }
 
-    .menu-setting-checkbox:last-child {
-      margin-bottom: 12px;
+    .menu-setting-button-right {
+      margin-left: 5px;
     }
 
     .menu-setting-update {
@@ -194,6 +206,21 @@
         margin-left: 10px;
       }
     }
+  }
+
+  .el-icon-warning-outline {
+    color: $--color-danger;
+    font-size: 16px;
+  }
+
+  .el-icon-connection {
+    font-size: 16px;
+    color: $--color-success;
+  }
+
+  .el-icon-cloudy {
+    font-size: 16px;
+    color: $--color-primary;
   }
 
 </style>

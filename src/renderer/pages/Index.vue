@@ -20,7 +20,7 @@
                   :url="page.current.url||activeRule.url"
                   :paths="activeRule.paths"
                   :window-key="windowKey"
-                  @change="handleSortChanged"
+                  @sort-change="handleSortChanged"
                   @window-change="handleWindowChanged"
                   :sortKey="page.current.sort"></search-sort>
                 <!--页码-->
@@ -61,7 +61,6 @@
   import GuidePage from '../components/GuidePage'
   import PagerHeader from '../components/PagerHeader'
   import DetailDialog from '../components/DetailDialog'
-  import axios from '@/plugins/axios'
 
   export default {
     components: {
@@ -98,19 +97,19 @@
       }
     },
     watch: {
-      '$route.query' (to, from) {
-        console.log(to)
-        if (to.k) this.page.current.keyword = to.k
-        if (to.s) this.page.current.sort = to.s
-        if (to.p) this.page.current.page = to.p
-        this.handleRequestSearch()
+      '$route' (to, from) {
+        // 如果路由变化发生在index
+        if (from.path === '/' && to.path === '/') {
+          const query = to.query
+          if (query.k) this.page.current.keyword = query.k
+          this.handleRequestSearch()
+        }
       }
     },
     methods: {
-      handleRuleRefreshFinished (rules, err) {
-        const message = err ? err.message : `成功刷新${rules.length}个规则`
+      handleRuleRefreshFinished (type, message) {
         this.guidePage.message = message
-        this.guidePage.type = err ? 'error' : 'success'
+        this.guidePage.type = type
         console.info(message)
       },
       handleRuleChanged (active) {
@@ -123,35 +122,22 @@
         this.page.current.sort = keys[0]
         this.page.current.page = 1
         this.page.current.url = active.url
+        this.handleRequestSearch()
       },
       handleClickSearch (keyword) {
         this.page.current.keyword = keyword
         this.page.current.page = 1
 
-        this.redirectSearch()
+        this.handleRequestSearch()
       },
       handlePageChanged (page) {
         this.page.current.page = page
-        this.redirectSearch()
+        this.handleRequestSearch()
       },
       handleSortChanged (sortKey) {
         this.page.current.sort = sortKey
         this.page.current.page = 1
-        this.redirectSearch()
-      },
-      redirectSearch () {
-        const cur = this.page.current
-        const query = this.$route.query
-        if (cur.id === this.$route.params.id && cur.sort === query.s && cur.keyword === query.k && cur.page === query.p) {
-          this.handleRequestSearch()
-        } else {
-          const query = {s: cur.sort, k: cur.keyword, p: cur.page}
-          this.$router.push({
-            name: 'index',
-            params: {id: cur.id},
-            query: cur.keyword ? query : null
-          })
-        }
+        this.handleRequestSearch()
       },
       handleRequestSearch () {
         // 发起请求
@@ -159,9 +145,7 @@
         if (params.keyword) {
           this.guidePage.show = false
           this.loading.table = true
-          console.info('搜索', JSON.stringify(params, '/t', 2))
-
-          axios.get('/search', {
+          this.$http.get('search', {
             params: params
           }).then((rsp) => {
             this.page = rsp.data
@@ -188,17 +172,16 @@
       }
     },
     created () {
-      const params = this.$route.params
       const query = this.$route.query
       this.page.current = {
-        id: params.id,
+        id: query.id,
         keyword: query.k,
         sort: query.s,
         page: parseInt(query.p)
       }
     },
     mounted () {
-      this.handleRequestSearch()
+      // this.handleRequestSearch()
     },
     head: {
       title: function () {
@@ -243,7 +226,7 @@
   }
 
   .guide-page {
-    margin-top: 55px;
+    margin-top: 70px;
     padding: 0 20px 20px 20px;
     position: absolute;
     z-index: 2000;

@@ -19,6 +19,10 @@ router.get('/rule', async (ctx) => {
   ctx.success(await repo.getRule())
 })
 
+router.get('/load-rule', async (ctx) => {
+  ctx.success(await repo.loadRuleByURL())
+})
+
 router.get('/search', async (ctx) => {
   if (ctx.query.keyword) {
     const current = repo.makeupSearchOption(ctx.query)
@@ -61,20 +65,20 @@ function getIPAddress () {
   }
 }
 
-async function reload (config) {
+async function reload (config, preload) {
   repo.applyConfig(config)
 
-  const rule = await repo.loadRuleByURL()
-  const ruleLog = rule.map((it) => `[加载][${it.name}][${it.url}]`).join('\n')
-  const proxyCount = rule.filter(it => it.proxy).length
-  const log = `${ruleLog}\n${rule.length}个规则加载完成，其中${rule.length - proxyCount}个可直接使用，${proxyCount}个需要代理\n`
-  console.info(log)
+  if (preload) {
+    const rule = await repo.loadRuleByURL()
+    const ruleLog = rule.map((it) => `[加载][${it.name}][${it.url}]`).join('\n')
+    const proxyCount = rule.filter(it => it.proxy).length
+    const log = `${ruleLog}\n${rule.length}个规则加载完成，其中${rule.length - proxyCount}个可直接使用，${proxyCount}个需要代理\n`
+    console.info(log)
+  }
 }
 
-async function start (config) {
+async function start (config, preload) {
   try {
-    await reload(config)
-
     const port = process.env.PORT || 9000
     koaServer = app.listen(port)
 
@@ -83,6 +87,9 @@ async function start (config) {
       ip: getIPAddress(),
       local: 'localhost'
     }
+
+    await reload(config, preload)
+
     return serverInfo
   } catch (e) {
     return {message: e.message}

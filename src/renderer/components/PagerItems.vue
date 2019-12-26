@@ -1,9 +1,8 @@
 <template>
   <el-table
     border
-    default-expand-all
     :data="items"
-    style="width: 100%;">
+    style="width: 100%;background-color: red">
     <el-table-column
       type="index"
       width="40"

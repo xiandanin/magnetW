@@ -1,14 +1,15 @@
 module.exports = function () {
   return {
     checkUpdateURL: 'https://magnetw.app/update.json',
-    // 云引擎URL
+    // 云解析URL
+    cloud: false,
     cloudUrl: '',
     // 解析规则文件URL 支持网络链接和本地路径
     ruleUrl: 'https://magnetw.app/rule.json',
     // 默认最大化窗口
     maxWindow: false,
     // 是否显示需要代理的源站
-    showProxyRule: true,
+    showProxyRule: false,
     // 是否显示源站入口
     showSourceLink: false,
     // 使用代理
