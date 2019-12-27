@@ -7,9 +7,9 @@
       <slot name="center"></slot>
     </div>
     <div class="header-right">
-      <el-menu mode="horizontal" default-active="/" @select="select">
-        <el-menu-item index="/">首页</el-menu-item>
-        <el-menu-item index="/setting">设置</el-menu-item>
+      <el-menu mode="horizontal" default-active="index" @select="select">
+        <el-menu-item index="index">首页</el-menu-item>
+        <el-menu-item index="setting">设置</el-menu-item>
         <template v-for="menuItem in $config.menu">
           <el-submenu v-if="menuItem.submenu" :index="menuItem.index" popper-class="header-submenu"
                       :key="menuItem.index">
@@ -39,7 +39,7 @@
     },
     data () {
       return {
-        defaultActive: '/'
+        defaultActive: 'index'
       }
     },
     created () {

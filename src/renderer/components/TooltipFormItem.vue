@@ -1,5 +1,5 @@
 <template>
-  <el-form-item>
+  <el-form-item :prop="prop">
     <div slot="label" class="setting-item-label">
       <span>{{label}}</span>
       <el-tooltip v-if="tooltip" effect="light" :content="tooltip" placement="bottom">
@@ -12,7 +12,7 @@
 
 <script>
   export default {
-    props: ['label', 'tooltip'],
+    props: ['label', 'tooltip', 'prop'],
     data () {
       return {}
     },

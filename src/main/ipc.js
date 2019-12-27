@@ -4,7 +4,7 @@ const logger = require('./logger')
 const path = require('path')
 const {ipcMain, app} = require('electron')
 const request = require('request-promise-native')
-const {reload, start} = require('./api')
+const {reload, start, getProxyNetworkInfo} = require('./api')
 const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
 const Store = require('electron-store')
 const store = new Store()
@@ -101,6 +101,15 @@ function registerIPC (mainWindow) {
     event.returnValue = {
       logDir: path.resolve(logger.transports.file.file, '..')
     }
+  })
+
+  /**
+   * 获取网络信息
+   */
+  ipcMain.on('get-network-info', async (event) => {
+    const {info, test, time} = await getProxyNetworkInfo()
+    const message = test ? `本次测试耗时 ${time}ms\n${info}` : '本次测试连接失败，请检查地址端口是否正确'
+    event.sender.send('on-get-network-info', message)
   })
 }
 

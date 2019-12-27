@@ -1,6 +1,6 @@
 <template>
   <div class="config">
-    <el-form ref="form" label-width="auto" label-position="left">
+    <el-form ref="settingForm" label-width="130px" label-position="left" :model='config' :rules="formRules">
       <el-form-item label="默认窗口大小">
         <el-radio-group v-model="config.maxWindow">
           <el-radio :label="false">标准</el-radio>
@@ -11,13 +11,14 @@
         <el-checkbox v-model="config.showProxyRule">显示所有源站</el-checkbox>
         <el-checkbox v-model="config.showSourceLink">显示源站入口</el-checkbox>
       </el-form-item>
-      <tooltip-form-item label="云解析" tooltip="通过服务器中转来代理请求">
+      <tooltip-form-item label="云解析" prop="cloudUrl" tooltip="通过服务器中转来代理请求">
         <el-row>
           <el-col :span="3">
             <el-switch v-model="config.cloud"></el-switch>
           </el-col>
           <el-col :span="20">
-            <el-input :size="formSize" v-model="config.cloudUrl" :placeholder="defaultConfig.cloudUrl"></el-input>
+            <el-input :size="formSize" v-model="config.cloudUrl"
+                      :placeholder="defaultConfig.cloudUrl||'输入解析服务器的BaseURL'"></el-input>
           </el-col>
         </el-row>
       </tooltip-form-item>
@@ -35,23 +36,34 @@
                         class="form-input-center medium-input-width">
                 <template slot="prepend">地址</template>
               </el-input>
-              <el-input :size="formSize" v-model="config.proxyPort" :placeholder="defaultConfig.proxyPort"
+              <el-input :size="formSize" v-model.number="config.proxyPort" :placeholder="defaultConfig.proxyPort"
+                        type="number"
                         class="form-input-center small-input-width input-append">
                 <template slot="prepend">端口</template>
               </el-input>
+              <el-button :size="formSize" @click="handleCheckProxy" class="input-append" :loading="checkProxyLoading">
+                测试连接
+              </el-button>
             </el-col>
           </el-row>
+          <el-input v-show="checkProxyInfo" type="textarea"
+                    v-model="checkProxyInfo"
+                    disabled
+                    autosize
+                    class="textarea-proxy-info"
+                    :size="formSize"></el-input>
         </el-form-item>
         <el-form-item label="预加载">
           <el-switch v-model="config.preload"></el-switch>
         </el-form-item>
         <el-form-item label="缓存有效时间">
-          <el-input :size="formSize" v-model="config.cacheExpired" :placeholder="defaultConfig.cacheExpired"
+          <el-input :size="formSize" v-model.number="config.cacheExpired" :placeholder="defaultConfig.cacheExpired"
+                    type="number"
                     class="form-input-center small-input-width">
             <template slot="append">秒</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="自定义UserAgent">
+        <el-form-item label="自定义UserAgent" prop="customUserAgentValue">
           <el-switch v-model="config.customUserAgent"></el-switch>
           <el-input v-show="config.customUserAgent" type="textarea"
                     v-model="config.customUserAgentValue" placeholder="自定义UserAgent"
@@ -82,8 +94,30 @@
     data () {
       return {
         formSize: 'mini',
+        checkProxyLoading: false,
+        checkProxyInfo: null,
         defaultConfig: ipcRenderer.sendSync('get-default-server-config'),
-        appInfo: ipcRenderer.sendSync('get-app-info')
+        appInfo: ipcRenderer.sendSync('get-app-info'),
+        formRules: {
+          cloudUrl: [{
+            validator: (rule, value, callback) => {
+              // 如果开启了云解析 但不是url
+              const regx = /^(http|https):\/\//
+              const err = this.config.cloud && !regx.test(value) ? new Error('请输入正确的BaseURL') : undefined
+              callback(err)
+            },
+            trigger: 'change'
+          }],
+          customUserAgentValue: [{
+            validator: (rule, value, callback) => {
+              // 如果开启了自定义UserAgent 但是值不合适
+              const regx = /^\s*$|[\u4e00-\u9fa5]|magnet|magnetw|magnetx|mwbrowser|mwspider/
+              const err = this.config.customUserAgent && (!value || regx.test(value)) ? new Error('请输入正确的UserAgent') : undefined
+              callback(err)
+            },
+            trigger: 'change'
+          }]
+        }
       }
     },
     methods: {
@@ -91,9 +125,18 @@
         if (this.appInfo.logDir) {
           shell.showItemInFolder(this.appInfo.logDir)
         }
+      },
+      handleCheckProxy () {
+        this.checkProxyLoading = true
+        ipcRenderer.send('get-network-info')
       }
     },
     created () {
+      // 测试代理的监听
+      ipcRenderer.on('on-get-network-info', (event, content) => {
+        this.checkProxyLoading = false
+        this.checkProxyInfo = content
+      })
     }
   }
 </script>
@@ -109,10 +152,6 @@
 
   .form-input-center /deep/ input {
     text-align: center;
-  }
-
-  /deep/ .el-form-item__label-wrap {
-    margin-left: 0 !important;
   }
 
   .placeholder-disabled {
@@ -135,6 +174,19 @@
 
   .medium-input-width {
     width: 180px;
+  }
+
+  /deep/ input::-webkit-outer-spin-button,
+  /deep/ input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  /deep/ input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .textarea-proxy-info {
+    margin-top: 10px;
   }
 
 </style>

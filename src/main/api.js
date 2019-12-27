@@ -115,5 +115,5 @@ function getServerInfo () {
 }
 
 module.exports = {
-  reload, start, stop, getServerInfo, isStarting, prefix
+  reload, start, stop, getServerInfo, isStarting, prefix, getProxyNetworkInfo: repo.getProxyNetworkInfo
 }

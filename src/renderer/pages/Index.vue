@@ -2,6 +2,7 @@
   <el-container>
     <el-aside ref="indexAside" width="200px">
       <aside-menu
+        :indexActivated="activated"
         :active="page.current.id"
         @rule-refresh-finished="handleRuleRefreshFinished"
         @change="handleRuleChanged"></aside-menu>
@@ -9,6 +10,7 @@
     <el-main>
       <el-scrollbar class="index-main">
         <guide-page ref="guidePage" v-show="guidePage.show"
+                    :title="guidePage.title"
                     :message="guidePage.message" :type="guidePage.type"></guide-page>
         <div v-if="activeRule">
           <div class="pager-content">
@@ -16,6 +18,7 @@
               <div class="search-option">
                 <!--排序选项-->
                 <search-sort
+                  :indexActivated="activated"
                   class="search-option-left"
                   :url="page.current.url||activeRule.url"
                   :paths="activeRule.paths"
@@ -63,6 +66,9 @@
   import DetailDialog from '../components/DetailDialog'
 
   export default {
+    props: {
+      activated: Boolean
+    },
     components: {
       DetailDialog,
       AsideMenu,
@@ -107,10 +113,11 @@
       }
     },
     methods: {
-      handleRuleRefreshFinished (type, message) {
+      handleRuleRefreshFinished (type, title, message) {
+        this.guidePage.title = title
         this.guidePage.message = message
         this.guidePage.type = type
-        console.info(message)
+        console.info(title, message)
       },
       handleRuleChanged (active) {
         this.activeRule = active

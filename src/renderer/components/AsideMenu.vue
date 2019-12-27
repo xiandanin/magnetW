@@ -52,7 +52,8 @@
   export default {
     components: {BrowserLink},
     props: {
-      active: String
+      active: String,
+      indexActivated: Boolean
     },
     data () {
       return {
@@ -67,6 +68,16 @@
     watch: {
       active (id) {
         // this.emitRuleChangeByID(id)
+      },
+      indexActivated (val) {
+        if (val) {
+          const to = ipcRenderer.sendSync('get-server-config')
+          // 如果showProxyRule发生变化 就回调一次规则刷新完成
+          if (this.config.showProxyRule !== to.showProxyRule) {
+            this.emitChangeRules()
+          }
+          this.config = to
+        }
       }
     },
     computed: {
@@ -114,17 +125,21 @@
           this.$localSetting.saveValue('rule_list', rsp.data)
           this.ruleList = rsp.data
           this.handleRefreshActiveRule()
-
-          let message = `成功刷新${this.ruleList.length}个规则`
-          if (!this.config.showProxyRule) {
-            message = message + `，其中${this.ruleList.length - this.filterRules.length}个已隐藏`
-          }
-          this.$emit('rule-refresh-finished', 'success', message)
+          this.emitChangeRules()
         }).catch((err) => {
-          this.$emit('rule-refresh-finished', 'error', err.message)
+          this.emitChangeRules(err)
         }).finally(() => {
           if (reload) this.loading = false
         })
+      },
+      emitChangeRules (err) {
+        if (err) {
+          this.$emit('rule-refresh-finished', 'error', '刷新规则失败')
+        } else {
+          const title = `成功刷新${this.ruleList.length}个规则`
+          const message = this.config.showProxyRule ? null : `其中${this.ruleList.length - this.filterRules.length}个已隐藏，如需显示请更改设置`
+          this.$emit('rule-refresh-finished', 'success', title, message)
+        }
       }
     },
     created () {
@@ -134,7 +149,6 @@
       this.handleReloadRules()
     },
     activated () {
-      this.config = ipcRenderer.sendSync('get-server-config')
     }
   }
 </script>

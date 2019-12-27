@@ -6,11 +6,12 @@
           <browser-link :href="$config.docURL" :button="true" size="mini">查看帮助</browser-link>
         </el-col>
         <el-col :span="12" class="server-config-action">
-          <el-button :loading="loading.save" type="primary" size="mini" @click="handleSaveSetting">保存</el-button>
+          <el-button :loading="loading.save" type="primary" size="mini" @click="handleSaveSetting">应用</el-button>
           <el-button size="mini" type="info" plain @click="handleResetConfig">重置</el-button>
         </el-col>
       </el-row>
       <server-config v-if="config"
+                     ref="settingInfo"
                      :config="config"></server-config>
     </div>
   </el-scrollbar>
@@ -34,22 +35,12 @@
     },
     methods: {
       handleSaveSetting () {
-        let message = null
-        if (this.config.cloudUrl && !this.config.cloudUrl.startsWith('http')) {
-          message = '请输入正确的云解析地址'
-        } else if (!/^[1-9]\d*$/.test(this.config.cacheExpired)) {
-          message = '请输入正确的缓存时间'
-        } else if (!/^[1-9]\d*$/.test(this.config.proxyPort)) {
-          message = '请输入正确的代理端口'
-        } else if (this.config.customUserAgent && /[\u4e00-\u9fa5]|.*magnet.*|.*magnetw.*|.*mwbrowser.*|.*magnetx.*|.*mwspider.*/.test(this.config.customUserAgentValue)) {
-          message = '请输入正确的UserAgent'
-        }
-        if (message) {
-          this.$message({message: message, type: 'error'})
-        } else {
-          this.loading.save = true
-          ipcRenderer.send('save-server-config', this.config)
-        }
+        this.$refs.settingInfo.$refs.settingForm.validate((valid) => {
+          if (valid) {
+            this.loading.save = true
+            ipcRenderer.send('save-server-config', this.config)
+          }
+        })
       },
       handleResetConfig () {
         this.config = ipcRenderer.sendSync('get-default-server-config')

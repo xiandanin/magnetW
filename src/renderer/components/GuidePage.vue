@@ -2,11 +2,12 @@
   <div class="guide-page">
     <el-alert
       class="guide-page-alert"
-      :style="message?'visibility: inherit;':'visibility: hidden;'"
+      :style="title?'visibility: inherit;':'visibility: hidden;'"
       :type="type"
       :closable="false"
+      :description="message"
       show-icon>
-      <span slot="title">{{message}}</span>
+      <span slot="title">{{title}}</span>
     </el-alert>
     <div class="guide-page-content">
       <div v-for="it in $config.guide.content" class="guide-content">
@@ -21,21 +22,21 @@
 </template>
 
 <script>
-import BrowserLink from './BrowserLink'
+  import BrowserLink from './BrowserLink'
 
-export default {
-  props: ['message', 'type'],
-  components: {
-    BrowserLink
-  },
-  data () {
-    return {}
-  },
-  computed: {},
-  methods: {},
-  created () {
+  export default {
+    props: ['message', 'type', 'title'],
+    components: {
+      BrowserLink
+    },
+    data () {
+      return {}
+    },
+    computed: {},
+    methods: {},
+    created () {
+    }
   }
-}
 </script>
 
 <style scoped lang="scss">

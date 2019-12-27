@@ -41,7 +41,7 @@
 
   export default {
     props: {
-      'url': String, 'paths': Object, 'sortKey': String, 'windowKey': String
+      'url': String, 'paths': Object, 'sortKey': String, 'windowKey': String, 'indexActivated': Boolean
     },
     data () {
       return {
@@ -62,6 +62,9 @@
     watch: {
       sortKey (val) {
         this.checkedLabel = this.getLabelByKey(val)
+      },
+      indexActivated (val) {
+        if (val) this.config = ipcRenderer.sendSync('get-server-config')
       }
     },
     computed: {
@@ -105,7 +108,6 @@
       this.checkedLabel = this.getLabelByKey(this.sortKey)
     },
     activated () {
-      this.config = ipcRenderer.sendSync('get-server-config')
     }
   }
 </script>

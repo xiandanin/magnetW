@@ -9,7 +9,12 @@
     </el-header>
 
     <el-main class="main">
-      <router-view name="index"></router-view>
+      <transition name="el-fade-in">
+        <index class="main-child" v-show="indexActivated" :activated="indexActivated"></index>
+      </transition>
+      <transition name="el-fade-in">
+        <setting class="main-child" v-show="settingActivated"></setting>
+      </transition>
     </el-main>
   </el-container>
 </template>
@@ -18,14 +23,24 @@
   import {ipcRenderer, shell} from 'electron'
   import PagerHeader from '../components/PagerHeader'
   import SearchInput from '../components/SearchInput'
+  import Index from '../pages/Index'
+  import Setting from './Setting'
 
   export default {
     components: {
-      PagerHeader, SearchInput
+      PagerHeader, SearchInput, Index, Setting
     },
     data () {
       return {
-        active: '/'
+        active: 'index'
+      }
+    },
+    computed: {
+      indexActivated () {
+        return this.active === 'index'
+      },
+      settingActivated () {
+        return this.active === 'setting'
       }
     },
     methods: {
@@ -33,8 +48,9 @@
         ipcRenderer.send('window-max')
       },
       handleSelectMenu (index) {
-        console.info(index)
-        this.active = index
+        if (index === 'index' || index === 'setting') {
+          this.active = index
+        }
       }
     },
     created () {
@@ -65,12 +81,20 @@
   }
 
   .main {
+    background-color: white;
     padding: 0 !important;
     height: 100%;
+    position: relative;
   }
 
   .el-header {
     border-bottom: 1px solid $color-border;
+  }
+
+  .main-child {
+    position: absolute;
+    width: 100%;
+    height: 100%;
   }
 
   .pager-header-input {
@@ -84,6 +108,10 @@
     margin-left: 15%;
     margin-right: 15%;
     width: 100%;
+  }
+
+  .el-fade-in-enter-active, .el-fade-in-leave-active {
+    transition-duration: 0.2s;
   }
 
 </style>

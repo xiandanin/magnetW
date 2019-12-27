@@ -82,14 +82,10 @@ async function requestDocument (url, clientHeaders) {
     const newUserAgent = config.requestIdentifier && / windows | mac | android | ios /gi.test(userAgent) && process.env.npm_package_version ? `${userAgent} MWBrowser/${process.env.npm_package_version}` : userAgent
     headers['User-Agent'] = config.customUserAgent && config.customUserAgentValue ? config.customUserAgentValue : newUserAgent
   }
-  console.info({url, headers})
+  const options = {url: url, headers: headers, timeout: timeout, proxy: proxyURL}
+  console.info(options)
 
-  const html = await request({
-    url: url,
-    headers: headers,
-    timeout: timeout,
-    proxy: proxyURL
-  })
+  const html = await request(options)
 
   // 用htmlparser2转换一次再解析
   const outerHTML = htmlparser2.DomUtils.getOuterHTML(htmlparser2.parseDOM(html))
@@ -262,6 +258,29 @@ async function getRule () {
   return rule
 }
 
+async function getProxyNetworkInfo () {
+  const proxyURL = `http://${config.proxyHost}:${config.proxyPort}`
+  const ipOptions = {url: 'https://cip.cc', proxy: proxyURL, timeout: 5000, headers: {'User-Agent': 'curl'}}
+  const googleOptions = {url: 'https://www.google.com', proxy: proxyURL, timeout: 5000}
+  // console.info(ipOptions, googleOptions)
+  let info
+  try {
+    info = await request(ipOptions)
+  } catch (e) {
+    console.error(e)
+  }
+  let googleTest = false
+  const start = Date.now()
+  try {
+    const google = await request(googleOptions)
+    googleTest = google.length > 0
+  } catch (e) {
+    console.error(e)
+  }
+  const time = Date.now() - start
+  return {info, test: googleTest, time}
+}
+
 module.exports = {
   applyConfig,
   loadRuleByURL,
@@ -270,5 +289,6 @@ module.exports = {
   clearCache,
   makeupSearchOption,
   obtainDetailResult,
-  asyncCacheSearchResult
+  asyncCacheSearchResult,
+  getProxyNetworkInfo
 }
