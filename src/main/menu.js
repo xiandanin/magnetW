@@ -1,4 +1,4 @@
-const {Menu, app} = require('electron')
+const {Menu, app, session} = require('electron')
 const is = require('electron-is')
 
 module.exports = function (mainWindow) {
@@ -11,6 +11,8 @@ module.exports = function (mainWindow) {
       {type: 'separator'}
     ] : []),
     /* {label: `关于 ${app.getName()}`, role: 'about'}, */
+    {label: '清除缓存', click: () => session.defaultSession.clearCache(() => console.info('清除完成'))},
+    {type: 'separator'},
     ...(is.macOS() ? [
       {label: `隐藏 ${app.getName()}`, role: 'hide'},
       {label: '隐藏其他应用', role: 'hideothers'},
