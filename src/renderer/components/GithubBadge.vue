@@ -9,6 +9,7 @@
 
 <style scoped>
   .github-badge {
+    z-index: -100;
     top: 0;
     position: absolute;
     right: 0;

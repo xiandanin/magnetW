@@ -104,9 +104,134 @@
     }
   },
   {
+    "id": "btdb",
+    "name": " BTDB",
+    "url": "https://btdb.io",
+    "paths": {
+      "time": "?s={k}&sort=time&page={p}",
+      "preset": "?s={k}&page={p}",
+      "size": "?s={k}&sort=length&page={p}"
+    },
+    "xpath": {
+      "group": "//li[@class=\"search-ret-item\"]",
+      "name": "./h2/a",
+      "magnet": "./div/a/@href",
+      "size": "./div/span[1]",
+      "date": "./div/span[3]",
+      "hot": "./div/span[4]"
+    }
+  },
+  {
+    "id": "btdiguo",
+    "name": "BT目录",
+    "url": "https://www.btweb.xyz",
+    "paths": {
+      "time": "/search-update/{k}/page-{p}.html",
+      "size": "/search-size/{k}/page-{p}.html",
+      "hot": "/search-hot/{k}/page-{p}.html"
+    },
+    "xpath": {
+      "group": "//article[@class=\"item\"]/div",
+      "magnet": "./a/@href",
+      "name": "./a",
+      "size": "./p[1]",
+      "date": "./p[1]",
+      "hot": "./p[1]"
+    }
+  },
+  {
+    "id": "cilibao",
+    "name": "磁力宝",
+    "url": "http://www.clb.biz",
+    "paths": {
+      "time": "/s/{k}_time_{p}.html",
+      "size": "/s/{k}_size_{p}.html",
+      "preset": "/s/{k}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "magnet": "./div[1]/h3[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]"
+    }
+  },
+  {
+    "id": "bthub",
+    "name": "BThub",
+    "url": "https://bthub.site",
+    "paths": {
+      "preset": "/main-search-kw-{k}-{p}.html",
+      "size": "/main-search-kw-{k}-length-{p}.html",
+      "time": "/main-search-kw-{k}-time-{p}.html",
+      "hot": "/main-search-kw-{k}-requests-{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item detail-width']",
+      "magnet": "./div[3]/span[5]/a/@href",
+      "name": "./div[1]/h3/a",
+      "size": "./div[3]/span[3]/b",
+      "date": "./div[3]/span[2]/b",
+      "hot": "./div[3]/span[4]/b"
+    }
+  },
+  {
+    "id": "btdad",
+    "name": " Btdad",
+    "url": "http://www.btdad.bid",
+    "paths": {
+      "preset": "/search-{k}-0-0-{p}.html",
+      "size": "/search-{k}-0-1-{p}.html",
+      "time": "/search-{k}-0-2-{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='ssbox']",
+      "magnet": "./div[2]/span[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[2]/span[3]/b[1]",
+      "date": "./div[2]/span[4]/b[1]",
+      "hot": "./div[2]/span[5]/b[1]"
+    }
+  },
+  {
+    "id": "mag",
+    "name": "MAG磁力站",
+    "url": "http://f.cili001.com",
+    "paths": {
+      "preset": "/index/index/k/{k}/p/{p}"
+    },
+    "xpath": {
+      "group": "//ul[@class='link-list']",
+      "magnet": "./li/@data-magnet",
+      "name": "./li/span[1]",
+      "size": "./li/span[2]/span[1]",
+      "date": "./li/span[2]/span[2]"
+    }
+  },
+  {
+    "id": "clzz",
+    "name": "磁力蜘蛛",
+    "proxy": true,
+    "url": "http://www.eclzz.com",
+    "paths": {
+      "preset": "/s/{k}_rel_{p}.html",
+      "time": "/s/{k}_time_{p}.html",
+      "size": "/s/{k}_size_{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "magnet": "./div[1]/h3[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]"
+    }
+  },
+  {
     "id": "ciligou",
     "name": " 磁力狗",
-    "url": "http://www.ciligou.co",
+    "url": "http://www.ciligou.top",
     "paths": {
       "time": "/search?word={k}&sort=time&p={p}",
       "preset": "/search?word={k}&sort=rele&p={p}",
@@ -147,56 +272,25 @@
     }
   },
   {
-    "id": "btdiguo",
-    "name": "BT目录",
-    "url": "https://www.btdiguo.xyz",
+    "id": "btfox",
+    "name": " btfox",
+    "url": "http://www.btfox.biz",
     "paths": {
-      "time": "/search-update/{k}/page-{p}.html",
-      "size": "/search-size/{k}/page-{p}.html",
-      "hot": "/search-hot/{k}/page-{p}.html"
+      "time": "/s?wd={k}&sort=time&page={p}",
+      "size": "/s?wd={k}&sort=length&page={p}",
+      "hot": "/s?wd={k}&sort=hits&page={p}",
+      "preset": "/s?wd={k}&sort=rele&page={p}"
     },
     "xpath": {
-      "group": "//article[@class=\"item\"]/div",
-      "magnet": "./a/@href",
-      "name": "./a",
-      "size": "./p[1]",
-      "date": "./p[1]",
-      "hot": "./p[1]"
-    }
-  },
-  {
-    "id": "thepiratebay_z",
-    "name": "The Pirate Bay",
-    "proxy": false,
-    "url": "https://thepiratebay.unblocker.cc",
-    "paths": {
-      "preset": "/search/{k}/{p}/7/",
-      "time": "/search/{k}/{p}/3/",
-      "size": "/search/{k}/{p}/5/",
-      "hot": "/search/{k}/{p}/9/"
-    },
-    "xpath": {
-      "group": "//table[@id='searchResult']/tr",
-      "magnet": "./td[2]/a[1]/@href",
-      "name": "./td[2]/div/a",
-      "size": "./td[2]/font/text()",
-      "date": "./td[2]/font/text()",
-      "hot": "./td[4]"
-    }
-  },
-  {
-    "id": "mag",
-    "name": "MAG磁力站",
-    "url": "http://f.cili001.com",
-    "paths": {
-      "preset": "/index/index/k/{k}/p/{p}"
-    },
-    "xpath": {
-      "group": "//ul[@class='link-list']",
-      "magnet": "./li/@data-magnet",
-      "name": "./li/span[1]",
-      "size": "./li/span[2]/span[1]",
-      "date": "./li/span[2]/span[2]"
+      "group": "//div[@class=\"item\"]",
+      "name": "./div/div[1]/div/div/div/a",
+      "size": "./div/div/div[2]/text()[2]",
+      "date": "./div/div/div[2]/text()[3]",
+      "detail": {
+        "root": "//div[@class=\"maincontent\"]",
+        "magnet": "./div[2]/div/div[2]/ul/li[1]/a/@href",
+        "files": "./div[3]/div[2]/ul/li[1]"
+      }
     }
   },
   {
@@ -219,64 +313,8 @@
     }
   },
   {
-    "id": "ciliguanjia",
-    "name": "磁力管家",
-    "url": "http://www.ciliguanjia.net",
-    "paths": {
-      "preset": "/sh-{k}-0-0-{p}.html",
-      "time": "/sh-{k}-0-2-{p}.html",
-      "size": "/sh-{k}-0-1-{p}.html",
-      "hot": "/sh-{k}-0-3-{p}.html"
-    },
-    "xpath": {
-      "group": "//dl[@class='detail']",
-      "magnet": "./dt/a/@href",
-      "name": "./dt/a",
-      "size": "./dd[1]/span[3]",
-      "date": "./dd[1]/span[1]/b",
-      "hot": "./dd[1]/span[5]/b"
-    }
-  },
-  {
-    "id": "crsoso",
-    "name": " 超人搜索",
-    "proxy": false,
-    "url": "https://www.crsss.xyz",
-    "paths": {
-      "preset": "/search/{k}/page-{p}.html",
-      "hot": "/search-hot/{k}/page-{p}.html",
-      "size": "search-size/{k}/page-{p}.html"
-    },
-    "xpath": {
-      "group": "//article[@class='item']/div",
-      "magnet": "./a[1]/@href",
-      "name": "./a[1]",
-      "size": "./p[1]",
-      "date": "./p[1]",
-      "hot": "./p[1]"
-    }
-  },
-  {
-    "id": "sobt",
-    "name": " Sobt",
-    "url": "http://www.sobt5.pw",
-    "paths": {
-      "preset": "/q/{k}.html?sort=rel&page={p}",
-      "time": "/q/{k}.html?sort=time&page={p}",
-      "size": "/q/{k}.html?sort=size&page={p}"
-    },
-    "xpath": {
-      "group": "//div[@class='search-item']",
-      "magnet": "./div[1]/h3[1]/a[1]/@href",
-      "name": "./div[1]/h3[1]/a[1]",
-      "size": "./div[3]/span[3]/b[1]",
-      "date": "./div[3]/span[2]/b[1]",
-      "hot": "./div[3]/span[4]/b[1]"
-    }
-  },
-  {
     "id": "nyaa",
-    "name": "Nyaa（动漫）",
+    "name": "Nyaa",
     "proxy": false,
     "url": "https://nyaa.fun",
     "paths": {
@@ -290,7 +328,6 @@
       "name": "./td[2]/a",
       "size": "./td[4]",
       "date": "./td[5]",
-      "hot": "./td[8]",
       "detail": {
         "files": "//div[@class=\"torrent-file-list panel-body\"]/ul/li"
       }
@@ -319,6 +356,81 @@
     }
   },
   {
+    "id": "sobt",
+    "name": " Sobt",
+    "url": "http://www.sobt5.pw",
+    "paths": {
+      "preset": "/q/{k}.html?sort=rel&page={p}",
+      "time": "/q/{k}.html?sort=time&page={p}",
+      "size": "/q/{k}.html?sort=size&page={p}"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "magnet": "./div[1]/h3[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]"
+    }
+  },
+  {
+    "id": "dmhy",
+    "name": "动漫花园",
+    "proxy": false,
+    "url": "https://dmhy.anoneko.com",
+    "paths": {
+      "time": "/topics/list/page/{p}?keyword={k}"
+    },
+    "xpath": {
+      "group": "//*[@id=\"topic_list\"]/tr",
+      "magnet": "./td[4]/a/@href",
+      "name": "./td[3]/a",
+      "size": "./td[5]",
+      "date": "./td[1]/text()",
+      "hot": "./td[8]",
+      "detail": {
+        "files": "//div[@class=\"file_list\"]/ul/li"
+      }
+    }
+  },
+  {
+    "id": "thepiratebay_z",
+    "name": "The Pirate Bay",
+    "proxy": false,
+    "url": "https://thepiratebay.unblocker.cc",
+    "paths": {
+      "preset": "/search/{k}/{p}/7/",
+      "time": "/search/{k}/{p}/3/",
+      "size": "/search/{k}/{p}/5/",
+      "hot": "/search/{k}/{p}/9/"
+    },
+    "xpath": {
+      "group": "//table[@id='searchResult']/tr",
+      "magnet": "./td[2]/a[1]/@href",
+      "name": "./td[2]/div/a",
+      "size": "./td[2]/font/text()",
+      "date": "./td[2]/font/text()",
+      "hot": "./td[4]"
+    }
+  },
+  {
+    "id": "extratorrent",
+    "name": "ExtraTorrent",
+    "url": "https://extratorrent.si",
+    "paths": {
+      "preset": "/search/?page={p}&search={k}&srt=added",
+      "size": "/search/?page={p}&search={k}&srt=size&order=desc"
+    },
+    "xpath": {
+      "group": "//tr[@class='tlr']",
+      "magnet": "./td[1]/a[2]/@href",
+      "name": "./td[3]/a",
+      "size": "./td[5]",
+      "date": "./td[4]",
+      "hot": "./td[6]"
+    }
+  },
+  {
     "id": "1337x",
     "name": "1337X（英文）",
     "proxy": true,
@@ -336,65 +448,8 @@
       "date": "./td[4]",
       "hot": "./td[8]",
       "detail": {
-        "root":"/html/body/main/div/div/div/div[2]",
+        "root": "/html/body/main/div/div/div/div[2]",
         "magnet": "./div[1]/ul[1]/li[1]/a/@href"
-      }
-    }
-  },
-  {
-    "id": "btdad",
-    "name": " Btdad",
-    "url": "http://www.btdad.xyz",
-    "paths": {
-      "preset": "/search-{k}-0-0-{p}.html",
-      "size": "/search-{k}-0-1-{p}.html",
-      "time": "/search-{k}-0-2-{p}.html"
-    },
-    "xpath": {
-      "group": "//div[@class='ssbox']",
-      "magnet": "./div[2]/span[1]/a[1]/@href",
-      "name": "./div[1]/h3[1]/a[1]",
-      "size": "./div[2]/span[3]/b[1]",
-      "date": "./div[2]/span[4]/b[1]",
-      "hot": "./div[2]/span[5]/b[1]"
-    }
-  },
-  {
-    "id": "clzz",
-    "name": "磁力蜘蛛",
-    "proxy": true,
-    "url": "http://www.eclzz.com",
-    "paths": {
-      "preset": "/s/{k}_rel_{p}.html",
-      "time": "/s/{k}_time_{p}.html",
-      "size": "/s/{k}_size_{p}.html"
-    },
-    "xpath": {
-      "group": "//div[@class='search-item']",
-      "magnet": "./div[1]/h3[1]/a[1]/@href",
-      "name": "./div[1]/h3[1]/a[1]",
-      "size": "./div[3]/span[3]/b[1]",
-      "date": "./div[3]/span[2]/b[1]",
-      "hot": "./div[3]/span[4]/b[1]"
-    }
-  },
-  {
-    "id": "dmhy",
-    "name": "动漫花园（镜像）",
-    "proxy": false,
-    "url": "https://dmhy.anoneko.com",
-    "paths": {
-      "time": "/topics/list/page/{p}?keyword={k}"
-    },
-    "xpath": {
-      "group": "//*[@id=\"topic_list\"]/tr",
-      "magnet": "./td[4]/a/@href",
-      "name": "./td[3]/a",
-      "size": "./td[5]",
-      "date": "./td[1]/text()",
-      "hot": "./td[8]",
-      "detail": {
-        "files": "//div[@class=\"file_list\"]/ul/li"
       }
     }
   }

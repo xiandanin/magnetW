@@ -128,14 +128,14 @@
       },
       handleCheckProxy () {
         this.checkProxyLoading = true
-        ipcRenderer.send('get-network-info')
+        ipcRenderer.send('get-network-info', this.config.proxy)
       }
     },
     created () {
       // 测试代理的监听
-      ipcRenderer.on('on-get-network-info', (event, content) => {
+      ipcRenderer.on('on-get-network-info', (event, {info, test, time}) => {
         this.checkProxyLoading = false
-        this.checkProxyInfo = content
+        this.checkProxyInfo = (test ? `连接正常 ${time}ms` : '连接失败，请检查地址端口是否正确') + `\n\n${info.trim()}`
       })
     }
   }
@@ -187,6 +187,10 @@
 
   .textarea-proxy-info {
     margin-top: 10px;
+
+    /deep/ .el-textarea__inner {
+      line-height: 120% !important;
+    }
   }
 
 </style>

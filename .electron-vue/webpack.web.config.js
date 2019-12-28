@@ -137,12 +137,6 @@ if (process.env.NODE_ENV === 'production') {
         from: path.join(__dirname, '../static'),
         to: path.join(__dirname, '../dist/web/static'),
         ignore: ['.*']
-      },
-      // 复制web编译文件夹
-      {
-        from: path.join(__dirname, '../web/dist'),
-        to: path.join(__dirname, '../dist/web'),
-        ignore: ['.*']
       }
     ]),
     new webpack.DefinePlugin({

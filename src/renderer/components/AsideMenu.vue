@@ -52,8 +52,7 @@
   export default {
     components: {BrowserLink},
     props: {
-      active: String,
-      indexActivated: Boolean
+      active: String
     },
     data () {
       return {
@@ -68,16 +67,6 @@
     watch: {
       active (id) {
         // this.emitRuleChangeByID(id)
-      },
-      indexActivated (val) {
-        if (val) {
-          const to = ipcRenderer.sendSync('get-server-config')
-          // 如果showProxyRule发生变化 就回调一次规则刷新完成
-          if (this.config.showProxyRule !== to.showProxyRule) {
-            this.emitChangeRules()
-          }
-          this.config = to
-        }
       }
     },
     computed: {
@@ -91,7 +80,7 @@
     },
     methods: {
       emitRuleChangeByID (id) {
-        const rules = this.ruleList
+        const rules = this.filterRules
         let active = rules[0]
         for (let i = 0; i < rules.length; i++) {
           if (id === rules[i].id) {
@@ -145,6 +134,18 @@
     created () {
     },
     mounted () {
+      // 接收设置刷新的通知
+      this.$on('global:event-config-refreshed', (config, oldConfig) => {
+        this.config = config
+        // 如果修改规则url 重新加载列表
+        if (config.ruleUrl !== oldConfig.ruleUrl) {
+          this.handleReloadRules(false)
+        } else if (config.showProxyRule !== oldConfig.showProxyRule) {
+          // 如果仅修改了显示所有开关 重新检查过滤列表
+          this.emitChangeRules()
+        }
+      })
+
       this.handleRefreshActiveRule()
       this.handleReloadRules()
     },
@@ -223,18 +224,18 @@
   }
 
   .el-icon-warning-outline {
-    color: $--color-danger;
+    color: $--color-danger !important;
     font-size: 16px;
   }
 
   .el-icon-connection {
     font-size: 16px;
-    color: $--color-success;
+    color: $--color-success !important;
   }
 
   .el-icon-cloudy {
     font-size: 16px;
-    color: $--color-primary;
+    color: $--color-primary !important;
   }
 
 </style>

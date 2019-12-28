@@ -22,19 +22,13 @@
     watch: {
       keyword (val) {
         this.value = val
-      },
-      '$route.query.k' (to, from) {
-        if (to) {
-          this.value = to
-        }
       }
     },
     methods: {
       emitClickSearch () {
-        const query = {}
-        Object.assign(query, this.$router.query)
-        query.k = this.value || this.placeholder
-        this.$router.push({path: '/', query})
+        const value = this.value || this.placeholder
+        this.value = value
+        this.$emit('search', value)
       }
     },
     created () {

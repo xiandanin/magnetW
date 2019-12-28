@@ -32,8 +32,10 @@ router.get('/search', async (ctx) => {
       items
     })
 
-    // 异步缓存后续结果
-    repo.asyncCacheSearchResult(current, ctx.headers)
+    if (items && items.length > 0) {
+      // 异步缓存后续结果
+      repo.asyncCacheSearchResult(current, ctx.headers)
+    }
   } else {
     ctx.throw(400, '请输入关键词')
   }

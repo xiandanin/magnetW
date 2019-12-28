@@ -21,7 +21,7 @@ module.exports = function () {
     // 缓存过期时间
     cacheExpired: 7200,
     // 追加请求标识
-    requestIdentifier: true,
+    requestIdentifier: false,
     // 自定义UserAgent
     customUserAgent: false,
     customUserAgentValue: null

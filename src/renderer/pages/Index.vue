@@ -2,7 +2,6 @@
   <el-container>
     <el-aside ref="indexAside" width="200px">
       <aside-menu
-        :indexActivated="activated"
         :active="page.current.id"
         @rule-refresh-finished="handleRuleRefreshFinished"
         @change="handleRuleChanged"></aside-menu>
@@ -18,7 +17,6 @@
               <div class="search-option">
                 <!--排序选项-->
                 <search-sort
-                  :indexActivated="activated"
                   class="search-option-left"
                   :url="page.current.url||activeRule.url"
                   :paths="activeRule.paths"
@@ -36,6 +34,7 @@
             <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
               <div class="index-main-content" v-if="page.items">
                 <pager-items :items="page.items"
+                             :emptyMessage="page.emptyMessage"
                              :keyword="page.current.keyword"
                              :baseURL="activeRule.url"
                              @show-detail="handleShowDetailDialog"></pager-items>
@@ -66,9 +65,6 @@
   import DetailDialog from '../components/DetailDialog'
 
   export default {
-    props: {
-      activated: Boolean
-    },
     components: {
       DetailDialog,
       AsideMenu,
@@ -83,8 +79,9 @@
       return {
         rule: null,
         page: {
-          current: null,
-          items: null
+          current: {},
+          items: null,
+          emptyMessage: null
         },
         activeRule: null,
         loading: {
@@ -94,6 +91,7 @@
         guidePage: {
           show: true,
           type: 'success',
+          title: null,
           message: null
         },
         detailDialog: {
@@ -103,14 +101,6 @@
       }
     },
     watch: {
-      '$route' (to, from) {
-        // 如果路由变化发生在index
-        if (from.path === '/' && to.path === '/') {
-          const query = to.query
-          if (query.k) this.page.current.keyword = query.k
-          this.handleRequestSearch()
-        }
-      }
     },
     methods: {
       handleRuleRefreshFinished (type, title, message) {
@@ -120,11 +110,13 @@
         console.info(title, message)
       },
       handleRuleChanged (active) {
+        if (this.activeRule && this.activeRule.id === active.id) {
+          return
+        }
         this.activeRule = active
         this.$localSetting.saveValue('last_rule_id', active.id)
 
         const keys = Object.keys(active.paths)
-        this.page.items = null
         this.page.current.id = active.id
         this.page.current.sort = keys[0]
         this.page.current.page = 1
@@ -150,6 +142,7 @@
         // 发起请求
         const params = this.page.current
         if (params.keyword) {
+          console.info('搜索', JSON.stringify(params, '\t', 2))
           this.guidePage.show = false
           this.loading.table = true
           this.$http.get('search', {
@@ -157,6 +150,9 @@
           }).then((rsp) => {
             this.page = rsp.data
           }).catch((err) => {
+            this.page.emptyMessage = err.message
+            this.page.items = []
+
             this.$message({
               message: err.message,
               type: 'error'
@@ -179,13 +175,6 @@
       }
     },
     created () {
-      const query = this.$route.query
-      this.page.current = {
-        id: query.id,
-        keyword: query.k,
-        sort: query.s,
-        page: parseInt(query.p)
-      }
     },
     mounted () {
       // this.handleRequestSearch()
@@ -230,15 +219,10 @@
     .el-backtop {
       position: absolute;
     }
-  }
 
-  .guide-page {
-    margin-top: 70px;
-    padding: 0 20px 20px 20px;
-    position: absolute;
-    z-index: 2000;
-    left: 0;
-    right: 0;
+    /deep/ .el-scrollbar__view {
+      position: relative;
+    }
   }
 
   .pager-search-items {

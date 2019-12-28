@@ -2,7 +2,7 @@
   <div class="guide-page">
     <el-alert
       class="guide-page-alert"
-      :style="title?'visibility: inherit;':'visibility: hidden;'"
+      v-show="title"
       :type="type"
       :closable="false"
       :description="message"
@@ -41,12 +41,23 @@
 
 <style scoped lang="scss">
 
+  .guide-page {
+    margin-top: 70px;
+    padding: 0 20px 20px 20px;
+    position: absolute;
+    z-index: 2000;
+    left: 0;
+    right: 0;
+  }
+
   .guide-page-alert {
     min-height: 36px;
   }
 
   .guide-page-content {
-    margin-top: 20px;
+    position: absolute;
+    top: 0;
+    margin-top: 60px;
   }
 
   .guide-content {

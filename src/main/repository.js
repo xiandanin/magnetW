@@ -1,5 +1,3 @@
-import {session} from 'electron'
-
 const format = require('./format-parser')
 const URI = require('urijs')
 const fs = require('fs')
@@ -77,7 +75,7 @@ async function requestDocument (url, clientHeaders) {
   if (xForwardedFor) {
     headers['X-Forwarded-For'] = xForwardedFor
   }
-  const userAgent = session.defaultSession.getUserAgent() || clientHeaders['user-agent']
+  const userAgent = clientHeaders['user-agent']
   if (userAgent) {
     const newUserAgent = config.requestIdentifier && / windows | mac | android | ios /gi.test(userAgent) && process.env.npm_package_version ? `${userAgent} MWBrowser/${process.env.npm_package_version}` : userAgent
     headers['User-Agent'] = config.customUserAgent && config.customUserAgentValue ? config.customUserAgentValue : newUserAgent
@@ -134,7 +132,7 @@ async function obtainSearchResult ({id, url}, headers) {
 }
 
 /**
- * 缓存下一页和下一个源站
+ * 缓存下一页
  * @param id
  * @param keyword
  * @param page
@@ -151,6 +149,7 @@ function asyncCacheSearchResult ({id, keyword, page, sort}, headers) {
   const next = makeupSearchOption({id, keyword, page: page + 1, sort})
   obtainSearchResult({id, url: next.url}, headers)
 
+  /*
   if (page === 1) {
     // 是第一页才缓存下一个源站
     let ruleKeys = Object.keys(ruleMap)
@@ -160,6 +159,7 @@ function asyncCacheSearchResult ({id, keyword, page, sort}, headers) {
       obtainSearchResult({id: next.id, url: next.url}, headers)
     }
   }
+  */
 }
 
 /**
@@ -186,7 +186,8 @@ function parseItemsDocument (document, expression) {
     const hot = expression.hot ? format.extractNumber(format.extractTextByNode(xpath.select(expression.hot, child))) : null
     // 详情url
     const detailExps = expression.name + '/@href'
-    const detailUrl = format.extractTextByNode(xpath.select(detailExps, child))
+    const detailUrlText = format.extractTextByNode(xpath.select(detailExps, child))
+    const detailUrl = detailUrlText ? new URI(detailUrlText).hostname('').toString() : null
     if (name) {
       items.push({
         name, magnet, resolution, date, size, hot, detailUrl
@@ -258,9 +259,9 @@ async function getRule () {
   return rule
 }
 
-async function getProxyNetworkInfo () {
-  const proxyURL = `http://${config.proxyHost}:${config.proxyPort}`
-  const ipOptions = {url: 'https://cip.cc', proxy: proxyURL, timeout: 5000, headers: {'User-Agent': 'curl'}}
+async function getProxyNetworkInfo (proxy) {
+  const proxyURL = proxy ? `http://${config.proxyHost}:${config.proxyPort}` : null
+  const ipOptions = {url: 'https://gip.dog', proxy: proxyURL, timeout: 5000, headers: {'User-Agent': 'curl'}}
   const googleOptions = {url: 'https://www.google.com', proxy: proxyURL, timeout: 5000}
   // console.info(ipOptions, googleOptions)
   let info
@@ -275,7 +276,7 @@ async function getProxyNetworkInfo () {
     const google = await request(googleOptions)
     googleTest = google.length > 0
   } catch (e) {
-    console.error(e)
+    console.error(e.message)
   }
   const time = Date.now() - start
   return {info, test: googleTest, time}

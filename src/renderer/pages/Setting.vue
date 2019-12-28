@@ -6,7 +6,9 @@
           <browser-link :href="$config.docURL" :button="true" size="mini">查看帮助</browser-link>
         </el-col>
         <el-col :span="12" class="server-config-action">
-          <el-button :loading="loading.save" type="primary" size="mini" @click="handleSaveSetting">应用</el-button>
+          <el-button :loading="loading.save" type="primary" size="mini" class="button-apply" @click="handleSaveSetting">
+            应用
+          </el-button>
           <el-button size="mini" type="info" plain @click="handleResetConfig">重置</el-button>
         </el-col>
       </el-row>
@@ -47,8 +49,8 @@
       }
     },
     created () {
-      // 保存配置的监听
-      ipcRenderer.on('on-save-server-config', (event, config, err) => {
+      // 保存配置的监听 - 保存后的配置对象,异常对象,是否通知重载
+      ipcRenderer.on('on-save-server-config', (event, config, oldConfig, err) => {
         this.loading.save = false
         this.config = config
         if (err) {
@@ -56,6 +58,7 @@
         } else {
           this.$resethttp()
           this.$message({message: '保存成功', type: 'success', duration: 1000})
+          this.$emit('global:event-config-refreshed', config, oldConfig)
         }
       })
 
@@ -73,5 +76,9 @@
   .server-config-action {
     margin-bottom: 20px;
     text-align: right;
+  }
+
+  .button-apply {
+    min-width: 80px;
   }
 </style>

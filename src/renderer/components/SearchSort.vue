@@ -41,7 +41,7 @@
 
   export default {
     props: {
-      'url': String, 'paths': Object, 'sortKey': String, 'windowKey': String, 'indexActivated': Boolean
+      'url': String, 'paths': Object, 'sortKey': String, 'windowKey': String
     },
     data () {
       return {
@@ -62,9 +62,6 @@
     watch: {
       sortKey (val) {
         this.checkedLabel = this.getLabelByKey(val)
-      },
-      indexActivated (val) {
-        if (val) this.config = ipcRenderer.sendSync('get-server-config')
       }
     },
     computed: {
@@ -107,7 +104,11 @@
     created () {
       this.checkedLabel = this.getLabelByKey(this.sortKey)
     },
-    activated () {
+    mounted () {
+      // 接收设置刷新的通知
+      this.$on('global:event-config-refreshed', (config, oldConfig) => {
+        this.config = config
+      })
     }
   }
 </script>

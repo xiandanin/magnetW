@@ -1,8 +1,10 @@
 <template>
   <el-table
     border
+    default-expand-all=""
     :data="items"
-    style="width: 100%;background-color: red">
+    :empty-text="emptyMessage||'什么也没搜到'"
+    style="width: 100%">
     <el-table-column
       type="index"
       width="40"
@@ -29,9 +31,15 @@
     </el-table-column>
     <el-table-column type="expand">
       <div class="page-column-expand" slot-scope="scope">
-        <div><span class="page-item-expand">
-          <span class="page-item-expand-label">人气</span>{{scope.row.hot}}</span>
-          <span class="page-item-expand"><span class="page-item-expand-label">时间</span>{{scope.row.date|date}}</span>
+        <div>
+          <span class="page-item-expand">
+            <span class="page-item-expand-label">时间</span>
+            <span>{{scope.row.date|date}}</span>
+          </span>
+          <span class="page-item-expand" v-show="typeof scope.row.hot=='number'">
+            <span class="page-item-expand-label">人气</span>
+            <span>{{scope.row.hot}}</span>
+          </span>
         </div>
         <div class="page-column-expand-action">
           <item-button-group :baseURL="baseURL"
@@ -50,14 +58,14 @@
   import ItemButtonGroup from './ItemButtonGroup'
 
   export default {
-    props: {'items': Array, 'keyword': String, 'baseURL': String},
+    props: {'items': Array, 'keyword': String, 'baseURL': String, 'emptyMessage': String},
     components: {HighlightName, ItemButtonGroup},
     methods: {
       handleShowDetail (item) {
         this.$emit('show-detail', {name: item.name, path: item.detailUrl})
       },
       getButtons (item) {
-        return item.magnet ? ['qrcode', 'detail', 'miwifi', 'copy'] : ['detail', 'detail-dialog']
+        return item.magnet ? ['qrcode', item.detailUrl ? 'detail' : null, 'miwifi', 'copy'] : ['detail', 'detail-dialog']
       }
     },
     mounted () {

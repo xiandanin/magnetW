@@ -1,11 +1,11 @@
-/* 此脚本用于编译成node服务 */
+/* 编译成node服务 */
 
 const {execSync} = require('child_process')
 const path = require('path')
 const fs = require('fs-extra')
 const Terser = require('terser')
 // 需要忽略的文件/文件夹
-const ignore = ['.DS_Store', 'service.js', 'index.js', 'index.dev.js', 'ipc.js', 'node_modules']
+const ignore = ['.DS_Store', 'service.js', 'index.js', 'index.dev.js', 'ipc.js', 'node_modules', 'electron-cache.js']
 // 忽略压缩的文件
 const ignoreMinify = ['defaultConfig.js', 'process-config.js']
 
@@ -15,14 +15,14 @@ const releases = 'build/releases/service'
 const source = 'src/main'
 const finder = require('findit2')(source)
 
-console.info('开始编译')
-execSync('cd web && npm run build', {stdio: 'inherit'})
-
 // 清空发布文件夹
-fs.emptyDirSync(releases)
-
-// 复制web到发布web文件夹
-fs.copySync('web/dist', `${releases}/web`)
+const releasesIgnore = ['package-lock.json', 'node_modules', 'package-lock.json']
+const dir = fs.readdirSync(releases)
+dir.forEach((file) => {
+  if (!isIgnore(file, releasesIgnore)) {
+    fs.removeSync(`${releases}/${file}`)
+  }
+})
 
 fs.copySync('package.json', `${releases}/package.json`)
 fs.copySync(`${source}/service.js`, `${releases}/index.js`)
@@ -52,9 +52,10 @@ finder.on('file', function (file, stat, linkPath) {
  * @param file
  * @returns {boolean}
  */
-function isIgnore (file) {
-  for (let i = 0; i < ignore.length; i++) {
-    if (new RegExp(ignore[i]).test(file)) {
+function isIgnore (file, ignoreArray) {
+  const array = ignoreArray || ignore
+  for (let i = 0; i < array.length; i++) {
+    if (new RegExp(array[i]).test(file)) {
       return true
     }
   }

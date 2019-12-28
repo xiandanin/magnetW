@@ -1,4 +1,4 @@
-import {ipcRenderer} from 'electron'
+import {ipcRenderer, remote} from 'electron'
 import axios from 'axios'
 import URI from 'urijs'
 
@@ -13,7 +13,7 @@ function create () {
   })
 
   http.interceptors.request.use(config => {
-    console.info(new URI(config.baseURL + config.url).query(config.params).toString())
+    config.headers['user-agent'] = remote.session.defaultSession.getUserAgent()
     return config
   })
 

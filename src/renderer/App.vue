@@ -30,4 +30,8 @@
       min-width: 120px !important;
     }
   }
+
+  .el-textarea__inner[disabled="disabled"], .el-input__inner[disabled="disabled"] {
+    color: #909399 !important;
+  }
 </style>

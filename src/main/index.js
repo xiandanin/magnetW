@@ -3,8 +3,10 @@
 import {app, BrowserWindow, session} from 'electron'
 
 const registerMenu = require('./menu')
-const {build} = require('../../package.json')
+const {appName, build} = require('../../package.json')
 const is = require('electron-is')
+const Store = require('electron-store')
+const store = new Store()
 
 /**
  * Set `__static` path to static files in production
@@ -33,15 +35,23 @@ function createWindow () {
     minWidth: 900,
     minHeight: 550,
     frame: true,
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'hidden',
+    show: false
   })
-
-  registerMenu(mainWindow)
+  // 是否设置最大化
+  const configVariable = store.get('config_variable')
+  if (configVariable && configVariable.maxWindow) {
+    mainWindow.maximize()
+  }
+  mainWindow.show()
 
   const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(`${app.getName()}\\/.* `, 'gi'), '')
   mainWindow.webContents.setUserAgent(userAgent)
   session.defaultSession.setUserAgent(userAgent)
   app.setName(build.productName)
+
+  registerMenu(mainWindow)
+
   mainWindow.loadURL(winURL)
   mainWindow.on('closed', () => {
     mainWindow = null

@@ -4,6 +4,7 @@
       <header-version></header-version>
     </div>
     <div class="header-center">
+      <div class="header-center-placeholder" @dblclick="dblclick"></div>
       <slot name="center"></slot>
     </div>
     <div class="header-right">
@@ -68,11 +69,16 @@
       border: none !important;
     }
 
+    /deep/ .el-menu-item {
+      background-color: transparent !important;
+    }
+
     .header-left {
       display: flex;
     }
 
     .header-center {
+      position: relative;
       flex: 1;
       display: flex;
       align-items: center;
@@ -80,6 +86,14 @@
 
       .pager-header-input {
         width: 100%;
+      }
+
+      .header-center-placeholder {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
     }
   }

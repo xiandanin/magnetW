@@ -2,28 +2,27 @@ const {Menu, app} = require('electron')
 const is = require('electron-is')
 
 module.exports = function (mainWindow) {
-  const webContents = mainWindow.webContents
   const appSubmenu = [
     ...(is.dev() ? [
       {
         label: '开发人员工具',
-        click: () => webContents.isDevToolsOpened() ? webContents.closeDevTools() : webContents.openDevTools()
+        role: 'toggledevtools'
       },
       {type: 'separator'}
     ] : []),
-    {label: `关于 ${app.getName()}`, role: 'about'},
-    {label: '重新加载', click: () => mainWindow.reload()},
-    {type: 'separator'},
-    {label: `隐藏 ${app.getName()}`, role: 'hide'},
-    {label: '隐藏其他应用', role: 'hideothers'},
-    {label: '显示全部', role: 'unhide'},
-    {type: 'separator'},
+    /* {label: `关于 ${app.getName()}`, role: 'about'}, */
+    ...(is.macOS() ? [
+      {label: `隐藏 ${app.getName()}`, role: 'hide'},
+      {label: '隐藏其他应用', role: 'hideothers'},
+      {label: '显示全部', role: 'unhide'},
+      {type: 'separator'}
+    ] : []),
     {label: `退出 ${app.getName()}`, role: 'quit'}
   ]
   const windowMenu = [
+    {label: '重新加载', role: 'reload'},
     {label: '最小化', role: 'minimize'},
-    {label: '缩放', role: 'zoom'},
-    {label: '最大化', click: () => mainWindow.maximize()},
+    {label: '最大化', click: () => mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()},
     ...(is.macOS() ? [
       {type: 'separator'},
       {label: '前置全部窗口', role: 'front'}
@@ -56,7 +55,7 @@ module.exports = function (mainWindow) {
   ]
   const menu = Menu.buildFromTemplate([
     {
-      label: 'app',
+      label: app.getName(),
       submenu: appSubmenu
     },
     {

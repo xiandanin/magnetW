@@ -5,6 +5,7 @@ Vue.use({
       const baseURL = 'https://magnetw.app'
       Vue.prototype.$config = {
         baseURL: baseURL,
+        docURL: `${baseURL}/guide`,
         icons: {
           baseUrl: `${baseURL}/favicon`,
           extension: 'ico'

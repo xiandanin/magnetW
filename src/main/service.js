@@ -15,7 +15,7 @@ async function startServer () {
 
   const newConfig = processConfig.getConfig(configVariable)
   configVariable ? console.info('使用自定义配置启动服务', configVariable, newConfig) : console.info('使用默认配置启动服务', configVariable, newConfig)
-  const {port, ip, local, message} = await start(newConfig)
+  const {port, ip, local, message} = await start(newConfig, true)
   if (message) {
     console.error(message)
   } else {

@@ -4,18 +4,19 @@
     <el-header class="drag">
       <pager-header :dblclick="handleClickMaxWindow" :select="handleSelectMenu">
         <!--搜索框与排序菜单-->
-        <search-input slot="center"></search-input>
+        <search-input slot="center" @search="handleSearch"></search-input>
       </pager-header>
     </el-header>
 
     <el-main class="main">
       <transition name="el-fade-in">
-        <index class="main-child" v-show="indexActivated" :activated="indexActivated"></index>
+        <index class="main-child" v-show="indexActivated" ref="index"></index>
       </transition>
       <transition name="el-fade-in">
         <setting class="main-child" v-show="settingActivated"></setting>
       </transition>
     </el-main>
+    <github-badge></github-badge>
   </el-container>
 </template>
 
@@ -23,12 +24,13 @@
   import {ipcRenderer, shell} from 'electron'
   import PagerHeader from '../components/PagerHeader'
   import SearchInput from '../components/SearchInput'
+  import GithubBadge from '../components/GithubBadge'
   import Index from '../pages/Index'
   import Setting from './Setting'
 
   export default {
     components: {
-      PagerHeader, SearchInput, Index, Setting
+      PagerHeader, SearchInput, GithubBadge, Index, Setting
     },
     data () {
       return {
@@ -51,6 +53,9 @@
         if (index === 'index' || index === 'setting') {
           this.active = index
         }
+      },
+      handleSearch (keyword) {
+        this.$refs.index.handleClickSearch(keyword)
       }
     },
     created () {

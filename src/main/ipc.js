@@ -26,10 +26,6 @@ function getLocalConfig () {
 }
 
 function registerIPC (mainWindow) {
-  if (getLocalConfig().maxWindow) {
-    mainWindow.maximize()
-  }
-
   ipcMain.on('window-max', function () {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize()
@@ -41,13 +37,14 @@ function registerIPC (mainWindow) {
    * 保存配置
    */
   ipcMain.on('save-server-config', async (event, config) => {
+    let oldConfig = getLocalConfig()
     const configVariable = extractConfigVariable(config)
     const newConfig = getConfig(configVariable)
 
     let err
     try {
       // 如果修改了规则url 就重新加载
-      await reload(newConfig, newConfig.ruleUrl !== defaultConfig().ruleUrl)
+      await reload(newConfig, newConfig.ruleUrl !== oldConfig.ruleUrl)
     } catch (e) {
       err = e.message
     }
@@ -57,7 +54,7 @@ function registerIPC (mainWindow) {
     } else {
       store.delete('config_variable')
     }
-    event.sender.send('on-save-server-config', newConfig, err)
+    event.sender.send('on-save-server-config', newConfig, oldConfig, err)
   })
   /**
    * 获取配置信息
@@ -106,10 +103,8 @@ function registerIPC (mainWindow) {
   /**
    * 获取网络信息
    */
-  ipcMain.on('get-network-info', async (event) => {
-    const {info, test, time} = await getProxyNetworkInfo()
-    const message = test ? `本次测试耗时 ${time}ms\n${info}` : '本次测试连接失败，请检查地址端口是否正确'
-    event.sender.send('on-get-network-info', message)
+  ipcMain.on('get-network-info', async (event, proxy) => {
+    event.sender.send('on-get-network-info', await getProxyNetworkInfo(proxy))
   })
 }
 
