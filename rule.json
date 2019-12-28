@@ -3,7 +3,7 @@
     "id": "zhongzisou",
     "name": "种子搜",
     "proxy": true,
-    "url": "https://www.zhongzihu.com",
+    "url": "https://www.dongxingdi.com",
     "paths": {
       "time": "/list/{k}/{p}",
       "size": "/list_length/{k}/{p}",
@@ -64,7 +64,7 @@
     "id": "btdet",
     "name": "BT蚂蚁",
     "proxy": true,
-    "url": "http://www.btunt.com",
+    "url": "https://btantx.com",
     "paths": {
       "time": "/search/{k}-first-asc-{p}",
       "size": "/search/{k}-size-desc-{p}",
