@@ -75,7 +75,7 @@
     },
     mounted () {
       // 检查更新
-      // ipcRenderer.send('check-update')
+      ipcRenderer.send('check-update')
     }
   }
 </script>
