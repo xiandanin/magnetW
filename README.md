@@ -9,9 +9,6 @@
 ## 简介
 `magnetW`基于[magnetX](https://github.com/youusername/magnetX)的规则原理，将各个磁力站的搜索结果统一格式化
 
-## Demo演示
-[https://biedian.me](https://biedian.me/)（需要梯子）
-
 ## 安装
 从[Github Releases](https://github.com/xiandanin/magnetW/releases)下载对应平台  
 或者  
