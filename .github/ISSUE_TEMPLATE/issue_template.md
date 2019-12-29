@@ -1,6 +1,6 @@
 ---
 name: issue_template
-about: 默认/通用
+about: 提交issue前请先确认文档是否已有答案
 title: ''
 labels: ''
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 >操作系统版本：  
->磁力搜版本：  
+>应用版本：  
 
 #### 问题描述：
 
