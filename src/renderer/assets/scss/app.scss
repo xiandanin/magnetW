@@ -1,0 +1,35 @@
+@import "./element-variables";
+@import "~element-ui/packages/theme-chalk/src/common/var";
+
+$font-size: 14px;
+$color-border: #e6e6e6;
+$color-title: #555555;
+$color-sub-title: #5b5b5b;
+$color-text-gray: #b3b3b3;
+
+html, body, #app, .el-container {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+.el-button [class*="iconfont"] + span {
+  margin-left: 5px;
+}
+
+.el-table th.is-leaf {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+

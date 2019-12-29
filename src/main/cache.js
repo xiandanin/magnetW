@@ -1,6 +1,5 @@
 const moment = require('moment')
-const Store = require('electron-store')
-const store = new Store()
+const store = process.env.BUILD_TARGET === 'electron' ? require('./electron-cache') : require('./memory-cache')
 
 /**
  * 添加缓存
@@ -10,12 +9,12 @@ const store = new Store()
  */
 function set (key, value, expired) {
   const expiredDate = expired > 0 ? new Date(Date.now() + (expired * 1000)) : new Date(2100, 0, 1)
-  store.set(key, {
+  store.put(key, {
     created: new Date(),
     expired: expiredDate,
     data: value
   })
-  console.debug(`新增缓存: ${key}, 过期时间: ${moment(expiredDate).format('YYYY-MM-DD HH:mm:ss.SSS')}`)
+  console.info(`新增缓存: ${key}, 过期时间: ${moment(expiredDate).format('YYYY-MM-DD HH:mm:ss.SSS')}`)
 }
 
 /**
@@ -29,6 +28,9 @@ function get (key) {
     // 没过期
     if (moment().isBefore(value.expired)) {
       return value.data
+    } else {
+      store.delete(key)
+      console.info(`删除过期缓存: ${key}`)
     }
   }
   return null

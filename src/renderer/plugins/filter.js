@@ -55,6 +55,15 @@ Vue.filter('size', function (size) {
 })
 
 Vue.filter('date', function (time) {
+  if (/^-?\d+$/.test(time)) {
+    const momentTime = moment(time)
+    return momentTime.format(momentTime.hour() === 0 && momentTime.minute() === 0 ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm')
+  } else {
+    return time
+  }
+})
+
+Vue.filter('date_interval', function (time) {
   if (/^\d+$/.test(time)) {
     let delta = moment().valueOf() - time
     delta /= 60 * 1000
@@ -80,4 +89,14 @@ Vue.filter('isNotEmpty', function (obj) {
     return obj.length > 0
   }
   return !!obj
+})
+
+Vue.filter('formatURL', function (url) {
+  if (url && url.startsWith('http')) {
+    const params = 'from=mw'
+    const symbol = url.indexOf('?') !== -1 ? '&' : '?'
+    return url + symbol + params
+  } else {
+    return url
+  }
 })

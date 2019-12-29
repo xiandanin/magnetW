@@ -1,26 +1,20 @@
 import Vue from 'vue'
-import axios from 'axios'
+import create from '@/plugins/axios'
 
-import './plugins/filter'
 import App from './App'
 import router from './router'
-import store from './store'
-import './plugins/element'
-import Setting from './plugins/setting'
-import Project from './data/project'
-import './plugins/analytics.js'
-
-Vue.use(Setting)
-Vue.use(Project)
+import './plugins'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-Vue.http = Vue.prototype.$http = axios
+Vue.http = Vue.prototype.$http = create()
+Vue.prototype.$resethttp = function () {
+  Vue.http = Vue.prototype.$http = create()
+}
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-  components: { App },
+  components: {App},
   router,
-  store,
   template: '<App/>'
 }).$mount('#app')

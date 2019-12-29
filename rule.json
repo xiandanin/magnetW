@@ -1,0 +1,456 @@
+[
+  {
+    "id": "zhongzisou",
+    "name": "种子搜",
+    "proxy": true,
+    "url": "https://www.dongxingdi.com",
+    "paths": {
+      "time": "/list/{k}/{p}",
+      "size": "/list_length/{k}/{p}",
+      "hot": "/list_click/{k}/{p}"
+    },
+    "xpath": {
+      "group": "//table[@class='table table-bordered table-striped']",
+      "magnet": "./tbody/tr[1]/td/div/h4/a/@href",
+      "name": "./tbody/tr[1]/td/div/h4/a",
+      "size": "./tbody/tr[2]/td[2]/strong",
+      "date": "./tbody/tr[2]/td[1]/strong",
+      "hot": "./tbody/tr[2]/td[3]/strong",
+      "detail": {
+        "files": "//*[@id=\"wrapp\"]/div[2]/div/div/div[3]/div[1]/div[2]/div[2]/select/option"
+      }
+    }
+  },
+  {
+    "id": "idope",
+    "name": "idope",
+    "proxy": true,
+    "url": "https://idope.se",
+    "paths": {
+      "preset": "/torrent-list/{k}/?p={p}",
+      "size": "/torrent-list/{k}/?p={p}&o=-2"
+    },
+    "xpath": {
+      "group": "//div[@class=\"resultdiv\"]",
+      "magnet": "./div[1]/a/@href",
+      "name": "./div[1]/a",
+      "size": "./div[2]/div[3]/div[2]",
+      "date": "./div[2]/div[2]/div[2]",
+      "detail": {
+        "files": "//div[@class=\"filetag\"]"
+      }
+    }
+  },
+  {
+    "id": "btsow",
+    "name": "BTSOW",
+    "proxy": true,
+    "url": "https://btos.pw",
+    "paths": {
+      "preset": "/search/{k}/page/{p}"
+    },
+    "xpath": {
+      "group": "//div[@class='row']",
+      "magnet": "./a/@href",
+      "name": "./a/div[1]",
+      "size": "./div[1]",
+      "date": "./div[2]",
+      "detail": {
+        "files": "//div[@class=\"detail data-list\"]/div/text()"
+      }
+    }
+  },
+  {
+    "id": "btdet",
+    "name": "BT蚂蚁",
+    "proxy": true,
+    "url": "https://btantx.com",
+    "paths": {
+      "time": "/search/{k}-first-asc-{p}",
+      "size": "/search/{k}-size-desc-{p}",
+      "hot": "/search/{k}-hot-desc-{p}"
+    },
+    "xpath": {
+      "group": "//div[@id='wall']/div[@class='search-item']",
+      "magnet": "./div[@class='item-title']/a/@href",
+      "name": "./div[@class='item-title']/a",
+      "size": "./div[@class='item-bar']/span[4]/b",
+      "date": "./div[@class='item-bar']/span[1]/b",
+      "hot": "./div[@class='item-bar']/span[2]/b",
+      "detail": {
+        "files": "//*[@id=\"wall\"]/ol/li"
+      }
+    }
+  },
+  {
+    "id": "bt4g",
+    "name": "BT4G",
+    "proxy": true,
+    "url": "https://cn.bt4g.com",
+    "paths": {
+      "time": "/search/{k}/{p}",
+      "size": "/search/{k}/bysize/{p}",
+      "hot": "/search/{k}/byrequests/{p}"
+    },
+    "xpath": {
+      "group": "/html/body/main/div/div[3]/div/div",
+      "magnet": "./h5/a/@href",
+      "name": "./h5/a",
+      "size": "./span[4]/b",
+      "date": "./span[2]/b",
+      "detail": {
+        "files": "//*[@id=\"wall\"]/div[6]/div[2]/ol/li"
+      }
+    }
+  },
+  {
+    "id": "btdb",
+    "name": " BTDB",
+    "url": "https://btdb.io",
+    "paths": {
+      "time": "?s={k}&sort=time&page={p}",
+      "preset": "?s={k}&page={p}",
+      "size": "?s={k}&sort=length&page={p}"
+    },
+    "xpath": {
+      "group": "//li[@class=\"search-ret-item\"]",
+      "name": "./h2/a",
+      "magnet": "./div/a/@href",
+      "size": "./div/span[1]",
+      "date": "./div/span[3]",
+      "hot": "./div/span[4]"
+    }
+  },
+  {
+    "id": "btdiguo",
+    "name": "BT目录",
+    "url": "https://www.btweb.xyz",
+    "paths": {
+      "time": "/search-update/{k}/page-{p}.html",
+      "size": "/search-size/{k}/page-{p}.html",
+      "hot": "/search-hot/{k}/page-{p}.html"
+    },
+    "xpath": {
+      "group": "//article[@class=\"item\"]/div",
+      "magnet": "./a/@href",
+      "name": "./a",
+      "size": "./p[1]",
+      "date": "./p[1]",
+      "hot": "./p[1]"
+    }
+  },
+  {
+    "id": "cilibao",
+    "name": "磁力宝",
+    "url": "http://www.clb.biz",
+    "paths": {
+      "time": "/s/{k}_time_{p}.html",
+      "size": "/s/{k}_size_{p}.html",
+      "preset": "/s/{k}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "magnet": "./div[1]/h3[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]"
+    }
+  },
+  {
+    "id": "bthub",
+    "name": "BThub",
+    "url": "https://bthub.site",
+    "paths": {
+      "preset": "/main-search-kw-{k}-{p}.html",
+      "size": "/main-search-kw-{k}-length-{p}.html",
+      "time": "/main-search-kw-{k}-time-{p}.html",
+      "hot": "/main-search-kw-{k}-requests-{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item detail-width']",
+      "magnet": "./div[3]/span[5]/a/@href",
+      "name": "./div[1]/h3/a",
+      "size": "./div[3]/span[3]/b",
+      "date": "./div[3]/span[2]/b",
+      "hot": "./div[3]/span[4]/b"
+    }
+  },
+  {
+    "id": "btdad",
+    "name": " Btdad",
+    "url": "http://www.btdad.bid",
+    "paths": {
+      "preset": "/search-{k}-0-0-{p}.html",
+      "size": "/search-{k}-0-1-{p}.html",
+      "time": "/search-{k}-0-2-{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='ssbox']",
+      "magnet": "./div[2]/span[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[2]/span[3]/b[1]",
+      "date": "./div[2]/span[4]/b[1]",
+      "hot": "./div[2]/span[5]/b[1]"
+    }
+  },
+  {
+    "id": "mag",
+    "name": "MAG磁力站",
+    "url": "http://f.cili001.com",
+    "paths": {
+      "preset": "/index/index/k/{k}/p/{p}"
+    },
+    "xpath": {
+      "group": "//ul[@class='link-list']",
+      "magnet": "./li/@data-magnet",
+      "name": "./li/span[1]",
+      "size": "./li/span[2]/span[1]",
+      "date": "./li/span[2]/span[2]"
+    }
+  },
+  {
+    "id": "clzz",
+    "name": "磁力蜘蛛",
+    "proxy": true,
+    "url": "http://www.eclzz.com",
+    "paths": {
+      "preset": "/s/{k}_rel_{p}.html",
+      "time": "/s/{k}_time_{p}.html",
+      "size": "/s/{k}_size_{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "magnet": "./div[1]/h3[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]"
+    }
+  },
+  {
+    "id": "ciligou",
+    "name": " 磁力狗",
+    "url": "http://www.ciligou.top",
+    "paths": {
+      "time": "/search?word={k}&sort=time&p={p}",
+      "preset": "/search?word={k}&sort=rele&p={p}",
+      "size": "/search?word={k}&sort=length&p={p}"
+    },
+    "xpath": {
+      "group": "//*[@id=\"Search_list_wrapper\"]/li",
+      "name": "./div[1]/div[1]/a[1]",
+      "size": "./div[2]/text()[1]",
+      "date": "./div[2]/text()[2]",
+      "hot": "./div[2]/span[1]",
+      "detail": {
+        "root": "//*[@id=\"Information_container\"]/div[2]",
+        "magnet": "./div[1]/div[2]/a/@href",
+        "files": "./div[3]/div[2]/ul/li/div"
+      }
+    }
+  },
+  {
+    "id": "ciliba",
+    "name": " 磁力吧",
+    "url": "http://www.ciliba.bid",
+    "paths": {
+      "time": "/s/{k}/1/{p}.html",
+      "hot": "/s/{k}/3/{p}.html",
+      "size": "/s/{k}/2/{p}.html"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]",
+      "detail": {
+        "root": "//*[@id=\"wall\"]",
+        "magnet": "./div[1]/p[7]/a[1]/@href"
+      }
+    }
+  },
+  {
+    "id": "btfox",
+    "name": " btfox",
+    "url": "http://www.btfox.biz",
+    "paths": {
+      "time": "/s?wd={k}&sort=time&page={p}",
+      "size": "/s?wd={k}&sort=length&page={p}",
+      "hot": "/s?wd={k}&sort=hits&page={p}",
+      "preset": "/s?wd={k}&sort=rele&page={p}"
+    },
+    "xpath": {
+      "group": "//div[@class=\"item\"]",
+      "name": "./div/div[1]/div/div/div/a",
+      "size": "./div/div/div[2]/text()[2]",
+      "date": "./div/div/div[2]/text()[3]",
+      "detail": {
+        "root": "//div[@class=\"maincontent\"]",
+        "magnet": "./div[2]/div/div[2]/ul/li[1]/a/@href",
+        "files": "./div[3]/div[2]/ul/li[1]"
+      }
+    }
+  },
+  {
+    "id": "kickass",
+    "name": "KickassTorrents",
+    "proxy": true,
+    "url": "https://kickasstorrents.to",
+    "paths": {
+      "preset": "/usearch/{k}/{p}"
+    },
+    "xpath": {
+      "group": "//tr[@class='odd']",
+      "magnet": "./td[1]/div[2]/div/a/@href",
+      "name": "./td[1]/div[2]/div/a",
+      "size": "./td[2]",
+      "date": "./td[4]",
+      "detail": {
+        "files": "//div[@class=\"dd filelist\"]"
+      }
+    }
+  },
+  {
+    "id": "nyaa",
+    "name": "Nyaa",
+    "proxy": false,
+    "url": "https://nyaa.fun",
+    "paths": {
+      "time": "?q={k}&p={p}",
+      "size": "?q={k}&s=size&o=desc&p={p}",
+      "hot": "?q={k}&s=downloads&o=desc&p={p}"
+    },
+    "xpath": {
+      "group": "//div[@class='table-responsive']/table/tbody/tr",
+      "magnet": "./td[3]/a[2]/@href",
+      "name": "./td[2]/a",
+      "size": "./td[4]",
+      "date": "./td[5]",
+      "detail": {
+        "files": "//div[@class=\"torrent-file-list panel-body\"]/ul/li"
+      }
+    }
+  },
+  {
+    "id": "sukebei",
+    "name": "Sukebei Nyaa",
+    "proxy": false,
+    "url": "https://sukebei.nyaa.fun",
+    "paths": {
+      "time": "?q={k}&p={p}",
+      "size": "?q={k}&s=size&o=desc&p={p}",
+      "hot": "?q={k}&s=downloads&o=desc&p={p}"
+    },
+    "xpath": {
+      "group": "//div[@class='table-responsive']/table/tbody/tr",
+      "magnet": "./td[3]/a[2]/@href",
+      "name": "./td[2]/a",
+      "size": "./td[4]",
+      "date": "./td[5]",
+      "hot": "./td[8]",
+      "detail": {
+        "files": "//div[@class=\"torrent-file-list panel-body\"]/ul/li"
+      }
+    }
+  },
+  {
+    "id": "sobt",
+    "name": " Sobt",
+    "url": "http://www.sobt5.pw",
+    "paths": {
+      "preset": "/q/{k}.html?sort=rel&page={p}",
+      "time": "/q/{k}.html?sort=time&page={p}",
+      "size": "/q/{k}.html?sort=size&page={p}"
+    },
+    "xpath": {
+      "group": "//div[@class='search-item']",
+      "magnet": "./div[1]/h3[1]/a[1]/@href",
+      "name": "./div[1]/h3[1]/a[1]",
+      "size": "./div[3]/span[3]/b[1]",
+      "date": "./div[3]/span[2]/b[1]",
+      "hot": "./div[3]/span[4]/b[1]"
+    }
+  },
+  {
+    "id": "dmhy",
+    "name": "动漫花园",
+    "proxy": false,
+    "url": "https://dmhy.anoneko.com",
+    "paths": {
+      "time": "/topics/list/page/{p}?keyword={k}"
+    },
+    "xpath": {
+      "group": "//*[@id=\"topic_list\"]/tr",
+      "magnet": "./td[4]/a/@href",
+      "name": "./td[3]/a",
+      "size": "./td[5]",
+      "date": "./td[1]/text()",
+      "hot": "./td[8]",
+      "detail": {
+        "files": "//div[@class=\"file_list\"]/ul/li"
+      }
+    }
+  },
+  {
+    "id": "thepiratebay_z",
+    "name": "The Pirate Bay",
+    "proxy": false,
+    "url": "https://thepiratebay.unblocker.cc",
+    "paths": {
+      "preset": "/search/{k}/{p}/7/",
+      "time": "/search/{k}/{p}/3/",
+      "size": "/search/{k}/{p}/5/",
+      "hot": "/search/{k}/{p}/9/"
+    },
+    "xpath": {
+      "group": "//table[@id='searchResult']/tr",
+      "magnet": "./td[2]/a[1]/@href",
+      "name": "./td[2]/div/a",
+      "size": "./td[2]/font/text()",
+      "date": "./td[2]/font/text()",
+      "hot": "./td[4]"
+    }
+  },
+  {
+    "id": "extratorrent",
+    "name": "ExtraTorrent",
+    "url": "https://extratorrent.si",
+    "paths": {
+      "preset": "/search/?page={p}&search={k}&srt=added",
+      "size": "/search/?page={p}&search={k}&srt=size&order=desc"
+    },
+    "xpath": {
+      "group": "//tr[@class='tlr']",
+      "magnet": "./td[1]/a[2]/@href",
+      "name": "./td[3]/a",
+      "size": "./td[5]",
+      "date": "./td[4]",
+      "hot": "./td[6]"
+    }
+  },
+  {
+    "id": "1337x",
+    "name": "1337X（英文）",
+    "proxy": true,
+    "url": "https://1337x.to",
+    "paths": {
+      "preset": "/search/{k}/{p}/",
+      "time": "/sort-search/{k}/time/desc/{p}/",
+      "size": "/sort-search/{k}/size/desc/{p}/",
+      "hot": "/sort-search/{k}/leechers/desc/{p}/"
+    },
+    "xpath": {
+      "group": "//div[@class='table-list-wrap']/table/tbody/tr",
+      "name": "./td[1]/a[2]",
+      "size": "./td[5]",
+      "date": "./td[4]",
+      "hot": "./td[8]",
+      "detail": {
+        "root": "/html/body/main/div/div/div/div[2]",
+        "magnet": "./div[1]/ul[1]/li[1]/a/@href"
+      }
+    }
+  }
+]

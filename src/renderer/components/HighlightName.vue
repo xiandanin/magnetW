@@ -1,18 +1,18 @@
 <template>
-    <div>
-        <el-tag size="mini" v-show="resolution"
-                disable-transitions :type="getResolutionTagType(resolution)">
-            {{resolution}}
-        </el-tag>
-        <span class="page-items-magnet" @click="handleOpenMagnet(url)"
-              v-html="highlight(keyword, value, 'highlight-name')"></span>
-    </div>
+  <browser-link :href="url" type="primary">
+    <el-tag size="mini" v-show="resolution"
+            disable-transitions :type="getResolutionTagType(resolution)">
+      {{resolution}}
+    </el-tag>
+    <span v-html="highlight(keyword, value, 'highlight-name')"></span>
+  </browser-link>
 </template>
 
 <script>
-  import {shell} from 'electron'
+  import BrowserLink from './BrowserLink'
 
   export default {
+    components: {BrowserLink},
     props: ['keyword', 'resolution', 'url', 'value'],
     methods: {
       getResolutionTagType (resolution) {
@@ -34,18 +34,13 @@
        * 点击磁力链
        */
       handleOpenMagnet (url) {
-        shell.openExternal(url)
+        window.open(url)
       }
     }
   }
 </script>
 <style lang="scss">
-    .page-items-magnet {
-        color: $--color-primary;
-        cursor: pointer;
-
-        .highlight-name {
-            color: $--color-danger;
-        }
-    }
+  .highlight-name {
+    color: $--color-danger
+  }
 </style>

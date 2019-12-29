@@ -71,4 +71,5 @@ console.verbose = logger.verbose
 console.debug = logger.debug
 console.silly = logger.silly
 
-export default logger
+logger.debug('注册日志工具', logger.transports.file.fileName)
+module.exports = logger

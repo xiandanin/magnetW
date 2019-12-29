@@ -6,7 +6,7 @@ const path = require('path')
 const {dependencies} = require('../package.json')
 const webpack = require('webpack')
 
-const BabiliWebpackPlugin = require('babili-webpack-plugin')
+const MinifyPlugin = require('babel-minify-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -20,7 +20,6 @@ const {VueLoaderPlugin} = require('vue-loader')
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/webpack-configurations.html#white-listing-externals
  */
 let whiteListedModules = ['vue', 'element-ui']
-
 let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
@@ -48,7 +47,7 @@ let rendererConfig = {
           {
             loader: 'sass-resources-loader',
             options: {
-              resources: path.resolve(__dirname, '../src/renderer/styles/app.scss')
+              resources: path.resolve(__dirname, '../src/renderer/assets/scss/app.scss')
             }
           }
         ]
@@ -132,6 +131,8 @@ let rendererConfig = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
+      title: process.env.npm_package_build_productName,
+      description: process.env.npm_package_description,
       templateParameters (compilation, assets, options) {
         return {
           compilation: compilation,
@@ -164,7 +165,8 @@ let rendererConfig = {
   resolve: {
     alias: {
       '@': path.join(__dirname, '../src/renderer'),
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      '~': path.resolve(),
     },
     extensions: ['.js', '.vue', '.json', '.css', '.node']
   },
@@ -189,7 +191,7 @@ if (process.env.NODE_ENV === 'production') {
   rendererConfig.devtool = ''
 
   rendererConfig.plugins.push(
-    new BabiliWebpackPlugin(),
+    new MinifyPlugin(),
     new CopyWebpackPlugin([
       {
         from: path.join(__dirname, '../static'),

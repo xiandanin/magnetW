@@ -1,33 +1,53 @@
 <template>
-    <el-button v-if="button" :type="type" @click="handleClickLink" :size="size">
-        <slot></slot>
-    </el-button>
-    <el-link v-else target="_blank" :type="type" @click="handleClickLink" :underline="underline||false">
-        <slot></slot>
-    </el-link>
+  <el-link :type="type"
+           :target="target||'_blank'"
+           :underline="underline||false"
+           :icon="icon"
+           :class="linkClass"
+           @click="handleClickLink">
+    <slot></slot>
+  </el-link>
 </template>
 
 <script>
   import {shell} from 'electron'
-  import mixin from '../mixins/mixin'
 
   export default {
-    props: ['href', 'underline', 'type', 'button', 'size'],
-    mixins: [mixin],
+    props: {
+      'href': String,
+      'underline': Boolean,
+      'type': String,
+      'button': Boolean,
+      'size': String,
+      'target': String,
+      'icon': String
+    },
+    computed: {
+      linkClass () {
+        const linkClass = this.href ? 'browser-link' : 'browser-link browser-link-empty'
+        return this.button ? `el-button el-button--default el-button--${this.size} browser-link-button` : linkClass
+      }
+    },
     methods: {
       handleClickLink () {
-        if (this.href) {
-          const url = this.formatURL(this.href)
-          shell.openExternal(url)
-        }
+        shell.openExternal(this.href)
       }
     }
   }
 </script>
 
-<style scoped>
-    .el-link {
-        font-weight: normal;
-        vertical-align: baseline;
-    }
+<style lang="scss" scoped>
+  .browser-link {
+    font-size: inherit;
+    font-weight: normal;
+  }
+
+  .browser-link-button {
+    vertical-align: baseline;
+  }
+
+  .browser-link-empty, .browser-link-empty:hover {
+    color: $--color-text-primary;
+    cursor: inherit;
+  }
 </style>
