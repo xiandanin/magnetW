@@ -4,7 +4,7 @@
     <el-header class="drag">
       <pager-header :dblclick="handleClickMaxWindow" :select="handleSelectMenu">
         <!--搜索框与排序菜单-->
-        <search-input slot="center" @search="handleSearch"></search-input>
+        <search-input slot="center" class="no-drag" @search="handleSearch"></search-input>
       </pager-header>
     </el-header>
 
