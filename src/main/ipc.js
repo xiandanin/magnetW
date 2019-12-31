@@ -4,20 +4,24 @@ const logger = require('./logger')
 const path = require('path')
 const {ipcMain, app} = require('electron')
 const request = require('request-promise-native')
-const {reload, start, getProxyNetworkInfo} = require('./api')
+const {reload, start, isStarting, getProxyNetworkInfo} = require('./api')
 const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
 const Store = require('electron-store')
 const store = new Store()
 
 async function registerServer () {
-  const configVariable = store.get('config_variable')
-  const newConfig = getConfig(configVariable)
-  configVariable ? console.info('使用自定义配置加载服务', configVariable, newConfig) : console.info('使用默认配置加载服务', configVariable, newConfig)
-  const {port, ip, local, message} = await start(newConfig, false)
-  if (message) {
-    console.error(message)
+  if (isStarting()) {
+    console.info('服务已启动')
   } else {
-    console.info(`启动成功，本地访问 http://${local}:${port}，IP访问 http://${ip}:${port}`)
+    const configVariable = store.get('config_variable')
+    const newConfig = getConfig(configVariable)
+    configVariable ? console.info('使用自定义配置加载服务', configVariable, newConfig) : console.info('使用默认配置加载服务', configVariable, newConfig)
+    const {port, ip, local, message} = await start(newConfig, false)
+    if (message) {
+      console.error(message)
+    } else {
+      console.info(`启动成功，本地访问 http://${local}:${port}，IP访问 http://${ip}:${port}`)
+    }
   }
 }
 

@@ -25,6 +25,8 @@ module.exports = function (mainWindow) {
     {label: '重新加载', role: 'reload'},
     {label: '最小化', role: 'minimize'},
     {label: '最大化', click: () => mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()},
+    {type: 'separator'},
+    {label: '关闭', role: 'close'},
     ...(is.macOS() ? [
       {type: 'separator'},
       {label: '前置全部窗口', role: 'front'}

@@ -62,7 +62,8 @@ module.exports = {
    */
   extractMagnet (url) {
     if (url) {
-      if (/magnet:?[^\\"]+/.test(url)) {
+      // 如果是磁力链 直接返回
+      if (/^(magnet:\?xt=urn:btih:)/.test(url)) {
         return url.toLowerCase()
       } else {
         // 如果不是磁力链 就提取 连续字母数字32-40位

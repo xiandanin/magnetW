@@ -10,14 +10,12 @@ Vue.use({
           baseUrl: `${baseURL}/favicon`,
           extension: 'ico'
         },
-        searchPlaceholder: ['火影忍者', '钢铁侠', '美国队长', '犬夜叉', '七龙珠', '奥特曼', '千与千寻', '你的名字。'],
+        searchPlaceholder: ['火影忍者', '钢铁侠', '美国队长', '犬夜叉', '七龙珠', '奥特曼', '英雄联盟'],
         proxyDocURL: `${baseURL}/guide/proxy.html`,
         guide: {
-          content: [
-          ]
+          content: []
         },
-        menu: [
-        ]
+        menu: []
       }
     }
   }
