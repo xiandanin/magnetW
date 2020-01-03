@@ -81,7 +81,7 @@ async function reload (config, preload) {
 
 async function start (config, preload) {
   try {
-    const port = process.env.PORT || 9000
+    const port = config.port || 9000
     koaServer = app.listen(port)
 
     serverInfo = {

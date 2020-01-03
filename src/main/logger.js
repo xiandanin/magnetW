@@ -1,11 +1,12 @@
-import logger from 'electron-log'
-import moment from 'moment'
-import util from 'util'
+const logger = require('electron-log')
+const moment = require('moment')
+const util = require('util')
+const path = require('path')
 
 const level = process.env.NODE_ENV === 'development' ? 'debug' : 'silly'
 logger.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'
 logger.transports.console.level = level
-logger.transports.file.fileName = `${moment().format('YYYY-MM-DD')}.log`
+logger.transports.file.fileName = `${moment().format('YYYY-MM-DD_HH_mm')}.log`
 logger.transports.file.level = level
 
 const styles = {
@@ -57,10 +58,38 @@ logger.transports.console = (msg) => {
   if (messageLevel.id <= levels[level].id) {
     const time = moment(msg.date).format('YYYY-MM-DD HH:mm:ss.SSS')
     const color = messageLevel.color
-    const header = colorize(util.format('[%s][%s]', time, msg.level.toUpperCase()), color)
+    const stack = getStackInfo()
+    const header = colorize(util.format('[%s][%s][%s]', time, msg.level.toUpperCase(), `${stack.file}:${stack.line}`), color)
     const text = colorize(util.format(...msg.data), color)
     const message = util.format('%s %s', header, text)
+
     console.log(message)
+  }
+}
+
+function getStackInfo () {
+  try {
+    const stackReg = /at\s+(.*)\s+\((.*):(\d*):(\d*)\)/i
+    const stackReg2 = /at\s+()(.*):(\d*):(\d*)/i
+    const stackList = (new Error()).stack.split('\n').slice(3)
+    const sp = stackReg.exec(stackList[1]) || stackReg2.exec(stackList[1])
+    const data = {}
+    if (sp && sp.length === 5) {
+      data.method = sp[1]
+      data.path = sp[2]
+      data.line = sp[3]
+      data.pos = sp[4]
+      data.file = path.basename(data.path)
+    }
+    return data
+  } catch (e) {
+    return {
+      method: '',
+      path: '',
+      line: '',
+      pos: '',
+      file: ''
+    }
   }
 }
 

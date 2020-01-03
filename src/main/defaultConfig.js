@@ -14,8 +14,9 @@ module.exports = function () {
     showSourceLink: false,
     // 使用代理
     proxy: false,
+    proxyType: 'http',
     proxyHost: '127.0.0.1',
-    proxyPort: '1087',
+    proxyPort: 1087,
     // 是否启用预加载 启用后会预加载下一页和下一个源站
     preload: true,
     // 缓存过期时间

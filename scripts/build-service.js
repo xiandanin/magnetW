@@ -5,18 +5,21 @@ const path = require('path')
 const fs = require('fs-extra')
 const Terser = require('terser')
 // 需要忽略的文件/文件夹
-const ignore = ['.DS_Store', 'service.js', 'index.js', 'index.dev.js', 'ipc.js', 'node_modules', 'electron-cache.js']
+const ignore = ['.DS_Store', 'service.js', 'index.js', 'index.dev.js', 'ipc.js', 'node_modules', 'electron-cache.js', 'menu.js']
 // 忽略压缩的文件
 const ignoreMinify = ['defaultConfig.js', 'process-config.js']
 
-const releases = 'build/releases/service'
+const releases = 'build/releases'
+if (!fs.existsSync(releases)) {
+  fs.mkdirsSync(releases)
+}
 
 // 源代码路径
 const source = 'src/main'
 const finder = require('findit2')(source)
 
 // 清空发布文件夹
-const releasesIgnore = ['package-lock.json', 'node_modules', 'package-lock.json']
+const releasesIgnore = ['package-lock.json', 'node_modules']
 const dir = fs.readdirSync(releases)
 dir.forEach((file) => {
   if (!isIgnore(file, releasesIgnore)) {
@@ -24,7 +27,6 @@ dir.forEach((file) => {
   }
 })
 
-fs.copySync('package.json', `${releases}/package.json`)
 fs.copySync(`${source}/service.js`, `${releases}/index.js`)
 finder.on('file', function (file, stat, linkPath) {
   if (isIgnore(file)) {
@@ -46,6 +48,18 @@ finder.on('file', function (file, stat, linkPath) {
     // console.info('复制文件', file, target)
   }
 })
+// 生成package.json
+console.log('生成package.json')
+const json = require(path.resolve('package.json'))
+json.main = './index.js'
+json.scripts = {
+  'start': 'node index.js'
+}
+delete json.build
+delete json.appName
+delete json.description
+json.name = 'magnetw-service'
+fs.writeFileSync(path.resolve(releases, 'package.json'), JSON.stringify(json, '\t', 2))
 
 /**
  * 是否忽略此文件

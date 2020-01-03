@@ -6,8 +6,8 @@
           <browser-link :href="$config.docURL" :button="true" size="mini">查看帮助</browser-link>
         </el-col>
         <el-col :span="12" class="server-config-action">
-          <el-button :loading="loading.save" type="primary" size="mini" class="button-apply" @click="handleSaveSetting">
-            应用
+          <el-button :loading="loading.save" type="primary" size="mini" @click="handleSaveSetting">
+            应用设置
           </el-button>
           <el-button size="mini" type="info" plain @click="handleResetConfig">重置</el-button>
         </el-col>
@@ -78,7 +78,4 @@
     text-align: right;
   }
 
-  .button-apply {
-    min-width: 80px;
-  }
 </style>

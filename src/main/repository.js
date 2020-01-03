@@ -58,7 +58,7 @@ function getRuleById (id) {
 
 async function requestDocument (url, clientHeaders) {
   const timeout = config.timeout || 10000
-  const proxyURL = config.proxy ? `http://${config.proxyHost}:${config.proxyPort}` : null
+  const proxyURL = getProxyURL(config)
 
   // header
   const uri = new URI(url)
@@ -259,22 +259,24 @@ async function getRule () {
   return rule
 }
 
-async function getProxyNetworkInfo (proxy) {
-  const proxyURL = proxy ? `http://${config.proxyHost}:${config.proxyPort}` : null
+function getProxyURL (newConfig) {
+  return newConfig.proxy ? `${newConfig.proxyType}://${newConfig.proxyHost}:${newConfig.proxyPort}` : null
+}
+
+async function getProxyNetworkInfo (config) {
+  let proxyURL = getProxyURL(config)
   const ipOptions = {url: 'https://gip.dog', proxy: proxyURL, timeout: 5000, headers: {'User-Agent': 'curl'}}
   const googleOptions = {url: 'https://www.google.com', proxy: proxyURL, timeout: 5000}
-  // console.info(ipOptions, googleOptions)
-  let info
-  try {
-    info = await request(ipOptions)
-  } catch (e) {
-    console.error(e)
-  }
+  console.info('测试代理', proxyURL)
   let googleTest = false
+  let info
   const start = Date.now()
   try {
     const google = await request(googleOptions)
+    console.log(google)
     googleTest = google.length > 0
+    info = await request(ipOptions)
+    console.log(info)
   } catch (e) {
     console.error(e.message)
   }

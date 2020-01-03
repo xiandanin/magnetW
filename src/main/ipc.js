@@ -6,6 +6,7 @@ const {ipcMain, app} = require('electron')
 const request = require('request-promise-native')
 const {reload, start, isStarting, getProxyNetworkInfo} = require('./api')
 const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
+const is = require('electron-is')
 const Store = require('electron-store')
 const store = new Store()
 
@@ -76,6 +77,9 @@ function registerIPC (mainWindow) {
    * 检查更新
    */
   ipcMain.on('check-update', async (event) => {
+    if (is.dev()) {
+      return
+    }
     try {
       const response = await request({
         url: defaultConfig().checkUpdateURL,
@@ -107,8 +111,8 @@ function registerIPC (mainWindow) {
   /**
    * 获取网络信息
    */
-  ipcMain.on('get-network-info', async (event, proxy) => {
-    event.sender.send('on-get-network-info', await getProxyNetworkInfo(proxy))
+  ipcMain.on('get-network-info', async (event, config) => {
+    event.sender.send('on-get-network-info', await getProxyNetworkInfo(config))
   })
 }
 

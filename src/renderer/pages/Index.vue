@@ -153,10 +153,12 @@
             this.page.emptyMessage = err.message
             this.page.items = []
 
+            /*
             this.$message({
               message: err.message,
               type: 'error'
             })
+            */
           }).finally(() => {
             this.loading.table = false
           })

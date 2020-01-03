@@ -30,7 +30,9 @@
     },
     methods: {
       handleClickLink () {
-        shell.openExternal(this.href)
+        if (this.href) {
+          shell.openExternal(this.href)
+        }
       }
     }
   }
@@ -47,7 +49,7 @@
   }
 
   .browser-link-empty, .browser-link-empty:hover {
-    color: $--color-text-primary;
+    color: $--color-text-primary !important;
     cursor: inherit;
   }
 </style>

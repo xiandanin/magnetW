@@ -1,7 +1,7 @@
 {
   "name": "magnetw",
   "version": "3.1.0",
-  "appName": "磁力搜",
+  "appName": "magnetw",
   "description": "磁力链接聚合搜索",
   "license": "GNU General Public License v3.0",
   "main": "./dist/electron/main.js",
@@ -21,7 +21,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "磁力搜 For magnetW",
+    "productName": "magnetW",
     "appId": "app.magnetw.desktop",
     "artifactName": "${name}-${version}-${os}.${ext}",
     "directories": {
@@ -83,6 +83,8 @@
     "moment": "^2.24.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
+    "socks5-http-client": "^1.0.4",
+    "socks5-https-client": "^1.2.1",
     "urijs": "^1.19.2",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.1",

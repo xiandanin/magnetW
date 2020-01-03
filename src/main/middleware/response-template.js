@@ -13,10 +13,11 @@ module.exports = async (ctx, next) => {
       ctx.throw(ctx.status, ctx.message)
     }
   } catch (e) {
-    console.error(e.message)
+    const statusCode = e.statusCode || 500
+    console.error(statusCode, e.message)
     const maxLength = 100
-    const message = e.message
-    ctx.status = e.statusCode || 500
+    const message = `${statusCode} - 请求异常，请查看日志`
+    ctx.status = statusCode
     ctx.body = {
       success: false,
       message: message.length > maxLength ? `${message.substring(0, maxLength)}...` : message
