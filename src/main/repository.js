@@ -4,6 +4,7 @@ const fs = require('fs')
 const request = require('request-promise-native')
 // const fs = require('fs')
 const cacheManager = require('./cache')
+const {initialize, isFilter} = require('./filter/filter')
 const xpath = require('xpath')
 const DOMParser = require('xmldom').DOMParser
 const htmlparser2 = require('htmlparser2')
@@ -26,6 +27,8 @@ let config = null
 
 function applyConfig (newConfig) {
   config = newConfig
+
+  initialize()
 }
 
 function clearCache () {
@@ -128,7 +131,14 @@ async function obtainSearchResult ({id, url}, headers) {
       cacheManager.set(url, items, config.cacheExpired)
     }
   }
-  return items
+
+  // 过滤
+  const originalCount = items.length
+  if (config.filterBare) {
+    items = items.filter((item) => !isFilter(item.name.replace(/ /g, '')))
+  }
+
+  return {originalCount, items}
 }
 
 /**

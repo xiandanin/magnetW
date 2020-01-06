@@ -12,6 +12,8 @@ module.exports = function () {
     showProxyRule: false,
     // 是否显示源站入口
     showSourceLink: false,
+    // 过滤
+    filterBare: true,
     // 使用代理
     proxy: false,
     proxyType: 'http',

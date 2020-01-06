@@ -68,11 +68,12 @@ module.exports = {
       } else {
         // 如果不是磁力链 就提取 连续字母数字32-40位
         let match = /[\da-zA-Z]{32,40}/.exec(url)
-        return match ? `magnet:?xt=urn:btih:${match[0]}`.toLowerCase() : url
+        if (match) {
+          return `magnet:?xt=urn:btih:${match[0]}`.toLowerCase()
+        }
       }
-    } else {
-      return null
     }
+    return null
   },
   /**
    * 提取时间
@@ -116,26 +117,24 @@ module.exports = {
         }
       }
       // 如果是时间间隔
-      let number = 0
-      let name = 'days'
       if (/yesterday|昨天/.test(dateText)) {
-        number = 1
-        name = 'days'
+        return moment().subtract(1, 'day').valueOf()
       } else {
         const unit = [
-          {regx: /year|年/, name: 'years'}, {regx: /month|月/, name: 'months'},
-          {regx: /day|天/, name: 'days'}, {regx: /hours|小时/, name: 'hour'},
-          {regx: /minute|分钟/, name: 'minutes'}, {regx: /second|秒/, name: 'seconds'}
+          {regx: 'yesterday|昨天', name: 'days'},
+          {regx: 'year|年', name: 'years'}, {regx: 'month|月', name: 'months'},
+          {regx: 'day|天', name: 'days'}, {regx: 'hour|小时', name: 'hour'},
+          {regx: 'minute|分钟', name: 'minutes'}, {regx: 'second|秒', name: 'seconds'}
         ]
-        number = extractNumber(dateText)
         for (let i = 0; i < unit.length; i++) {
-          if (unit[i].regx.test(dateText)) {
-            name = unit[i].name
-            break
+          const dateTextMatches = new RegExp(`\\d+( {0,3})${unit[i].regx}`, 'gi').exec(dateText)
+          if (dateTextMatches) {
+            const number = extractNumber(dateTextMatches[0])
+            return moment().subtract(number, unit[i].name).valueOf()
           }
         }
       }
-      return moment().subtract(number, name).valueOf()
+      return 0
     }
   },
   /**

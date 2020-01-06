@@ -18,7 +18,8 @@
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
-    "postinstall": "npm run lint:fix"
+    "postinstall": "npm run lint:fix",
+    "export-filter-db": "node scripts/export-filter-db.js"
   },
   "build": {
     "productName": "magnetW",
@@ -83,8 +84,10 @@
     "moment": "^2.24.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
+    "sequelize": "^5.21.3",
     "socks5-http-client": "^1.0.4",
     "socks5-https-client": "^1.2.1",
+    "sqlite3": "^4.1.1",
     "urijs": "^1.19.2",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.3.1",

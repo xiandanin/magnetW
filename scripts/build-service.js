@@ -1,6 +1,5 @@
 /* 编译成node服务 */
 
-const {execSync} = require('child_process')
 const path = require('path')
 const fs = require('fs-extra')
 const Terser = require('terser')

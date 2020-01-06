@@ -1,6 +1,5 @@
 const Koa = require('koa')
 const Router = require('koa-router')
-const koaStatic = require('koa-static')
 const app = new Koa()
 const prefix = '/api'
 const router = new Router({prefix})
@@ -26,9 +25,10 @@ router.get('/load-rule', async (ctx) => {
 router.get('/search', async (ctx) => {
   if (ctx.query.keyword) {
     const current = repo.makeupSearchOption(ctx.query)
-    const items = await repo.obtainSearchResult(current, ctx.headers)
+    const {originalCount, items} = await repo.obtainSearchResult(current, ctx.headers)
     ctx.success({
       current,
+      originalCount,
       items
     })
 
