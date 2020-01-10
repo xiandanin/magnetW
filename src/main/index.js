@@ -36,7 +36,11 @@ function createWindow () {
     minHeight: 550,
     frame: true,
     titleBarStyle: 'hidden',
-    show: false
+    backgroundColor: '#fff',
+    show: false,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
   // 是否设置最大化
   const configVariable = store.get('config_variable')
@@ -45,10 +49,9 @@ function createWindow () {
   }
   mainWindow.show()
 
-  const userAgent = mainWindow.webContents.getUserAgent().replace(new RegExp(`${app.getName()}\\/.* `, 'gi'), '')
-  mainWindow.webContents.setUserAgent(userAgent)
+  const userAgent = mainWindow.webContents.userAgent.replace(new RegExp(`${app.name}\\/.* `, 'gi'), '')
+  mainWindow.webContents.userAgent = userAgent
   session.defaultSession.setUserAgent(userAgent)
-  app.setName(build.productName)
 
   registerMenu(mainWindow)
 

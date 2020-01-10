@@ -23,6 +23,13 @@
         </el-row>
       </tooltip-form-item>
       <div v-show="!config.cloud">
+        <el-form-item label="服务状态">
+          <div v-if="appInfo.server" class="server-status-success">
+            <span>IP: {{appInfo.server.ip}}</span>
+            <span class="server-status-success-value">端口: {{appInfo.server.port}}</span>
+          </div>
+          <div v-else class="server-status-error">{{appInfo.server.message||'服务启动失败，请查看日志'}}</div>
+        </el-form-item>
         <tooltip-form-item label="规则同步URL" tooltip="解析源站的规则文件URL，支持网络链接和本地路径">
           <el-input :size="formSize" v-model="config.ruleUrl" :placeholder="defaultConfig.ruleUrl"></el-input>
         </tooltip-form-item>
@@ -199,4 +206,21 @@
     }
   }
 
+  .config-item-title {
+    font-size: 20px;
+    font-weight: bolder;
+    color: $--color-text-primary;
+  }
+
+  .server-status-error {
+    color: $--color-danger;
+  }
+
+  .server-status-success {
+    color: $--color-success
+  }
+
+  .server-status-success-value {
+    margin-left: 15px;
+  }
 </style>

@@ -24,6 +24,10 @@ body {
   -webkit-app-region: no-drag;
 }
 
+.el-button, .el-radio__label, .el-checkbox__label {
+  font-weight: normal;
+}
+
 .el-button [class*="iconfont"] + span {
   margin-left: 5px;
 }

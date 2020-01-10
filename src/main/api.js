@@ -81,11 +81,11 @@ async function reload (config, preload) {
 
 async function start (config, preload) {
   try {
-    const port = config.port || 9000
-    koaServer = app.listen(port)
-
+    const port = config.port
+    koaServer = await app.listen(port)
+    const address = koaServer.address()
     serverInfo = {
-      port,
+      port: address.port,
       ip: getIPAddress(),
       local: 'localhost'
     }

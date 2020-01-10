@@ -10,16 +10,16 @@ module.exports = function (mainWindow) {
       },
       {type: 'separator'}
     ] : []),
-    /* {label: `关于 ${app.getName()}`, role: 'about'}, */
+    /* {label: `关于 ${app.name}`, role: 'about'}, */
     {label: '清除缓存', click: () => session.defaultSession.clearCache(() => console.info('清除完成'))},
     {type: 'separator'},
     ...(is.macOS() ? [
-      {label: `隐藏 ${app.getName()}`, role: 'hide'},
+      {label: `隐藏 ${app.name}`, role: 'hide'},
       {label: '隐藏其他应用', role: 'hideothers'},
       {label: '显示全部', role: 'unhide'},
       {type: 'separator'}
     ] : []),
-    {label: `退出 ${app.getName()}`, role: 'quit'}
+    {label: `退出 ${app.name}`, role: 'quit'}
   ]
   const windowMenu = [
     {label: '重新加载', role: 'reload'},
@@ -59,7 +59,7 @@ module.exports = function (mainWindow) {
   ]
   const menu = Menu.buildFromTemplate([
     {
-      label: app.getName(),
+      label: app.name,
       submenu: appSubmenu
     },
     {

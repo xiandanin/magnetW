@@ -4,7 +4,7 @@ const logger = require('./logger')
 const path = require('path')
 const {ipcMain, app} = require('electron')
 const request = require('request-promise-native')
-const {reload, start, isStarting, getProxyNetworkInfo} = require('./api')
+const {reload, start, isStarting, getProxyNetworkInfo, getServerInfo} = require('./api')
 const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
 const is = require('electron-is')
 const Store = require('electron-store')
@@ -104,7 +104,8 @@ function registerIPC (mainWindow) {
    */
   ipcMain.on('get-app-info', (event) => {
     event.returnValue = {
-      logDir: path.resolve(logger.transports.file.file, '..')
+      logDir: path.resolve(logger.transports.file.file, '..'),
+      server: getServerInfo()
     }
   })
 

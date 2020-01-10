@@ -14,3 +14,4 @@ Project_Default.xml
 package-lock.json
 .idea
 scripts/filter-data/.temp
+build/icons/.icns.iconset

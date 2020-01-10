@@ -1,7 +1,7 @@
 <template>
   <browser-link href="/" target="_self">
     <div class="header-version align-items-center">
-      <img src="../assets/logo.png" width="36" height="36"/>
+      <img src="../assets/logo.svg" width="36" height="36"/>
       <div>
         <div class="header-version-text">{{ appName }}</div>
         <div class="header-version-text">v{{ version }}</div>
