@@ -5,16 +5,12 @@ import URI from 'urijs'
 function create () {
   const isDev = process.env.NODE_ENV === 'development'
   const config = ipcRenderer.sendSync('get-server-config')
-  const baseURI = config.cloud && config.cloudUrl ? new URI(config.cloudUrl) : new URI('http://localhost:9000')
+  const localBaseURL = ipcRenderer.sendSync('api-base-url')
+  const baseURI = config.cloud && config.cloudUrl ? new URI(config.cloudUrl) : new URI(localBaseURL)
   let http = axios.create({
     baseURL: baseURI.directory('api').toString(),
     timeout: 10000,
     responseType: 'json'
-  })
-
-  http.interceptors.request.use(config => {
-    config.headers['user-agent'] = remote.session.defaultSession.getUserAgent()
-    return config
   })
 
   http.interceptors.response.use(response => {

@@ -16,17 +16,23 @@
           <el-col :span="3">
             <el-switch v-model="config.cloud"></el-switch>
           </el-col>
-          <el-col :span="20">
+          <el-col :span="21">
             <el-input :size="formSize" v-model="config.cloudUrl"
                       :placeholder="defaultConfig.cloudUrl||'输入解析服务器的BaseURL'"></el-input>
           </el-col>
         </el-row>
       </tooltip-form-item>
       <div v-show="!config.cloud">
-        <el-form-item label="服务状态">
+        <div class="setting-item-dividing"></div>
+        <el-form-item label="映射端口">
+          <el-radio-group v-model="config.customServerPort">
+            <el-radio :label="false">自动分配</el-radio>
+            <el-radio :label="true">自定义</el-radio>
+          </el-radio-group>
+          <el-input :size="formSize" v-model="config.customServerPortValue" class="input-server-port"
+                    type="number" placeholder="端口号" :disabled="!config.customServerPort"></el-input>
           <div v-if="appInfo.server" class="server-status-success">
-            <span>IP: {{appInfo.server.ip}}</span>
-            <span class="server-status-success-value">端口: {{appInfo.server.port}}</span>
+            <span>搜索服务已启动，映射端口：{{appInfo.server.port}}</span>
           </div>
           <div v-else class="server-status-error">{{appInfo.server.message||'服务启动失败，请查看日志'}}</div>
         </el-form-item>
@@ -41,7 +47,7 @@
             <el-col :span="10">
               <el-radio-group v-model="config.proxyType">
                 <el-radio label="http">HTTP</el-radio>
-                <el-radio label="socks5" disabled>Socks5</el-radio>
+                <el-radio label="socks5">Socks5</el-radio>
               </el-radio-group>
             </el-col>
           </el-row>
@@ -66,6 +72,11 @@
                     class="textarea-proxy-info"
                     :size="formSize"></el-input>
         </el-form-item>
+        <div class="setting-item-dividing"></div>
+        <el-form-item label="内容过滤">
+          <el-checkbox v-model="config.filterBare">过滤暴露内容</el-checkbox>
+          <el-checkbox v-model="config.filterEmpty">过滤空文件</el-checkbox>
+        </el-form-item>
         <el-form-item label="预加载">
           <el-switch v-model="config.preload"></el-switch>
         </el-form-item>
@@ -86,6 +97,7 @@
           <el-switch v-model="config.requestIdentifier"></el-switch>
         </el-form-item>
       </div>
+      <div class="setting-item-dividing"></div>
       <el-form-item label="日志">
         <el-input disabled :size="formSize" v-model="appInfo.logDir">
           <el-button slot="append" icon="el-icon-folder-opened" @click="handleOpenLoggerDir"></el-button>
@@ -131,6 +143,11 @@
             trigger: 'change'
           }]
         }
+      }
+    },
+    computed: {
+      getServerPortType () {
+        return this.config.serverPort > 0 ? 'number' : 'auto'
       }
     },
     methods: {
@@ -222,5 +239,32 @@
 
   .server-status-success-value {
     margin-left: 15px;
+  }
+
+  .setting-title {
+    font-size: 20px;
+    font-weight: bolder;
+    color: $--color-text-primary;
+    border-bottom: $color-border solid 1px;
+    padding-bottom: 15px;
+    margin-bottom: 7px;
+  }
+
+  .el-form-item {
+    margin-bottom: 18px;
+  }
+
+  .setting-item-dividing {
+    margin-bottom: 10px;
+    border-bottom: $color-border solid 1px;
+  }
+
+  .input-server-port {
+    width: 80px;
+    margin-left: 10px;
+
+    /deep/ input {
+      text-align: center;
+    }
   }
 </style>

@@ -1,20 +1,18 @@
 <template>
   <el-scrollbar>
     <div class="setting">
-      <el-row>
-        <el-col :span="12">
-          <browser-link :href="$config.docURL" :button="true" size="mini">查看帮助</browser-link>
-        </el-col>
-        <el-col :span="12" class="server-config-action">
-          <el-button :loading="loading.save" type="primary" size="mini" @click="handleSaveSetting">
-            应用设置
-          </el-button>
-          <el-button size="mini" type="info" plain @click="handleResetConfig">重置</el-button>
-        </el-col>
-      </el-row>
       <server-config v-if="config"
                      ref="settingInfo"
-                     :config="config"></server-config>
+                     :config="config"
+                     class="server-config"></server-config>
+      <div class="setting-button-action">
+        <el-button :loading="loading.save" type="primary" :disabled="saveDisabled" size="mini"
+                   class="setting-save-button"
+                   @click="handleSaveSetting">
+          保存
+        </el-button>
+        <el-button size="mini" type="info" plain @click="handleResetConfig">重置</el-button>
+      </div>
     </div>
   </el-scrollbar>
 </template>
@@ -26,9 +24,24 @@
 
   export default {
     components: {BrowserLink, ServerConfig},
+    watch: {
+      config: {
+        handler () {
+          const after = JSON.stringify(this.config)
+          const local = JSON.stringify(this.localConfig)
+          // 如果设置改变
+          if (after !== local) {
+            this.saveDisabled = false
+          }
+        },
+        deep: true
+      }
+    },
     data () {
       return {
         config: null,
+        localConfig: null,
+        saveDisabled: true,
         loading: {
           full: false,
           save: false
@@ -41,6 +54,8 @@
           if (valid) {
             this.loading.save = true
             ipcRenderer.send('save-server-config', this.config)
+            this.localConfig = ipcRenderer.sendSync('get-server-config')
+            this.saveDisabled = true
           }
         })
       },
@@ -64,18 +79,25 @@
 
       // 获取服务配置
       this.config = ipcRenderer.sendSync('get-server-config')
+      this.localConfig = ipcRenderer.sendSync('get-server-config')
     }
   }
 </script>
 
 <style lang="scss" scoped>
   .setting {
-    padding: 20px 40px 40px 40px;
+    padding: 20px 40px 45px 40px;
   }
 
-  .server-config-action {
-    margin-bottom: 20px;
-    text-align: right;
+  .setting-save-button {
+    min-width: 80px;
+  }
+
+  .setting-button-action {
+    padding: 0 40px 20px 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
   }
 
 </style>

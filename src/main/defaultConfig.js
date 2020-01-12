@@ -13,9 +13,14 @@ module.exports = function () {
     // 是否显示源站入口
     showSourceLink: false,
     // 过滤
-    filterBare: true,
+    filterBare: false,
+    filterEmpty: false,
+    // 自定义服务映射端口
+    customServerPort: false,
+    customServerPortValue: null,
     // 使用代理
     proxy: false,
+    // http|socks5
     proxyType: 'http',
     proxyHost: '127.0.0.1',
     proxyPort: 1087,

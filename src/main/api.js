@@ -3,7 +3,6 @@ const Router = require('koa-router')
 const app = new Koa()
 const prefix = '/api'
 const router = new Router({prefix})
-const path = require('path')
 const repo = require('./repository')
 
 let serverInfo = null
@@ -81,13 +80,15 @@ async function reload (config, preload) {
 
 async function start (config, preload) {
   try {
-    const port = config.port
+    const customPort = config.customServerPort ? config.customServerPortValue : undefined
+    const port = config.port || customPort
     koaServer = await app.listen(port)
     const address = koaServer.address()
     serverInfo = {
       port: address.port,
       ip: getIPAddress(),
-      local: 'localhost'
+      local: 'localhost',
+      url: `http://localhost:${address.port}`
     }
 
     await reload(config, preload)

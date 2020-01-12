@@ -3,8 +3,8 @@
 const logger = require('./logger')
 const path = require('path')
 const {ipcMain, app} = require('electron')
-const request = require('request-promise-native')
-const {reload, start, isStarting, getProxyNetworkInfo, getServerInfo} = require('./api')
+const createAxios = require('./axios')
+const {reload, start, isStarting, getServerInfo} = require('./api')
 const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
 const is = require('electron-is')
 const Store = require('electron-store')
@@ -37,6 +37,9 @@ function registerIPC (mainWindow) {
     } else {
       mainWindow.maximize()
     }
+  })
+  ipcMain.on('api-base-url', function (event) {
+    event.returnValue = getServerInfo().url
   })
   /**
    * 保存配置
@@ -77,13 +80,11 @@ function registerIPC (mainWindow) {
    * 检查更新
    */
   ipcMain.on('check-update', async (event) => {
-    if (is.dev()) {
-      return
-    }
     try {
+      const request = createAxios(getLocalConfig())
       const response = await request({
         url: defaultConfig().checkUpdateURL,
-        json: true
+        responseType: 'json'
       })
       let newVerArray = response.version.split('.')
       let currentVerArray = app.getVersion().split('.')
@@ -93,7 +94,7 @@ function registerIPC (mainWindow) {
           return
         }
       }
-      console.info('暂无更新', response.version)
+      console.info(`is the latest, cur: ${app.getVersion()}, latest: ${response.version}`)
     } catch (e) {
       console.error(e.message)
     }
@@ -113,7 +114,28 @@ function registerIPC (mainWindow) {
    * 获取网络信息
    */
   ipcMain.on('get-network-info', async (event, config) => {
-    event.sender.send('on-get-network-info', await getProxyNetworkInfo(config))
+    const ip = {
+      url: 'http://gip.dog',
+      headers: {'User-Agent': 'curl'}
+    }
+    const options = {
+      url: 'https://www.google.com'
+    }
+    let googleTest = false
+    let ipBody
+    const start = Date.now()
+    try {
+      const request = createAxios(config)
+      const googleBody = await request(options)
+      googleTest = googleBody.length > 0
+      ipBody = await request(ip)
+    } catch (e) {
+      console.error(e.message)
+    }
+    const time = Date.now() - start
+    const test = {info: ipBody, test: googleTest, time}
+    console.info(test)
+    event.sender.send('on-get-network-info', test)
   })
 }
 

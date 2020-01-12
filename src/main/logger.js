@@ -59,7 +59,7 @@ logger.transports.console = (msg) => {
     const time = moment(msg.date).format('YYYY-MM-DD HH:mm:ss.SSS')
     const color = messageLevel.color
     const stack = getStackInfo()
-    const header = colorize(util.format('[%s][%s][%s]', time, msg.level.toUpperCase(), `${stack.file}:${stack.line}`), color)
+    const header = colorize(util.format('[%s][%s][%s]', time, msg.level.toUpperCase(), `${stack.file}${stack.line}`), color)
     const text = colorize(util.format(...msg.data), color)
     const message = util.format('%s %s', header, text)
 
