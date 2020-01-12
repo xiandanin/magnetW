@@ -34,7 +34,7 @@
           <div v-if="appInfo.server" class="server-status-success">
             <span>搜索服务已启动，映射端口：{{appInfo.server.port}}</span>
           </div>
-          <div v-else class="server-status-error">{{appInfo.server.message||'服务启动失败，请查看日志'}}</div>
+          <div v-else class="server-status-error">服务启动失败，请查看日志</div>
         </el-form-item>
         <tooltip-form-item label="规则同步URL" tooltip="解析源站的规则文件URL，支持网络链接和本地路径">
           <el-input :size="formSize" v-model="config.ruleUrl" :placeholder="defaultConfig.ruleUrl"></el-input>
@@ -143,11 +143,6 @@
             trigger: 'change'
           }]
         }
-      }
-    },
-    computed: {
-      getServerPortType () {
-        return this.config.serverPort > 0 ? 'number' : 'auto'
       }
     },
     methods: {

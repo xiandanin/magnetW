@@ -38,7 +38,8 @@ function registerIPC (mainWindow) {
     }
   })
   ipcMain.on('api-base-url', function (event) {
-    event.returnValue = getServerInfo().url
+    let serverInfo = getServerInfo()
+    event.returnValue = serverInfo && serverInfo.url ? serverInfo.url : ''
   })
   /**
    * 保存配置

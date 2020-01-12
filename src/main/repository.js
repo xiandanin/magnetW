@@ -3,7 +3,7 @@ const URI = require('urijs')
 const fs = require('fs')
 const createAxios = require('./axios')
 const cacheManager = require('./cache')
-const {initialize, isFilter} = require('./filter/filter')
+const {loadFilterData, isFilter} = require('./filter/filter')
 const xpath = require('xpath')
 const DOMParser = require('xmldom').DOMParser
 const htmlparser2 = require('htmlparser2')
@@ -29,7 +29,9 @@ function applyConfig (newConfig) {
   config = newConfig
   request = createAxios(newConfig)
 
-  initialize()
+  if (config.filterBare) {
+    loadFilterData()
+  }
 }
 
 function clearCache () {
@@ -133,8 +135,14 @@ async function obtainSearchResult ({id, url}, headers) {
 
   // 过滤
   const originalCount = items.length
-  if (config.filterBare) {
-    items = items.filter((item) => !isFilter(item.name.replace(/ /g, '')))
+  if (config.filterBare || config.filterEmpty) {
+    items = items.filter((item) => {
+      if (config.filterBare) {
+        return !isFilter(item.name.replace(/ /g, ''))
+      } else if (config.filterEmpty) {
+        return typeof item.size === 'number' && item.size > 0
+      }
+    })
   }
 
   return {originalCount, items}

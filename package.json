@@ -19,7 +19,7 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "postinstall": "npm run lint:fix",
     "ins": "npm install --no-optional",
-    "export-filter-db": "node scripts/export-filter-db.js"
+    "merge-filter-db": "node scripts/merge-filter-db.js"
   },
   "build": {
     "productName": "magnetW",

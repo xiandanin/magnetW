@@ -1,11 +1,14 @@
-// https://github.com/aojiaotage/text-censor
-
 const path = require('path')
 const fs = require('fs')
 
 const map = {}
+let load = false
 
-function initialize () {
+async function loadFilterData () {
+  if (load) {
+    return
+  }
+  load = true
   const original = Buffer.from(fs.readFileSync(path.resolve(__dirname, './keywords.txt'), 'utf-8'), 'base64')
   const words = original.toString().split('\n')
   words.forEach((line) => {
@@ -13,6 +16,7 @@ function initialize () {
       addWord(line)
     }
   })
+  console.info('加载词条%d条', words.length)
 }
 
 function addWord (word) {
@@ -82,5 +86,5 @@ function isFilter (s, cb) {
 }
 
 module.exports = {
-  initialize, isFilter
+  loadFilterData, isFilter
 }
