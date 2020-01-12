@@ -6,7 +6,6 @@ const {ipcMain, app} = require('electron')
 const createAxios = require('./axios')
 const {reload, start, isStarting, getServerInfo} = require('./api')
 const {defaultConfig, extractConfigVariable, getConfig} = require('./process-config')
-const is = require('electron-is')
 const Store = require('electron-store')
 const store = new Store()
 

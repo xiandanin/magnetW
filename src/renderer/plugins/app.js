@@ -5,7 +5,7 @@ Vue.use({
   install: (Vue, options) => {
     Vue.prototype.$app = {
       name: json.name,
-      appName: json.appName,
+      appName: json.build.productName,
       version: json.version,
       description: json.description,
       author: json.author,

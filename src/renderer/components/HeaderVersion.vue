@@ -1,5 +1,5 @@
 <template>
-  <browser-link href="/" target="_self">
+  <browser-link target="_self">
     <div class="header-version align-items-center">
       <img src="../assets/logo.svg" width="36" height="36"/>
       <div>
@@ -18,7 +18,7 @@
     data () {
       return {
         version: this.$app.version,
-        appName: this.$app.appName
+        appName: this.$app.name
       }
     },
     created () {
