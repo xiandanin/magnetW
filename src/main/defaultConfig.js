@@ -21,9 +21,9 @@ module.exports = function () {
     // 使用代理
     proxy: false,
     // http|socks5
-    proxyType: 'http',
+    proxyType: 'socks5',
     proxyHost: '127.0.0.1',
-    proxyPort: 1087,
+    proxyPort: 1080,
     // 是否启用预加载 启用后会预加载下一页和下一个源站
     preload: true,
     // 缓存过期时间

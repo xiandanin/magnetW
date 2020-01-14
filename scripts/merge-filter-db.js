@@ -42,4 +42,4 @@ function unique (arr) {
   return result
 }
 
-fs.writeFileSync('src/main/filter/keywords.txt', Buffer.from(uniqueWords.join('\n')).toString('base64'))
+fs.writeFileSync('static/keywords.txt', Buffer.from(uniqueWords.join('\n')).toString('base64'))

@@ -106,6 +106,7 @@
   {
     "id": "btdb",
     "name": " BTDB",
+    "proxy": true,
     "url": "https://btdb.io",
     "paths": {
       "time": "?s={k}&sort=time&page={p}",
@@ -124,7 +125,7 @@
   {
     "id": "btdiguo",
     "name": "BT目录",
-    "url": "https://www.btweb.xyz",
+    "url": "https://www.aixiazai.xyz",
     "paths": {
       "time": "/search-update/{k}/page-{p}.html",
       "size": "/search-size/{k}/page-{p}.html",
@@ -160,7 +161,7 @@
   {
     "id": "bthub",
     "name": "BThub",
-    "url": "https://bthub.site",
+    "url": "https://bthub.xyz",
     "paths": {
       "preset": "/main-search-kw-{k}-{p}.html",
       "size": "/main-search-kw-{k}-length-{p}.html",
@@ -192,6 +193,21 @@
       "size": "./div[2]/span[3]/b[1]",
       "date": "./div[2]/span[4]/b[1]",
       "hot": "./div[2]/span[5]/b[1]"
+    }
+  },
+  {
+    "id": "alibt",
+    "name": " 阿里BT",
+    "url": "https://alibt.pw",
+    "paths": {
+      "preset": "/zh-cn/s/{p}/{k}"
+    },
+    "xpath": {
+      "group": "//*[@id=\"wrapper\"]/ul/li",
+      "magnet": "./p[1]/a/@href",
+      "name": "./p[1]/a",
+      "size": "./p[2]/span[2]",
+      "date": "./p[2]/span[1]"
     }
   },
   {
@@ -274,7 +290,7 @@
   {
     "id": "btfox",
     "name": " btfox",
-    "url": "http://www.btfox.biz",
+    "url": "http://www.btfox.in",
     "paths": {
       "time": "/s?wd={k}&sort=time&page={p}",
       "size": "/s?wd={k}&sort=length&page={p}",

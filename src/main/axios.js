@@ -1,5 +1,3 @@
-import {remote} from 'electron'
-
 const axios = require('axios')
 const tunnel = require('tunnel')
 const SocksProxyAgent = require('socks-proxy-agent')

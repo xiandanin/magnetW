@@ -4,12 +4,15 @@ const fs = require('fs')
 const map = {}
 let load = false
 
+const isDev = process.env.NODE_ENV === 'development'
+
 async function loadFilterData () {
   if (load) {
     return
   }
   load = true
-  const original = Buffer.from(fs.readFileSync(path.resolve(__dirname, './keywords.txt'), 'utf-8'), 'base64')
+  const file = isDev ? path.resolve('static/keywords.txt') : path.resolve(__dirname, './static/keywords.txt')
+  const original = Buffer.from(fs.readFileSync(file, 'utf-8'), 'base64')
   const words = original.toString().split('\n')
   words.forEach((line) => {
     if (line) {

@@ -10,6 +10,15 @@
       <span slot="title">{{title}}</span>
     </el-alert>
     <div class="guide-page-content">
+      <div class="guide-page-log" v-if="serverInfo">
+        <div>搜索服务已启动，启动模式：{{serverInfo.customServerPort?'自定义':'自动分配'}}，<span class="guide-page-log-success">{{serverInfo.local}}:{{serverInfo.port}}</span>
+        </div>
+        <div v-if="serverInfo.proxy">
+          代理已启用：<span class="guide-page-log-success">{{serverInfo.proxyType}}://{{serverInfo.proxyHost}}:{{serverInfo.proxyPort}}</span>，请在设置中“测试连接”检查代理是否可用
+        </div>
+        <div v-if="serverInfo.filterBare||serverInfo.filterEmpty">内容过滤已启用</div>
+        <div v-show="serverInfo.message" class="guide-page-log-error">{{serverInfo.message}}</div>
+      </div>
       <div v-for="it in $config.guide.content" class="guide-content">
         <span class="guide-title">{{it.title}}</span>
         <div class="guide-content-item" v-for="item in it.items">
@@ -23,6 +32,7 @@
 
 <script>
   import BrowserLink from './BrowserLink'
+  import {ipcRenderer} from 'electron'
 
   export default {
     props: ['message', 'type', 'title'],
@@ -30,11 +40,27 @@
       BrowserLink
     },
     data () {
-      return {}
+      return {
+        serverInfo: null
+      }
     },
     computed: {},
     methods: {},
     created () {
+      // 接收设置刷新的通知
+      this.$on('global:event-config-refreshed', (config, oldConfig) => {
+        ipcRenderer.send('get-server-info')
+      })
+      ipcRenderer.on('on-get-server-info', (event, serverInfo, config) => {
+        if (serverInfo) {
+          const info = {}
+          Object.assign(info, serverInfo, config)
+          this.serverInfo = info
+        } else {
+          this.serverInfo = {message: '搜索服务启动失败，请查看日志'}
+        }
+      })
+      ipcRenderer.send('get-server-info')
     }
   }
 </script>
@@ -89,5 +115,18 @@
   .footerText {
     color: $color-text-gray;
     font-size: $font-size;
+  }
+
+  .guide-page-log {
+    color: $--color-text-primary;
+    line-height: 300%;
+  }
+
+  .guide-page-log-success {
+    color: $--color-success;
+  }
+
+  .guide-page-log-error {
+    color: $--color-danger;
   }
 </style>

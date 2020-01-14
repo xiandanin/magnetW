@@ -1,5 +1,4 @@
-// import fs from 'fs'
-
+const moment = require('moment')
 const logger = require('./logger')
 const path = require('path')
 const {ipcMain, app} = require('electron')
@@ -30,6 +29,12 @@ function getLocalConfig () {
 }
 
 function registerIPC (mainWindow) {
+  ipcMain.on('get-server-info', function (event) {
+    const configVariable = store.get('config_variable')
+    const newConfig = getConfig(configVariable)
+    event.sender.send('on-get-server-info', getServerInfo(), newConfig)
+  })
+
   ipcMain.on('window-max', function () {
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize()

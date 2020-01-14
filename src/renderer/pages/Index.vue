@@ -31,12 +31,12 @@
               </div>
             </div>
             <!--搜索结果-->
+            <div class="search-items-message" v-if="page.originalCount">
+              搜索到{{page.originalCount}}条结果
+              <span v-show="getItemsCount>0">，已过滤{{getItemsCount}}条，如需显示请更改设置</span>
+            </div>
             <div ref="pagerSearchItems" class="pager-search-items" v-loading="loading.table">
               <div class="index-main-content" v-if="page.items">
-                <div class="search-items-message">
-                  搜索到{{page.originalCount}}条结果
-                  <span v-show="getItemsCount>0">，已过滤{{getItemsCount}}条，如需显示请更改设置</span>
-                </div>
                 <pager-items :items="page.items"
                              :emptyMessage="page.emptyMessage"
                              :keyword="page.current.keyword"
@@ -268,6 +268,8 @@
   .search-items-message {
     color: $--color-success;
     font-size: 14px;
+    line-height: 14px;
+    margin-top: 15px;
   }
 
 </style>

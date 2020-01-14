@@ -30,9 +30,7 @@
           const after = JSON.stringify(this.config)
           const local = JSON.stringify(this.localConfig)
           // 如果设置改变
-          if (after !== local) {
-            this.saveDisabled = false
-          }
+          this.saveDisabled = after === local
         },
         deep: true
       }

@@ -251,16 +251,21 @@ function parseDetailDocument (document, expression) {
 async function loadRuleByURL () {
   const url = config.ruleUrl
   let rule
-  if (url.startsWith('http')) {
-    // 如果是网络文件
-    console.info('获取网络规则文件', url)
-    rule = await request(url, {timeout: 8000, json: true})
-  } else {
-    console.info('读取本地规则文件', url)
-    rule = JSON.parse(fs.readFileSync(url))
-  }
-  if (!Array.isArray(rule) || rule.length <= 0) {
-    throw new Error('规则格式不正确')
+  try {
+    if (url.startsWith('http')) {
+      // 如果是网络文件
+      console.info('获取网络规则文件', url)
+      rule = await request(url, {timeout: 8000, json: true})
+    } else {
+      console.info('读取本地规则文件', url)
+      rule = JSON.parse(fs.readFileSync(url))
+    }
+    if (!Array.isArray(rule) || rule.length <= 0) {
+      throw new Error('规则格式不正确')
+    }
+  } catch (e) {
+    console.error(e.message, '规则加载失败，将使用内置规则')
+    rule = require('../../rule.json')
   }
   cacheManager.set('rule_json', JSON.stringify(rule))
 
