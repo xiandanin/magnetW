@@ -62,6 +62,7 @@
 
     .header-right {
       margin-left: auto;
+      z-index: 1000;
     }
 
     .el-menu {
