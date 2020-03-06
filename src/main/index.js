@@ -59,7 +59,8 @@ function createWindow () {
   mainWindow.loadURL(winURL)
 
   mainWindow.on('close', (e) => {
-    if (quitApp) {
+    // 不是mac 或者 已标志退出
+    if (process.platform !== 'darwin' || quitApp) {
       mainWindow = null
     } else {
       e.preventDefault()
