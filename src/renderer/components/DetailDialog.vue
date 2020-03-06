@@ -13,10 +13,10 @@
           <browser-link v-show="detail.magnet" type="primary" :href="detail.magnet">{{detail.magnet}}</browser-link>
           <div v-if="detail.files">
             <div class="row-title">文件列表</div>
-            <el-row v-for="f in detail.files" :key="f.name" class="file-row-item" :gutter="20">
-              <el-col :span="20">{{f.name}}</el-col>
-              <el-col :span="4">{{f.size | size}}</el-col>
-            </el-row>
+            <div v-for="f in detail.files" :key="f.name" class="file-row-item">
+              <span class="file-row-item-left">{{f.name}}</span>
+              <span class="file-row-item-right">{{f.size | size}}</span>
+            </div>
           </div>
         </div>
         <div class="detail-info-right">
@@ -136,6 +136,16 @@
 
   .file-row-item {
     margin-top: 5px;
+    display: flex;
+  }
+
+  .file-row-item-left {
+    flex: 1;
+  }
+
+  .file-row-item-right {
+    min-width: 100px;
+    text-align: right;
   }
 
   .row-title {
