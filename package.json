@@ -6,7 +6,7 @@
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "cross-env BUILD_TARGET=electron node .electron-vue/build.js && electron-builder -mwl",
-    "build:dir": "cross-env BUILD_TARGET=electronnode .electron-vue/build.js && electron-builder --dir",
+    "build:dir": "cross-env BUILD_TARGET=electron node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:mac": "cross-env BUILD_TARGET=electron node .electron-vue/build.js && electron-builder --mac",
     "build:win": "cross-env BUILD_TARGET=electron node .electron-vue/build.js && electron-builder --win",
