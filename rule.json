@@ -2,8 +2,8 @@
   {
     "id": "zhongzisou",
     "name": "种子搜",
-    "proxy": true,
-    "url": "https://www.dongxingdi.com",
+    "proxy": false,
+    "url": "https://zhongzidi1.com",
     "paths": {
       "time": "/list/{k}/{p}",
       "size": "/list_length/{k}/{p}",
@@ -13,12 +13,29 @@
       "group": "//table[@class='table table-bordered table-striped']",
       "magnet": "./tbody/tr[1]/td/div/h4/a/@href",
       "name": "./tbody/tr[1]/td/div/h4/a",
-      "size": "./tbody/tr[2]/td[2]/strong",
-      "date": "./tbody/tr[2]/td[1]/strong",
+      "size": "./tbody/tr/td[2]/strong",
       "hot": "./tbody/tr[2]/td[3]/strong",
+      "date": "./tbody/tr/td[1]/strong",
       "detail": {
         "files": "//*[@id=\"wrapp\"]/div[2]/div/div/div[3]/div[1]/div[2]/div[2]/select/option"
       }
+    }
+  },
+  {
+    "id": "btgg",
+    "name": "BTGG",
+    "proxy": false,
+    "url": "https://www.btgg.cc",
+    "paths": {
+      "preset": "/search?q={k}&p={p}"
+    },
+    "xpath": {
+      "group": "//div[@class=\"item\"]",
+      "magnet": "./div[2]/a/@href",
+      "name": "./div[1]/a",
+      "size": "./div[2]/span[1]",
+      "hot": "./div[2]/span[2]",
+      "date": "./div[2]/span[3]"
     }
   },
   {
@@ -44,8 +61,8 @@
   {
     "id": "btsow",
     "name": "BTSOW",
-    "proxy": true,
-    "url": "https://btos.pw",
+    "proxy": false,
+    "url": "https://btsow.cyou",
     "paths": {
       "preset": "/search/{k}/page/{p}"
     },
@@ -63,8 +80,8 @@
   {
     "id": "btdet",
     "name": "BT蚂蚁",
-    "proxy": true,
-    "url": "https://btantx.com",
+    "proxy": false,
+    "url": "https://btmayi.iproxy.gq",
     "paths": {
       "time": "/search/{k}-first-asc-{p}",
       "size": "/search/{k}-size-desc-{p}",
@@ -85,8 +102,8 @@
   {
     "id": "bt4g",
     "name": "BT4G",
-    "proxy": true,
-    "url": "https://cn.bt4g.com",
+    "proxy": false,
+    "url": "https://bt4g.proxyit.ga",
     "paths": {
       "time": "/search/{k}/{p}",
       "size": "/search/{k}/bysize/{p}",
@@ -106,8 +123,8 @@
   {
     "id": "btdb",
     "name": " BTDB",
-    "proxy": true,
-    "url": "https://btdb.io",
+    "proxy": false,
+    "url": "https://btdb.proxyit.ga",
     "paths": {
       "time": "?s={k}&sort=time&page={p}",
       "preset": "?s={k}&page={p}",
@@ -125,7 +142,8 @@
   {
     "id": "btdiguo",
     "name": "BT目录",
-    "url": "https://www.aixiazai.xyz",
+    "proxy": false,
+    "url": "https://91bt.info",
     "paths": {
       "time": "/search-update/{k}/page-{p}.html",
       "size": "/search-size/{k}/page-{p}.html",
@@ -143,7 +161,8 @@
   {
     "id": "cilibao",
     "name": "磁力宝",
-    "url": "http://www.clb.biz",
+    "proxy": false,
+    "url": "http://cilibao.me",
     "paths": {
       "time": "/s/{k}_time_{p}.html",
       "size": "/s/{k}_size_{p}.html",
@@ -161,12 +180,13 @@
   {
     "id": "bthub",
     "name": "BThub",
-    "url": "https://bthub.xyz",
+    "proxy": false,
+    "url": "https://bthub.monster",
     "paths": {
-      "preset": "/main-search-kw-{k}-{p}.html",
-      "size": "/main-search-kw-{k}-length-{p}.html",
-      "time": "/main-search-kw-{k}-time-{p}.html",
-      "hot": "/main-search-kw-{k}-requests-{p}.html"
+      "preset": "/cn/main-search-kw-{k}-{p}.html",
+      "size": "/cn/main-search-kw-{k}-length-{p}.html",
+      "time": "/cn/main-search-kw-{k}-time-{p}.html",
+      "hot": "/cn/main-search-kw-{k}-requests-{p}.html"
     },
     "xpath": {
       "group": "//div[@class='search-item detail-width']",
@@ -180,7 +200,7 @@
   {
     "id": "btdad",
     "name": " Btdad",
-    "url": "http://www.btdad.bid",
+    "url": "http://www.btdad.co",
     "paths": {
       "preset": "/search-{k}-0-0-{p}.html",
       "size": "/search-{k}-0-1-{p}.html",
@@ -198,6 +218,7 @@
   {
     "id": "alibt",
     "name": " 阿里BT",
+    "proxy": true,
     "url": "https://alibt.pw",
     "paths": {
       "preset": "/zh-cn/s/{p}/{k}"
@@ -213,7 +234,7 @@
   {
     "id": "mag",
     "name": "MAG磁力站",
-    "url": "http://f.cili001.com",
+    "url": "http://mag234.com",
     "paths": {
       "preset": "/index/index/k/{k}/p/{p}"
     },
@@ -228,8 +249,8 @@
   {
     "id": "clzz",
     "name": "磁力蜘蛛",
-    "proxy": true,
-    "url": "http://www.eclzz.com",
+    "proxy": false,
+    "url": "http://www.eclzz.net",
     "paths": {
       "preset": "/s/{k}_rel_{p}.html",
       "time": "/s/{k}_time_{p}.html",
@@ -247,7 +268,7 @@
   {
     "id": "ciligou",
     "name": " 磁力狗",
-    "url": "http://www.ciligou.top",
+    "url": "https://ciligou.app",
     "paths": {
       "time": "/search?word={k}&sort=time&p={p}",
       "preset": "/search?word={k}&sort=rele&p={p}",
@@ -269,7 +290,7 @@
   {
     "id": "ciliba",
     "name": " 磁力吧",
-    "url": "http://www.ciliba.bid",
+    "url": "https://www.ciliba.icu",
     "paths": {
       "time": "/s/{k}/1/{p}.html",
       "hot": "/s/{k}/3/{p}.html",
@@ -290,7 +311,7 @@
   {
     "id": "btfox",
     "name": " btfox",
-    "url": "http://www.btfox.in",
+    "url": "http://btfox0.net",
     "paths": {
       "time": "/s?wd={k}&sort=time&page={p}",
       "size": "/s?wd={k}&sort=length&page={p}",
@@ -349,9 +370,7 @@
     "proxy": false,
     "url": "https://nyaa.fun",
     "paths": {
-      "time": "?q={k}&p={p}",
-      "size": "?q={k}&s=size&o=desc&p={p}",
-      "hot": "?q={k}&s=downloads&o=desc&p={p}"
+      "preset": "/search/c_{p}_0_k_{k}"
     },
     "xpath": {
       "group": "//div[@class='table-responsive']/table/tbody/tr",
@@ -367,12 +386,10 @@
   {
     "id": "sukebei",
     "name": "Sukebei Nyaa",
-    "proxy": false,
+    "proxy": true,
     "url": "https://sukebei.nyaa.fun",
     "paths": {
-      "time": "?q={k}&p={p}",
-      "size": "?q={k}&s=size&o=desc&p={p}",
-      "hot": "?q={k}&s=downloads&o=desc&p={p}"
+      "preset": "/search/c_{p}_0_k_{k}"
     },
     "xpath": {
       "group": "//div[@class='table-responsive']/table/tbody/tr",
@@ -389,7 +406,7 @@
   {
     "id": "sobt",
     "name": " Sobt",
-    "url": "http://www.sobt5.pw",
+    "url": "http://sobt0.net",
     "paths": {
       "preset": "/q/{k}.html?sort=rel&page={p}",
       "time": "/q/{k}.html?sort=time&page={p}",
