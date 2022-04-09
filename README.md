@@ -1,3 +1,5 @@
+# [已失效，不再维护]
+
 [![GitHub release](https://img.shields.io/github/release/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/stars)
 [![GitHub forks](https://img.shields.io/github/forks/xiandanin/magnetW)](https://github.com/xiandanin/magnetW/forks)
@@ -6,14 +8,8 @@
  
 [[中文文档]](https://github.com/xiandanin/magnetW/wiki)</font>
 
-## 简介
-`magnetW`基于[magnetX](https://github.com/youusername/magnetX)的规则原理，将各个磁力站的搜索结果统一格式化
-
 ## 安装
 从[Github Releases](https://github.com/xiandanin/magnetW/releases)或者[Github Wiki](https://github.com/xiandanin/magnetW/wiki)下载对应平台
-
-## 截图
-![](/screenshots/app.gif)
 
 ## 注意事项
 * 本项目**没有任何群组**，代码托管和相关技术交流只有**Github**，其它地址获取的都有可能存在风险，请**仔细辨别**
@@ -33,8 +29,3 @@
 2. 不能以盈利为目的，不能插入任何形式的广告
 3. 注明原项目出处
 4. 继承相同协议
-
-## 相关项目
-* [magnetX](https://github.com/youusername/magnetX)
-* [magnet_qt](https://github.com/youusername/magnet_qt)
-* [磁力搜自动采集](https://github.com/xiandanin/LardMonkeyScripts#%E7%A3%81%E5%8A%9B%E6%90%9C%E8%87%AA%E5%8A%A8%E9%87%87%E9%9B%86)
